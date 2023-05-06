@@ -1,0 +1,9 @@
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\bin\Debug\Negocios.dll
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\bin\Debug\Negocios.pdb
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\bin\Debug\Dominio.dll
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\bin\Debug\Dominio.pdb
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\obj\Debug\Negocios.csproj.AssemblyReference.cache
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\obj\Debug\Negocios.csproj.CoreCompileInputs.cache
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\obj\Debug\Negocios.csproj.CopyComplete
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\obj\Debug\Negocios.dll
+C:\Users\Jorge Perez\Desktop\Empleados\Negocios\obj\Debug\Negocios.pdb
