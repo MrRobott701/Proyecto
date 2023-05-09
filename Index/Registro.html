@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+    <head>
+        <title>Registro Empleados</title>
+        <script src="css/bootstrap.bundle.min.js"></script>
+        <script src="css/jquery-3.4.1.min.js"></script>
+        <link href="css/bootstrap.min.css" rel="stylesheet" /></head>
+    <body>
+        <div class="container">
+            <div class="row mt-3">
+              <div class="col-12">
+                <form>
+                    <input type="hidden" id="txtidusuario"/>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nombres</label>
+                        <input type="text" class="form-control" id="txtnombres" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Apellido</label>
+                        <input type="text" class="form-control" id="txtapellido" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Telefono</label>
+                        <input type="text" class="form-control" id="txttelefono" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Departamento</label>
+                        <input type="text" class="form-control" id="txtdepartamento" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Puesto</label>
+                        <input type="text" class="form-control" id="txtpuesto" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">TipodeContrato</label>
+                        <input type="text" class="form-control" id="txttipodecontrato" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Sueldo</label>
+                        <input type="text" class="form-control" id="txtsueldo" placeholder="">
+                    </div>
+                  
+                    <button type="button" class="btn btn-primary" onclick="GuardarUsuario()">Guardar</button>
+                    <button type="button" class="btn btn-warning" onclick="IrFormularioInicio()">Volver</button>
+                  </form>
+              </div>
+            </div>
+          </div>
+    </body>
+    <script>
+        function IrFormularioInicio(){
+            window.location = "Index.html";
+        }
+//Decimos que le formulario no sirve para editar
+var editar = false;
+//Hacemos un llamado si es que en la url hay un parametro que s ellame ID
+        window.onload = function() {
+//Ese id se guarda en var id
+            var id = $.urlParam('id');
+           console.log(id);
+           //Si id tiene algo, editar se vuelve true
+           if(id != null){
+               editar = true;
+               //el valor de txtidusuario va a ser el valor de id
+               $("#txtidusuario").val(id);
+               //pasamos al metodo get
+               PintarUsuario(id);
+           }
+        };
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results==null) {
+            return null;
+            }
+            return decodeURI(results[1]) || 0;
+        }
+
+        function PintarUsuario(idUsuario){
+            //AJAX tiene la propiedad get
+            $.get("http://localhost:58683/api/empleado/" + idUsuario)
+            .done(function( response ) {
+             console.log(response);
+              $("#txtnombres").val(response.Nombres),
+              $("#txtapellido").val(response.Apellido),
+              $("#txttelefono").val(response.Telefono),
+              $("#txtdepartamento").val(response.Departamento),
+              $("#txtpuesto").val(response.Puesto),
+              $("#txttipodecontrato").val(response.TipodeContrato),
+              $("#txtsueldo").val(response.Sueldo)
+});
+        }
+
+function GuardarUsuario(){
+            if(editar){
+                
+                var data = {
+                    IdUsuario : $("#txtidusuario").val(),
+                    Nombres : $("#txtnombres").val(),
+                    Apellido : $("#txtapellido").val(),
+                    Telefono : $("#txttelefono").val(),
+                    Departamento : $("#txtdepartamento").val(),
+                    Puesto: $("#txtpuesto").val(),
+                    TipodeContrato: $("#txttipodecontrato").val(),
+                    Sueldo: $("#txtsueldo").val()
+                }
+
+                $.ajax({
+                method: "PUT",
+                url: "http://localhost:58683/api/empleado",
+                contentType: 'application/json',
+                data: JSON.stringify(data), // access in body
+                })
+                .done(function( response ) {
+                    console.log(response);
+                    if(response){
+                        alert("Se guardaron los cambios");
+                        window.location = "Index.html";
+                    }else{
+                        alert("Error al Modificar")
+                    }
+                });
+
+            }else{
+//Objeto data que tiene lo mismo de la tabla, obtiene los valores 
+                var data = {
+                    Nombres : $("#txtnombres").val(),
+                    Apellido : $("#txtapellido").val(),
+                    Telefono : $("#txttelefono").val(),
+                    Departamento : $("#txtdepartamento").val(),
+                    Puesto: $("#txtpuesto").val(),
+                    TipodeContrato: $("#txttipodecontrato").val(),
+                    Sueldo: $("#txtsueldo").val()
+                }
+//Pasamos por AJAX el objeto data
+                $.post("http://localhost:58683/api/empleado", data)
+                //post devuelve un true o false, se almacena en response
+                .done(function(response) {
+                    console.log(response);//pinta en la consola la respuesta
+                    if(response){
+                        alert("Usuario Creado");
+                        window.location = "Index.html";
+                    }else{
+                        alert("Error al crear");
+                    }
+                });
+            }
+
+        }
+        
+
+    </script>
+</html>
+
+
+

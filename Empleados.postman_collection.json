@@ -1,0 +1,140 @@
+{
+	"info": {
+		"_postman_id": "013212cc-8beb-445f-bc82-fe369e874711",
+		"name": "Empleados",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23646713"
+	},
+	"item": [
+		{
+			"name": "Listar",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:58683/api/empleado",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "58683",
+					"path": [
+						"api",
+						"empleado"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:58683/api/empleado/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "58683",
+					"path": [
+						"api",
+						"empleado",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registrar",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Nombres\":\"Manuel\",\r\n    \"Apellido\":\"Arellano Felix\",\r\n    \"Telefono\":\"6587415658\",\r\n    \"Departamento\":\"Importacion\",\r\n    \"Puesto\":\"Coordinador\",\r\n    \"TipodeContrato\":\"Expirado\",\r\n    \"Sueldo\":50000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:58683/api/empleado/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "58683",
+					"path": [
+						"api",
+						"empleado",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"IdUsuario\":\"4\",\r\n    \"Nombres\":\"Rafael\",\r\n    \"Apellido\":\"Caro Quintero\",\r\n    \"Telefono\":\"2458763654\",\r\n    \"Departamento\":\"Cobranza\",\r\n    \"Puesto\":\"Contador\",\r\n    \"TipodeContrato\":\"9 Meses\",\r\n    \"Sueldo\":45800\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:58683/api/empleado",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "58683",
+					"path": [
+						"api",
+						"empleado"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:58683/api/empleado/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "58683",
+					"path": [
+						"api",
+						"empleado",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

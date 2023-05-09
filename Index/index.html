@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Gestion Empleados</title>
+    <script src="css/bootstrap.bundle.min.js"></script>
+    <script src="css/jquery-3.4.1.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-3 mt-3">
+            <div class="col-4">
+                <button type="button" class="btn btn-primary" OnClick="IrFormularioCrear()">Crear Nuevo</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+              <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Apellido</th>
+                      <th scope="col">Telefono</th>
+                      <th scope="col">Departamento</th>
+                      <th scope="col">Puesto</th>
+                      <th scope="col">Tipo de Contrato</th>
+                      <th scope="col">Sueldo</th>
+                      <th scope="col">Fecha Registro</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+    </div>
+</body>
+<script>
+    window.onload = function(){
+        Obtener();
+    };
+    function IrFormularioCrear(){
+            window.location = "Registro.html";
+        }
+    function Obtener(){
+//Limpia la tabla
+        $(".table tbody").html("");
+//Llamamos a Web API
+        $.get("http://localhost:58683/api/empleado")
+        //Obtenemos la respuesta
+        .done(function( response ) {
+            console.log(response);
+            $.each( response, function( id, fila ) {
+                $("<tr>").append(
+                    $("<td>").text(fila.IdUsuario),
+                    $("<td>").text(fila.Nombres),
+                    $("<td>").text(fila.Apellido),
+                    $("<td>").text(fila.Telefono),
+                    $("<td>").text(fila.Departamento),
+                    $("<td>").text(fila.Puesto),
+                    $("<td>").text(fila.TipodeContrato),
+                    $("<td>").text(fila.Sueldo),
+                    $("<td>").text(fila.FechaRegistro),
+                    $("<td>").append(
+                        //Los botones reciben una data que almacena el ID del usuario
+                        $("<button>").data("id",fila.IdUsuario).addClass("btn btn-success btn-sm mr-1 editar").text("Editar").attr({"type":"button"}),
+                        $("<button>").data("id",fila.IdUsuario).addClass("btn btn-danger btn-sm eliminar").text("Eliminar").attr({"type":"button"})
+                    )
+                ).appendTo(".table");
+            });
+        });
+    }
+    //En document en un acion de click a un objeto que tenga la clase editar
+    //Botar por consola el id que tenga ese objeto al cual se le dio click
+    //El boton guarda el id 
+    $(document).on('click', '.editar', function () {
+            console.log($(this).data("id"));
+        //redirige al formulairo de registro
+        //Pasamos por la URL el id 
+            window.location = "Registro.html?id=" + $(this).data("id");
+            
+        });
+
+        $(document).on('click', '.eliminar', function () {
+            console.log($(this).data("id"));
+
+            $.ajax({
+            method: "DELETE",
+            url: "http://localhost:58683/api/empleado/" + $(this).data("id")
+            })
+            .done(function( response ) {
+                console.log(response);
+                if(response){
+                    alert("Se Elimino Correctamente")
+                    Obtener();
+                }else{
+                    alert("Error al eliminar")
+                }
+            });
+            
+        });
+
+</script>
+</html>
