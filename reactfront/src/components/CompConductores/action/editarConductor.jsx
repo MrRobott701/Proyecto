@@ -302,7 +302,7 @@ const CompEditConductores = ({ id, onClose, getConductores }) => {
             <input
               type="text"
               id="avalNombre"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="font-bold shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Nombre del Aval"
               value={avalNombre}
               onChange={(e) => setavalNombre(e.target.value)}
@@ -313,7 +313,7 @@ const CompEditConductores = ({ id, onClose, getConductores }) => {
             <input
               type="text"
               id="avalTelefono"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="font-bold shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Teléfono del Aval"
               value={avalTelefono}
               onChange={(e) => setavalTelefono(e.target.value)}
@@ -327,7 +327,7 @@ const CompEditConductores = ({ id, onClose, getConductores }) => {
             <label className="block text-gray-900 text-lg font-bold mb-2" htmlFor="nota">Nota</label> 
             <input
               id="nota"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="font-bold shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Nota"
               value={nota}
               onChange={(e) => setNota(e.target.value)}

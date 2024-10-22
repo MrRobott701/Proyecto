@@ -106,46 +106,35 @@ const AsignarChofer = ({ idVehiculo, onAsignacionExitosa }) => {
     }
   };
 
-  const handleChangeConductor = async (selectedOption) => {
+  const handleChangeConductor = (selectedOption) => {
     const selectedConductorId = selectedOption ? selectedOption.value : null;
-    setIdConductor(selectedConductorId);
 
-    if (selectedConductorId === 0) {
-      await asignarConductor(0);  // Asigna conductor como "Sin conductor"
-    } else if (selectedConductorId) {
-      await asignarConductor(selectedConductorId);
-    }
+    // Mostrar la alerta de confirmación cuando se selecciona un nuevo conductor
+    Swal.fire({
+      title: '¿Estás seguro?',
+      html: '<p>Está a punto de cambiar el conductor asignado.</p><p>¿Desea continuar?</p>',
+       icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cambiar conductor',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // Si el usuario confirma el cambio, se asigna el nuevo conductor
+        setIdConductor(selectedConductorId);
+        await asignarConductor(selectedConductorId);
+      }
+    });
   };
 
   return (
     <div>
-      <div className="mb-4 mt-4">
-        <div className="flex">
-          <div className="flex">
-            <button onClick={() =>
-              Swal.fire({
-                title: "Asignación de Conductores",
-                html: `<p>Seleccione un <strong>conductor</strong> para asignar al vehículo.</p>
-                 <p>Solo se puede asignar <strong>un conductor</strong> a la vez.</p>
-                 <p>Si selecciona un <strong>conductor</strong> con un vehículo, el vehículo anterior quedará sin conductor</p>
-                <p>Si selecciona <strong>'Sin Conductor'</strong>, se <strong>desasignará</strong> el conductor actual.</p>`,
-                icon: "info",
-                confirmButtonText: "Entendido",
-                width: '800px',
-                padding: '1.5rem',
-                backdrop: true,
-              })
-            }
-            className="fa-solid fa-info-circle text-2xl mr-2 hover:scale-125 hover:shadow-xl"
-            style={{ "color": "#0000ff" }}></button>
-            <label className="block font-bold pt-0.5">Conductor Asignado</label>
-          </div>
-        </div>
-
+      <div>
         <Select
           className={`shadow rounded border-2 border-gray-400 mt-2`}
           value={selectedOptionConductor}
-          onChange={handleChangeConductor}
+          onChange={handleChangeConductor} // Aquí usas la función con SweetAlert
           options={conductoresOptions}
           placeholder={idConductor && idConductor !== 0 ? conductorAsignado : "Seleccionar Conductor"}
           isClearable

@@ -56,6 +56,16 @@ export const validarSoloNumeros = (value) => {
     return '';
 };
 
+export const validarIndividuo = (value,campo) => {
+    if (value.length <= 0 || value == null) {
+        return `El campo <strong>${campo}</strong> no puede estar vacío.`;
+    }
+    if(value == 0){
+        return `Selecciona <strong>${campo}</strong>.`;
+    }
+    return '';
+}
+
 // Función para validar si el teléfono tiene 10 dígitos
 export const validarTelefonoLongitud = (value) => {
     if (value.length != 10) {

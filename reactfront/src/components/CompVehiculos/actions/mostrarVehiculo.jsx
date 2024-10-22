@@ -1,8 +1,14 @@
+// mostrarVehiculo.jsx
+
 import axios from 'axios';
 import { useState, useEffect, useMemo } from 'react';
 import CompCreateVehiculos from './crearVehiculo.jsx'; // Componente del formulario
 import Encabezado from '../others/Encabezado.jsx';
 import AsignarChofer from './asignarChofer.jsx';
+import CompViewVehiculo from './viewVehiculo.jsx'; // Asegúrate de que la ruta sea correcta
+import CompEditVehiculo from './editarVehiculo.jsx'; // Asegúrate de que la ruta sea correcta
+import Swal from 'sweetalert2'; // Asegúrate de importar Swal si no lo has hecho
+import 'sweetalert2/dist/sweetalert2.min.css'; // Importa el CSS de SweetAlert2
 
 const URI = 'http://localhost:8000/vehiculos';
 
@@ -10,10 +16,49 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   const [Vehiculos, setVehiculos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga
 
+  // Nuevo estado para manejar el modal de "Ver Vehículo"
+  const [showViewModalver, setShowViewModalver] = useState(false);
   
+  // Nuevo estado para manejar el tipo de modal abierto: null, 'create', 'edit', 'view'
+  const [modalType, setModalType] = useState(null);
+  const [selectedVehiculoId, setSelectedVehiculoId] = useState(null);
+
+  // Función para abrir el modal de creación
+  const openCreateModal = () => {
+    setModalType('create');
+    setSelectedVehiculoId(null); // Asegura que no haya vehículo seleccionado para edición
+  };
+
+  // Función para abrir el modal de edición
+  const openEditModal = (id) => {
+    setSelectedVehiculoId(id);
+    setModalType('edit');
+  };
+
+
+    // Función para manejar cuando se hace clic en "Ver"
+    const handleViewVehiculo = (id) => {
+      setSelectedVehiculoId(id);
+      setShowViewModalver(true);
+    };
+
+    const handleViewModalClose = () => {
+      setShowViewModalver(false);
+    };
+  
+
+  // Función para abrir el modal de vista
+  const openViewModal = (id) => {
+    setSelectedVehiculoId(id);
+    setModalType('view');
+  };
+
+  // Función para cerrar cualquier modal
+  const closeModal = () => {
+    setModalType(null);
+    setSelectedVehiculoId(null);
+  };
 
   useEffect(() => {
     getVehiculos();
@@ -26,6 +71,11 @@ const CompSowVehiculos = ({ isCollapsed }) => {
       setVehiculos(response.data);
     } catch (error) {
       console.error("Error fetching Vehiculos:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al Obtener Vehículos',
+        text: 'No se pudieron obtener los vehículos, por favor intenta nuevamente.',
+      });
     } finally {
       setLoading(false);
     }
@@ -38,8 +88,9 @@ const CompSowVehiculos = ({ isCollapsed }) => {
       title: 'Asignación completada',
       text: 'El chofer ha sido asignado correctamente al vehículo.',
     });
+    getVehiculos(); // Refresca la lista de vehículos
   };
-  
+
   const filteredVehiculos = useMemo(() => {
     return Vehiculos.filter(vehiculo =>
       (vehiculo.marca && vehiculo.marca.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -52,6 +103,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
 
   // Función para extraer el FILE_ID de la URL de Google Drive
   const extractFileId = (url) => {
+    if (!url) return null;
     const regex = /\/d\/(.*?)\//;
     const match = url.match(regex);
     return match ? match[1] : null;
@@ -65,16 +117,16 @@ const CompSowVehiculos = ({ isCollapsed }) => {
     <>
       <Encabezado />
       <div className='pt-24 ml-20 mr-12 mb-12'>
-        {!isCreateModalOpen ? (
+        {!modalType ? (
           <>
-            <div className=' flex flex-col md:flex-row justify-between items-start'>
+            <div className='flex flex-col md:flex-row justify-between items-start'>
               <button
                 className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 font-bold mb-4 md:mb-0"
-                onClick={() => setIsCreateModalOpen(true)} 
+                onClick={openCreateModal} 
               >
-                <i className="fa-solid fa-user-plus"></i> Crear Vehiculo
+                <i className="fa-solid fa-user-plus"></i> Crear Vehículo
               </button>
-              <div className="relative w-full md:w-3/6 ">
+              <div className="relative w-full md:w-3/6">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <i className="fas fa-search text-gray-400"></i>
                 </div>
@@ -103,40 +155,59 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                       <p><span className="font-semibold">Color:</span> {vehiculo.color}</p>
                       <p><span className="font-semibold">Año:</span> {vehiculo.anio}</p>
                       <p><span className="font-semibold">Placas:</span> {vehiculo.placas}</p>
+                      <div className='relative mt-2'>
+                      <div className="flex">
+          <div className="flex">
+            <button onClick={() =>
+              Swal.fire({
+                title: "Asignación de Conductores",
+                html: `<p>Seleccione un <strong>conductor</strong> para asignar al vehículo.</p>
+                   <p>Solo se puede asignar <strong>un conductor</strong> a la vez.</p>
+                   <p>Si selecciona un <strong>conductor</strong> con un vehículo, el vehículo anterior quedará sin conductor.</p>
+                   <p>Si selecciona <strong>'Sin Conductor'</strong>, se <strong>desasignará</strong> el conductor actual.</p>`,
+                icon: "info",
+                confirmButtonText: "Entendido",
+                width: '800px',
+                padding: '1.5rem',
+                backdrop: true,
+              })
+            }
+            className="fa-solid fa-info-circle text-2xl mr-2 hover:scale-125 hover:shadow-xl"
+            style={{ "color": "#0000ff" }}></button>
+            <label className="block font-bold pt-0.5">Conductor Asignado</label>
+          </div>
+        </div>
+                        <AsignarChofer 
+                          idVehiculo={vehiculo.id} 
+                          onAsignacionExitosa={handleAsignacionExitosa}  
+                          className="absolute z-10 bg-white shadow-lg p-4 rounded"
+                        />
+                      </div>
 
                       <div className="border-2 border-gray-200 shadow-lg mt-4 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg hover:scale-105 hover:shadow-lg">
-      {fileId ? (
-        <>
-          {/* Mostrar spinner mientras se carga */}
-          {isLoading && (
-            <div className="absolute inset-0 flex justify-center items-center bg-white z-10">
-              <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full" role="status">
-                <span className="visually-hidden">Cargando...</span>
-              </div>
-            </div>
-          )}
-
-          <iframe
-            src={`https://drive.google.com/file/d/${fileId}/preview?disablezoom=true`} // Deshabilita el zoom
-            className="object-cover h-full w-full pointer-events-none" // Deshabilita la interacción
-            title="Car Image"
-            onLoad={() => setIsLoading(false)} // Cuando el iframe termina de cargar, oculta el spinner
-          />
-
-          {/* Overlay para desactivar interacción con el iframe */}
-          <div className="absolute inset-0 bg-transparent pointer-events-none"></div>
-        </>
-      ) : (
-        <span>Sin imagen</span>
-      )}
-    </div>
-        
-      <AsignarChofer idVehiculo={vehiculo.id} onAsignacionExitosa={getVehiculos}/>              
+                        {fileId ? (
+                          <iframe
+                            src={`https://drive.google.com/file/d/${fileId}/preview?disablezoom=true`}
+                            className="object-cover h-full w-full pointer-events-none"
+                            title="Car Image"
+                            onLoad={() => setLoading(false)} 
+                          />
+                        ) : (
+                          <span>Sin imagen</span>
+                        )}
+                      </div>
+  
                       <div className="mt-4 flex justify-between">
-                        <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 font-bold">
+                      <button
+                          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 font-bold"
+                          onClick={() => handleViewVehiculo(vehiculo.id)} // Abrir modal al hacer clic
+                        >
                           <i className="fa-solid fa-eye"></i> Ver
                         </button>
-                        <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700 font-bold">
+                        <button
+                          className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700 font-bold"
+                          onClick={() => openEditModal(vehiculo.id)}
+                        >
                           <i className="fa-solid fa-user-pen"></i> Editar
                         </button>
                       </div>
@@ -146,16 +217,33 @@ const CompSowVehiculos = ({ isCollapsed }) => {
               </div>
             )}
           </>
-        ) : (
+        ) : null}
+
+        {/* Renderizar el Modal correspondiente basado en modalType */}
+        {modalType === 'create' && (
           <CompCreateVehiculos
-            onClose={() => setIsCreateModalOpen(false)} 
+            onClose={closeModal} 
             getVehiculos={getVehiculos} 
+          />
+        )}
+
+        {modalType === 'edit' && selectedVehiculoId && (
+          <CompEditVehiculo
+            onClose={closeModal}
+            getVehiculos={getVehiculos}
+            vehiculoId={selectedVehiculoId}
+          />
+        )}
+
+        {showViewModalver === true && selectedVehiculoId && (
+          <CompViewVehiculo 
+            id={selectedVehiculoId} 
+            onClose={handleViewModalClose} 
           />
         )}
       </div>
     </>
   );
-
 };
 
 export default CompSowVehiculos;

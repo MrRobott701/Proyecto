@@ -282,34 +282,38 @@ const updateConductor = async (id, data) => {
   
   
 
-  const storeVehiculo = async (e) => {
-    e.preventDefault();
+const formatFecha = (fecha) => {
+  if (!fecha) return null;
+  const [dia, mes, anio] = fecha.split('/');
+  return `${anio}-${mes}-${dia}`;
+};
 
-    if (!validateForm()) {
-      return;
-    }
+const storeVehiculo = async (e) => {
+  e.preventDefault();
 
-    let placasDocUrl = '';
-    let imosDocUrl = '';
-    let revisionMecanicaDocUrl = '';
-    let polizaDocUrl = '';
-    let tarjetaCirculacionDocUrl = '';
-    let fotoCarroDocUrl = '';
-    
+  if (!validateForm()) {
+    return;
+  }
 
-    try{
-      Swal.fire({
-        title: "Cargando Documentos...",
-        html: "Por favor, espere...",
-        timer: 20000,
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-        willClose: () => {
-        }
-      });
-  
+  let placasDocUrl = '';
+  let imosDocUrl = '';
+  let revisionMecanicaDocUrl = '';
+  let polizaDocUrl = '';
+  let tarjetaCirculacionDocUrl = '';
+  let fotoCarroDocUrl = '';
+
+  try {
+    Swal.fire({
+      title: "Cargando Documentos...",
+      html: "Por favor, espere...",
+      timer: 20000,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {}
+    });
+
     // Crear promesas para cargar archivos
     const placasPromise = placasDocFile ? sendUpload({ target: { files: [placasDocFile] } }) : Promise.resolve(null);
     const imosPromise = imosDocFile ? sendUpload({ target: { files: [imosDocFile] } }) : Promise.resolve(null);
@@ -317,12 +321,12 @@ const updateConductor = async (id, data) => {
     const polizaPromise = polizaDocFile ? sendUpload({ target: { files: [polizaDocFile] } }) : Promise.resolve(null);
     const tarjetaCirculacionPromise = tarjetaCirculacionDocFile ? sendUpload({ target: { files: [tarjetaCirculacionDocFile] } }) : Promise.resolve(null);
     const fotoCarroPromise = fotoCarroDocFile ? sendUpload({ target: { files: [fotoCarroDocFile] } }) : Promise.resolve(null);
-  
+
     // Esperar a que se completen las promesas
     const [placasDocResult, imosDocResult, revisionMecanicaDocResult, polizaDocResult, tarjetaCirculacionDocResult, fotoCarroResult] = await Promise.all([
       placasPromise, imosPromise, revisionMecanicaPromise, polizaPromise, tarjetaCirculacionPromise, fotoCarroPromise
     ]);
-  
+
     // Asignar las URLs resultantes
     if (placasDocResult) placasDocUrl = placasDocResult;
     if (imosDocResult) imosDocUrl = imosDocResult;
@@ -330,122 +334,76 @@ const updateConductor = async (id, data) => {
     if (polizaDocResult) polizaDocUrl = polizaDocResult;
     if (tarjetaCirculacionDocResult) tarjetaCirculacionDocUrl = tarjetaCirculacionDocResult;
     if (fotoCarroResult) fotoCarroDocUrl = fotoCarroResult;
-  
+
     Swal.close();
 
-
     console.log('Creando vehículo...');
-    console.log('Marca:', marca);
-    console.log('Modelo:', modelo);
-    console.log('Color:', color);
-    console.log('Año:', `20${anio}`);
-    console.log('Placas:', placas);
-    console.log('Número de Serie:', numeroSerie);
-    console.log('Precio de Renta:', precioRenta);
-    console.log('Vencimiento de Placas:', placasVencimiento);
-    console.log('Vencimiento de IMOS:', imosVencimiento);
-    console.log('Vencimiento de Revisión Mecánica:', revisionMecanicaVencimiento);
-    console.log('Vencimiento de Póliza de Seguro:', polizaSeguroVencimiento);
-    console.log('Vencimiento de Tarjeta de Circulación:', tarjetaCirculacionVencimiento);
-    console.log('ID Propietario:', idPropietario);
-    console.log('ID Conductor:', idConductor);
-    console.log('Placas:', placasDocUrl);
-    console.log('IMOS:', imosDocUrl);
-    console.log('Revisión Mecánica:', revisionMecanicaDocUrl);
-    console.log('Póliza de Seguro:', polizaDocUrl);
-    console.log('Tarjeta de Circulación:', tarjetaCirculacionDocUrl);
-    console.log('Foto del Carro:', fotoCarroDocUrl);
-    try {
-      let timerInterval;
-      const swalInstance = Swal.fire({
-        title: "Guardando datos...",
-        html: "Por favor, espere...",
-        timer: 10000,
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-        willClose: () => {
-          clearInterval(timerInterval);
-        }
-      });
-
-      const response = await axios.post(URI, {
-        marca,
-        modelo,
-        color,
-        anio: `20${anio}`,
-        placas,
-        numeroSerie,
-        precioRenta: parseInt(precioRenta, 10),
-        placasDoc : placasDocUrl,
-        placasVencimiento,
-        imosPermiso : imosDocUrl,
-        imosVencimiento,
-        revisionMecanica : revisionMecanicaDocUrl,
-        revisionMecanicaVencimiento,
-        polizaSeguro : polizaDocUrl,
-        polizaSeguroVencimiento,
-        tarjetaCirculacion : tarjetaCirculacionDocUrl,
-        tarjetaCirculacionVencimiento,
-        idPropietario,
-        idConductor: idConductor || null,
-        fotoCarro : fotoCarroDocUrl,
-      });
-      // Verifica la respuesta
-console.log('Respuesta de la creación del vehículo:', response.data);
-
-
-// Verifica la respuesta
-console.log('Respuesta de la creación del vehículo:', response.data);
-
-// Asigna el objeto del vehículo creado
-const newVehiculo = response.data.vehiculo; // Ajusta para obtener el vehículo del objeto `response.data`
-
-if (!newVehiculo || !newVehiculo.id) {
-    throw new Error('El vehículo no se creó correctamente.');
-}
-
-// Si se especifica un conductor, actualizar el conductor con el ID del vehículo recién creado
-if (idConductor) {
-    await updateConductor(idConductor, { idVehiculo: newVehiculo.id });
-}
-
-
-
-
-      Swal.close();
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Vehículo creado con éxito',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-
-      onClose();
-      getVehiculos();
-      navigate('/vehiculos');
-    } catch (error) {
-      Swal.close();
-      console.error('Error creando vehículo:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al Crear Vehículo',
-        text: 'No se pudo guardar el vehículo, por favor intente nuevamente.',
-      });
-    }
-  }catch(error){
     
-      Swal.close();
-      console.error('Error al Subir Archivos:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al Subir Archivos',
-        text: 'No se pudieron guardar los archivos en Drive, por favor intente nuevamente.',
-      });
+    // Convertir las fechas a YYYY/MM/DD antes de enviar
+    const placasVencimientoFormatted = formatFecha(placasVencimiento);
+    const imosVencimientoFormatted = formatFecha(imosVencimiento);
+    const revisionMecanicaVencimientoFormatted = formatFecha(revisionMecanicaVencimiento);
+    const polizaSeguroVencimientoFormatted = formatFecha(polizaSeguroVencimiento);
+    const tarjetaCirculacionVencimientoFormatted = formatFecha(tarjetaCirculacionVencimiento);
+
+    const response = await axios.post(URI, {
+      marca,
+      modelo,
+      color,
+      anio: `20${anio}`,
+      placas,
+      numeroSerie,
+      precioRenta: parseInt(precioRenta, 10),
+      placasDoc: placasDocUrl,
+      placasVencimiento: placasVencimientoFormatted,
+      imosPermiso: imosDocUrl,
+      imosVencimiento: imosVencimientoFormatted,
+      revisionMecanica: revisionMecanicaDocUrl,
+      revisionMecanicaVencimiento: revisionMecanicaVencimientoFormatted,
+      polizaSeguro: polizaDocUrl,
+      polizaSeguroVencimiento: polizaSeguroVencimientoFormatted,
+      tarjetaCirculacion: tarjetaCirculacionDocUrl,
+      tarjetaCirculacionVencimiento: tarjetaCirculacionVencimientoFormatted,
+      idPropietario,
+      idConductor: idConductor || null,
+      fotoCarro: fotoCarroDocUrl,
+    });
+
+    console.log('Respuesta de la creación del vehículo:', response.data);
+
+    const newVehiculo = response.data.vehiculo;
+
+    if (!newVehiculo || !newVehiculo.id) {
+      throw new Error('El vehículo no se creó correctamente.');
     }
-  };
+
+    if (idConductor) {
+      await updateConductor(idConductor, { idVehiculo: newVehiculo.id });
+    }
+
+    Swal.close();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Vehículo creado con éxito',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    onClose();
+    getVehiculos();
+    navigate('/vehiculos');
+  } catch (error) {
+    Swal.close();
+    console.error('Error creando vehículo:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al Crear Vehículo',
+      text: 'No se pudo guardar el vehículo, por favor intente nuevamente.',
+    });
+  }
+};
+
 
 
   return (
