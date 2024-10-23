@@ -102,6 +102,11 @@ const VehiculoModel = db.define("vehiculos", {
             allowNull: true,
             field: 'fotoCarro',
         },
+        activo:{
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            field: 'activo',
+        }
 }, {
     // Desactiva la columna de sequelize
     timestamps: false, 

@@ -4,9 +4,6 @@ import axios from 'axios';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import 'flatpickr/dist/flatpickr.min.css'; // CSS de Flatpickr
-import flatpickr from 'flatpickr'; // Flatpickr
-import { Spanish } from 'flatpickr/dist/l10n/es.js'; // Localización en español
 import { sendUpload } from '../../sendUpload';
 import { deleteFile } from '../../deleteFile';
 import Select from 'react-select';
@@ -19,6 +16,18 @@ import {
   validarSoloNumeros,
   validarIndividuo,
 } from '../../validations/validaciones.js';
+
+// Importa las funciones necesarias de date-fns
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
+
+// Importa React DatePicker y sus estilos
+import DatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import esLocale from 'date-fns/locale/es';
+
+// Registra el locale español para DatePicker
+registerLocale('es', esLocale);
 
 const URI = 'http://localhost:8000/vehiculos';
 const URI_CONDUCTOR = 'http://localhost:8000/conductores';
@@ -34,16 +43,16 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
   const [anio, setAnio] = useState('');
   const [placas, setPlacas] = useState('');
   const [placasDoc, setPlacasDoc] = useState('');
-  const [placasVencimiento, setPlacasVencimiento] = useState(new Date().toLocaleDateString('es-ES'));
+  const [placasVencimiento, setPlacasVencimiento] = useState(new Date());
   const [numeroSerie, setNumeroSerie] = useState('');
   const [imosPermiso, setImosPermiso] = useState('');
-  const [imosVencimiento, setImosVencimiento] = useState(new Date().toLocaleDateString('es-ES'));
+  const [imosVencimiento, setImosVencimiento] = useState(new Date());
   const [revisionMecanica, setRevisionMecanica] = useState('');
-  const [revisionMecanicaVencimiento, setRevisionMecanicaVencimiento] = useState(new Date().toLocaleDateString('es-ES'));
+  const [revisionMecanicaVencimiento, setRevisionMecanicaVencimiento] = useState(new Date());
   const [polizaSeguro, setPolizaSeguro] = useState('');
-  const [polizaSeguroVencimiento, setPolizaSeguroVencimiento] = useState(new Date().toLocaleDateString('es-ES'));
+  const [polizaSeguroVencimiento, setPolizaSeguroVencimiento] = useState(new Date());
   const [tarjetaCirculacion, setTarjetaCirculacion] = useState('');
-  const [tarjetaCirculacionVencimiento, setTarjetaCirculacionVencimiento] = useState(new Date().toLocaleDateString('es-ES'));
+  const [tarjetaCirculacionVencimiento, setTarjetaCirculacionVencimiento] = useState(new Date());
   const [precioRenta, setPrecioRenta] = useState('');
   const [placasDocFile, setPlacasDocFile] = useState(null);
   const [imosDocFile, setImosDocFile] = useState(null);
@@ -100,23 +109,23 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
         const response = await axios.get(`${URI}/${vehiculoId}`);
         const vehiculo = response.data;
 
-        // Asigna los valores al estado, asegurando que sean cadenas
+        // Asigna los valores al estado, asegurando que sean cadenas y en el formato correcto
         setMarca(vehiculo.marca || '');
         setModelo(vehiculo.modelo || '');
         setColor(vehiculo.color || '');
-        setAnio(vehiculo.anio ? vehiculo.anio.toString().slice(-2) : '');
+        setAnio(vehiculo.anio ? String(vehiculo.anio).slice(-2) : '');
         setPlacas(vehiculo.placas || '');
         setNumeroSerie(vehiculo.numeroSerie || '');
         setPrecioRenta(vehiculo.precioRenta ? vehiculo.precioRenta.toString() : '');
-        setPlacasVencimiento(vehiculo.placasVencimiento ? formatDate(vehiculo.placasVencimiento) : '');
+        setPlacasVencimiento(vehiculo.placasVencimiento ? parseISO(vehiculo.placasVencimiento) : new Date());
         setImosPermiso(vehiculo.imosPermiso || '');
-        setImosVencimiento(vehiculo.imosVencimiento ? formatDate(vehiculo.imosVencimiento) : '');
+        setImosVencimiento(vehiculo.imosVencimiento ? parseISO(vehiculo.imosVencimiento) : new Date());
         setRevisionMecanica(vehiculo.revisionMecanica || '');
-        setRevisionMecanicaVencimiento(vehiculo.revisionMecanicaVencimiento ? formatDate(vehiculo.revisionMecanicaVencimiento) : '');
+        setRevisionMecanicaVencimiento(vehiculo.revisionMecanicaVencimiento ? parseISO(vehiculo.revisionMecanicaVencimiento) : new Date());
         setPolizaSeguro(vehiculo.polizaSeguro || '');
-        setPolizaSeguroVencimiento(vehiculo.polizaSeguroVencimiento ? formatDate(vehiculo.polizaSeguroVencimiento) : '');
+        setPolizaSeguroVencimiento(vehiculo.polizaSeguroVencimiento ? parseISO(vehiculo.polizaSeguroVencimiento) : new Date());
         setTarjetaCirculacion(vehiculo.tarjetaCirculacion || '');
-        setTarjetaCirculacionVencimiento(vehiculo.tarjetaCirculacionVencimiento ? formatDate(vehiculo.tarjetaCirculacionVencimiento) : '');
+        setTarjetaCirculacionVencimiento(vehiculo.tarjetaCirculacionVencimiento ? parseISO(vehiculo.tarjetaCirculacionVencimiento) : new Date());
         setIdPropietario(vehiculo.idPropietario || '');
         setIdConductor(vehiculo.idConductor || '');
         setFotoCarro(vehiculo.fotoCarro || '');
@@ -138,43 +147,41 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
   }, [vehiculoId, URI, URI_CONDUCTOR, URI_PROPPIETARIOS, onClose]);
 
   // Memorización de las opciones para optimizar el rendimiento
-  const conductoresOptions = useMemo(() => conductores.map(conductor => ({
-    value: conductor.id,
-    label: conductor.nombre
-  })), [conductores]);
+  const conductoresOptions = useMemo(
+    () =>
+      conductores.map((conductor) => ({
+        value: conductor.id,
+        label: conductor.nombre,
+      })),
+    [conductores]
+  );
 
-  const propietariosOptions = useMemo(() => propietarios.map(propietario => ({
-    value: propietario.id,
-    label: propietario.nombre
-  })), [propietarios]);
+  const propietariosOptions = useMemo(
+    () =>
+      propietarios.map((propietario) => ({
+        value: propietario.id,
+        label: propietario.nombre,
+      })),
+    [propietarios]
+  );
 
   // Opción seleccionada para conductor
   const selectedOptionConductor = conductoresOptions.find(
-    option => option.value === idConductor
+    (option) => option.value === idConductor
   ) || null;
 
   // Opción seleccionada para propietario
   const selectedOptionPropietario = propietariosOptions.find(
-    option => option.value === idPropietario
+    (option) => option.value === idPropietario
   ) || null;
 
   // Manejadores de cambio para Select
-  const handleChangeConductor = selectedOption => {
+  const handleChangeConductor = (selectedOption) => {
     setIdConductor(selectedOption ? selectedOption.value : '');
   };
 
-  const handleChangePropietario = selectedOption => {
+  const handleChangePropietario = (selectedOption) => {
     setIdPropietario(selectedOption ? selectedOption.value : '');
-  };
-
-  // Función para formatear la fecha de YYYY-MM-DD a DD/MM/YYYY
-  const formatDate = (fecha) => {
-    if (!fecha) return '';
-    const date = new Date(fecha);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JS son 0-indexados
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
   };
 
   // Función para transformar la URL de Google Drive para vista previa
@@ -221,15 +228,6 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
             allow="autoplay"
           />
         )}
-        {/* Texto "Ver Documento" debajo del iframe */}
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline mt-2 inline-block"
-        >
-          Ver Documento
-        </a>
       </div>
     );
   };
@@ -247,32 +245,56 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
 
   // Manejadores de selección de archivos con renombrado
   const handlePlacasDocSelected = (file) => {
-    const renamedFile = new File([file], `${formatFileName('PLACAS')}.${file.name.split('.').pop()}`, { type: file.type });
+    const renamedFile = new File(
+      [file],
+      `${formatFileName('PLACAS')}.${file.name.split('.').pop()}`,
+      { type: file.type }
+    );
     setPlacasDocFile(renamedFile);
   };
 
   const handleFotoCarroDocSelected = (file) => {
-    const renamedFile = new File([file], `${formatFileName('FOTO_CARRO')}.${file.name.split('.').pop()}`, { type: file.type });
+    const renamedFile = new File(
+      [file],
+      `${formatFileName('FOTO_CARRO')}.${file.name.split('.').pop()}`,
+      { type: file.type }
+    );
     setFotoCarroDocFile(renamedFile);
   };
 
   const handleImosDocSelected = (file) => {
-    const renamedFile = new File([file], `${formatFileName('IMOS')}.${file.name.split('.').pop()}`, { type: file.type });
+    const renamedFile = new File(
+      [file],
+      `${formatFileName('IMOS')}.${file.name.split('.').pop()}`,
+      { type: file.type }
+    );
     setImosDocFile(renamedFile);
   };
 
   const handleRevisionMecanicaDocSelected = (file) => {
-    const renamedFile = new File([file], `${formatFileName('REVISION_MECANICA')}.${file.name.split('.').pop()}`, { type: file.type });
+    const renamedFile = new File(
+      [file],
+      `${formatFileName('REVISION_MECANICA')}.${file.name.split('.').pop()}`,
+      { type: file.type }
+    );
     setRevisionMecanicaDocFile(renamedFile);
   };
 
   const handlePolizaDocSelected = (file) => {
-    const renamedFile = new File([file], `${formatFileName('POLIZA')}.${file.name.split('.').pop()}`, { type: file.type });
+    const renamedFile = new File(
+      [file],
+      `${formatFileName('POLIZA')}.${file.name.split('.').pop()}`,
+      { type: file.type }
+    );
     setPolizaDocFile(renamedFile);
   };
 
   const handleTarjetaCirculacionDocSelected = (file) => {
-    const renamedFile = new File([file], `${formatFileName('TARJETA_CIRCULACION')}.${file.name.split('.').pop()}`, { type: file.type });
+    const renamedFile = new File(
+      [file],
+      `${formatFileName('TARJETA_CIRCULACION')}.${file.name.split('.').pop()}`,
+      { type: file.type }
+    );
     setTarjetaCirculacionDocFile(renamedFile);
   };
 
@@ -299,44 +321,6 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
       text: 'El chofer ha sido asignado correctamente al vehículo.',
     });
   };
-
-// Función para manejar la selección de fecha con Flatpickr
-const handleDateSelection = (setter, title, currentDate) => {
-  let selectedDate = currentDate ? currentDate : new Date().toLocaleDateString('es-ES');
-
-  // Crea un contenedor para el input si no existe
-  let datePickerContainer = document.getElementById('datepicker-container');
-  if (!datePickerContainer) {
-    datePickerContainer = document.createElement('div');
-    datePickerContainer.id = 'datepicker-container';
-    document.body.appendChild(datePickerContainer);
-  }
-
-  // Crea el input para Flatpickr
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.id = 'datepicker';
-  datePickerContainer.appendChild(input);
-
-  // Inicializa Flatpickr
-  flatpickr('#datepicker', {
-    locale: Spanish,
-    defaultDate: selectedDate,
-    dateFormat: 'd/m/Y',
-    allowInput: true,
-    enableTime: false,
-    yearSelectorType: 'static',
-    onChange: (selectedDates, dateStr) => {
-      selectedDate = dateStr;
-    },
-    onClose: () => {
-      // Elimina el input después de seleccionar la fecha
-      datePickerContainer.removeChild(input);
-      setter(selectedDate); // Establece la fecha seleccionada
-    }
-  });
-};
-
 
   console.log('ID Conductor:', idConductor);
   console.log('ID Propietario:', idPropietario);
@@ -400,24 +384,17 @@ const handleDateSelection = (setter, title, currentDate) => {
     return true;
   };
 
+  // Función para formatear la fecha a 'yyyy-MM-dd'
   const formatFecha = (fecha) => {
-    if (!fecha) return null;
-  
-    if (fecha instanceof Date) {
-      // Establecer la hora en 00:00:00 para evitar problemas de zona horaria
-      const localDate = new Date(fecha.setHours(0, 0, 0, 1));
-  
-      const day = String(localDate.getUTCDate()).padStart(2, '0'); // Usar getUTCDate
-      const month = String(localDate.getUTCMonth() + 1).padStart(2, '0'); // Usar getUTCMonth
-      const year = localDate.getUTCFullYear(); // Usar getUTCFullYear
-      return `${year}-${month}-${day}`;
+    if (!fecha) return '';
+
+    try {
+      return format(fecha, 'yyyy-MM-dd');
+    } catch (error) {
+      console.error('Error formateando la fecha:', error);
+      return '';
     }
-  
-    // Para fechas en formato string DD/MM/YYYY
-    const [dia, mes, anio] = fecha.split('/');
-    return `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
   };
-  
 
   // Función para extraer el FILE_ID de la URL de Google Drive
   const extractFileId = (url) => {
@@ -453,7 +430,7 @@ const handleDateSelection = (setter, title, currentDate) => {
       // Vaciar el estado del documento correspondiente
       setDocUrl('');
 
-      // Mostrar alerta de éxito
+      // Mostrar alerta de éxito (opcional)
       // Swal.fire({
       //   icon: 'success',
       //   title: 'Archivo Eliminado',
@@ -557,11 +534,12 @@ const handleDateSelection = (setter, title, currentDate) => {
           datosVehiculo.idConductor = parseInt(idConductor, 10);
         }
 
+        console.log('Datos del Vehículo:', datosVehiculo, 'ID:', vehiculoId);
         const response = await axios.put(`${URI}/${vehiculoId}`, datosVehiculo);
 
         console.log('Respuesta de la actualización del vehículo:', response.data);
 
-        // Si se especifica un conductor, actualizar el conductor con el ID del vehículo recién actualizado
+        //Si se especifica un conductor, actualizar el conductor con el ID del vehículo recién actualizado
         if (idConductor) {
           await updateConductor(idConductor, { idVehiculo: vehiculoId });
         }
@@ -581,7 +559,7 @@ const handleDateSelection = (setter, title, currentDate) => {
       } catch (error) {
         Swal.close();
         console.error('Error actualizando vehículo:', error);
-        const mensajeError = error.response?.data?.error || 'No se pudo actualizar el vehículo, por favor intente nuevamente.';
+        const mensajeError = error.response?.data?.error || 'Porfavor, modifique algún dato e intente nuevamente.';
         Swal.fire({
           icon: 'error',
           title: 'Error al Actualizar Vehículo',
@@ -745,7 +723,7 @@ const handleDateSelection = (setter, title, currentDate) => {
                   id="precioRenta"
                   type="text"
                   className={`shadow pl-8 pr-10 p-2 rounded border-2 ${erroresCampos.renta ? 'border-red-500' : 'border-gray-400'}`}
-                  value={precioRenta ? `$${Number(precioRenta).toLocaleString('en-US')}` : ''} // Mostrar el valor formateado
+                  value={precioRenta ? `$${Number(precioRenta).toLocaleString('es-ES')}` : ''} // Mostrar el valor formateado
                   maxLength="5"
                   onChange={(e) => {
                     const inputValue = e.target.value.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea dígito
@@ -798,17 +776,19 @@ const handleDateSelection = (setter, title, currentDate) => {
 
             <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
               {/* Placas */}
+              
+              {console.log('Placas Vencimiento:', placasVencimiento)}
               <DocumentSection
                 title="Placas"
                 docUrl={placasDoc}
                 setDocUrl={setPlacasDoc}
-                handleDateSelection={handleDateSelection}
                 vencimiento={placasVencimiento}
                 setVencimiento={setPlacasVencimiento}
                 onFileSelected={handlePlacasDocSelected}
                 renderPreview={renderPreview}
                 handleDeleteFiles={handleDeleteFiles}
                 docType="Placas"
+                isDatePicker
               />
 
               {/* Permiso IMOS */}
@@ -816,13 +796,13 @@ const handleDateSelection = (setter, title, currentDate) => {
                 title="Permiso IMOS"
                 docUrl={imosPermiso}
                 setDocUrl={setImosPermiso}
-                handleDateSelection={handleDateSelection}
                 vencimiento={imosVencimiento}
                 setVencimiento={setImosVencimiento}
                 onFileSelected={handleImosDocSelected}
                 renderPreview={renderPreview}
                 handleDeleteFiles={handleDeleteFiles}
                 docType="Permiso IMOS"
+                isDatePicker
               />
 
               {/* Revisión Mecánica */}
@@ -830,13 +810,13 @@ const handleDateSelection = (setter, title, currentDate) => {
                 title="Revisión Mecánica"
                 docUrl={revisionMecanica}
                 setDocUrl={setRevisionMecanica}
-                handleDateSelection={handleDateSelection}
                 vencimiento={revisionMecanicaVencimiento}
                 setVencimiento={setRevisionMecanicaVencimiento}
                 onFileSelected={handleRevisionMecanicaDocSelected}
                 renderPreview={renderPreview}
                 handleDeleteFiles={handleDeleteFiles}
                 docType="Revisión Mecánica"
+                isDatePicker
               />
             </div>
 
@@ -853,13 +833,13 @@ const handleDateSelection = (setter, title, currentDate) => {
                 title="Póliza de Seguro"
                 docUrl={polizaSeguro}
                 setDocUrl={setPolizaSeguro}
-                handleDateSelection={handleDateSelection}
                 vencimiento={polizaSeguroVencimiento}
                 setVencimiento={setPolizaSeguroVencimiento}
                 onFileSelected={handlePolizaDocSelected}
                 renderPreview={renderPreview}
                 handleDeleteFiles={handleDeleteFiles}
                 docType="Póliza de Seguro"
+                isDatePicker
               />
 
               {/* Tarjeta de Circulación */}
@@ -867,13 +847,13 @@ const handleDateSelection = (setter, title, currentDate) => {
                 title="Tarjeta de Circulación"
                 docUrl={tarjetaCirculacion}
                 setDocUrl={setTarjetaCirculacion}
-                handleDateSelection={handleDateSelection}
                 vencimiento={tarjetaCirculacionVencimiento}
                 setVencimiento={setTarjetaCirculacionVencimiento}
                 onFileSelected={handleTarjetaCirculacionDocSelected}
                 renderPreview={renderPreview}
                 handleDeleteFiles={handleDeleteFiles}
                 docType="Tarjeta de Circulación"
+                isDatePicker
               />
 
               {/* Foto del Vehículo */}
@@ -881,13 +861,13 @@ const handleDateSelection = (setter, title, currentDate) => {
                 title="Foto del Vehículo"
                 docUrl={fotoCarro}
                 setDocUrl={setFotoCarro}
-                handleDateSelection={null} // No aplica fecha
                 vencimiento={null} // No aplica
                 setVencimiento={null} // No aplica
                 onFileSelected={handleFotoCarroDocSelected}
                 renderPreview={renderPreview}
                 handleDeleteFiles={handleDeleteFiles}
                 docType="Foto del Vehículo"
+                isDatePicker={false}
               />
             </div>
           </div>

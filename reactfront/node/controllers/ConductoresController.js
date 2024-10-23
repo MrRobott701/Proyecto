@@ -63,6 +63,35 @@ export const updateConductor = async (req, res) => {
     }
 };
 
+
+
+export const updateConductorVehiculo = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Verificar si el id es nulo, 0 o no válido
+        if (!id || id === "0" || isNaN(id)) {
+            return res.status(200).json({ message: "No tenia IdConductor" });
+        }
+
+        // Actualiza el campo idVehiculo a 0 para desasociar al conductor del vehículo
+        const [updated] = await ConductorModel.update(
+            { idVehiculo: 0 },  // Establece idVehiculo a 0
+            { where: { id } }  // Filtra por el id del conductor
+        );
+
+        // Verifica si se realizó la actualización
+        if (!updated) {
+            return res.status(404).json({ message: "Conductor no encontrado" });
+        }
+
+        res.status(200).json({ message: "Conductor actualizado correctamente" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
 // Actualizar los registros donde idVehiculo sea el mismo pero el id sea diferente
 export const updateVehiculoConductor = async (req, res) => {
     try {

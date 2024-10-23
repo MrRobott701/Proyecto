@@ -6,6 +6,7 @@
     "@heroicons/react": "^2.1.5",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "date-fns": "^4.1.0",
     "flatpickr": "^4.6.13",
     "react": "^18.2.0",
     "react-datepicker": "^7.5.0",
@@ -13,6 +14,7 @@
     "react-flatpickr": "^3.10.13",
     "react-router-dom": "^6.26.2",
     "react-select": "^5.8.1",
+    "rsuite": "^5.73.0",
     "sweetalert2": "^11.14.0"
   },
   "devDependencies": {

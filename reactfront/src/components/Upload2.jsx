@@ -99,7 +99,7 @@ const Upload2 = ({ onFileSelected, reDimensions, onCancelUpload }) => {
 
   return (
     <div>
-      <button type="button" onClick={handleFileSelection} className="shadow w-full border-2  bg-blue-600 hover:bg-blue-800 text-white p-2 rounded">
+      <button type="button" onClick={handleFileSelection} className="shadow w-full border-2  bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded">
         Subir Archivo
       </button>
       {selectedFile && (

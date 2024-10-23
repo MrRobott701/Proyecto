@@ -1,7 +1,7 @@
 import express from 'express';
 import { getAllPropietario, getPropietario,  createPropietario, updatePropietario, deletePropietario } from '../controllers/PropietarioController.js';
 import { getAllConductor, getConductor, createConductor, updateConductor, deleteConductor } from '../controllers/ConductoresController.js';
-import { getAllVehiculo, getVehiculo, createVehiculo, updateVehiculo, deleteVehiculo } from '../controllers/VehiculosController.js';
+import { getAllVehiculo, getVehiculo, createVehiculo, updateVehiculo, deleteVehiculo, getAllVehiculosActivos } from '../controllers/VehiculosController.js';
 const router = express.Router();
 
 router.get('/', getAllPropietario);
@@ -17,6 +17,7 @@ router.put('/:id', updateConductor);
 router.delete('/:id', deleteConductor);
 
 router.get('/', getAllVehiculo);
+router.get('/activos', getAllVehiculosActivos);
 router.get('/:id', getVehiculo);
 router.post('/', createVehiculo);
 router.put('/:id', updateVehiculo);

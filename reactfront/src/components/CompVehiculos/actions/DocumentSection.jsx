@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import Upload2 from '../../Upload2';
-import Flatpickr from 'react-flatpickr';
-import 'flatpickr/dist/themes/material_blue.css'; // Importa el tema que prefieras
-
+import DatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import esLocale from 'date-fns/locale/es';
+registerLocale('es', esLocale);
+import './DatePickerCustom.css';
 
 const DocumentSection = ({
   title,
   docUrl,
   setDocUrl,
-  handleDateSelection,
   vencimiento,
   setVencimiento,
   onFileSelected,
   renderPreview,
   handleDeleteFiles,
   docType,
+  isDatePicker = true,
 }) => {
   const [isUploading, setIsUploading] = useState(false); // Estado para controlar si se está subiendo un archivo
   const [reDimensions, setReDimensions] = useState(false); // Controla cuándo se debe redimensionar
@@ -36,44 +38,51 @@ const DocumentSection = ({
     onFileSelected(null);     // Notificar que la subida fue cancelada
   };
 
-  const handleDateChange = (selectedDates) => {
-    const date = selectedDates[0];
-  
-    // Establecer la hora en 00:00:00
-    const localDate = new Date(date.setHours(0, 0, 0, 0));
-  
-    // Formatear la fecha directamente usando UTC
-    const formattedDate = `${String(localDate.getUTCDate()).padStart(2, '0')}/${String(localDate.getUTCMonth() + 1).padStart(2, '0')}/${localDate.getUTCFullYear()}`;
-    setVencimiento(formattedDate);
-  };
+  const transformGoogleDriveURL = (url) => {
+    const fileIdMatch = url.match(/\/d\/(.*?)\//);
+    if (fileIdMatch) {
+      const fileId = fileIdMatch[1];
+      return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    }
+    return url;
+  }
   
   
 
   return (
     <div
-      className="shadow-2xl"
+      
       style={{
         padding: '16px',
         borderRadius: '15px',
-        border: '5px solid #a811ce',
+        border: '5px solid #e0e0e0',
+        boxShadow: '0 0 20px rgba(0, 0, 0, .3)', // Sombra alrededor del div
       }}
     >
       <div className="flex flex-col space-y-4">
-        {/* Renderizar la fecha solo si handleDateSelection está definido */}
-        {handleDateSelection && vencimiento ? (
+        { vencimiento ? (
           <>
-            <div>
-              <span className="block font-bold">Vencimiento</span>
-            </div>
-            <div className="flex flex-col w-full">
-            <Flatpickr
-  value={vencimiento}
-  onChange={handleDateChange}
-  options={{ locale: 'es', dateFormat: 'd/m/Y' }}
-  className="shadow w-full p-2 rounded border-2 border-gray-400"
+            {/* Selección de fecha de vencimiento */}
+      {isDatePicker && (
+        <div className="mt-2">
+          <label className="block font-bold mb-1">Fecha de Vencimiento:</label>
+          <DatePicker
+  selected={vencimiento}
+  onChange={(date) => setVencimiento(date)}
+  dateFormat="dd/MM/yyyy"
+  locale="es"
+  className="shadow w-full p-2 rounded border-2 border-gray-400 custom-datepicker text-center"
+  placeholderText="Selecciona una fecha"
+  showMonthDropdown
+  showYearDropdown
+  dropdownMode="select"
+  minDate={new Date(new Date().getFullYear() - 9, 0, 1)} // 9 años antes de la fecha actual
+  maxDate={new Date(new Date().getFullYear() + 4, 11, 31)} // 4 años después de la fecha actual
 />
+        
 
-            </div>
+        </div>
+      )}
           </>
         ) : (
           <div className="flex flex-col w-full">
@@ -87,59 +96,72 @@ const DocumentSection = ({
 
         {/* Vista Previa del Documento solo si no está en proceso de subida */}
         {!isUploading && docUrl && (
-          <div className="mt-2">
+          <div className="mt-2 pointer-events-none">
             {renderPreview(docUrl, title)}
           </div>
         )}
 
-        {/* Botón para eliminar el documento */}
-        {!isUploading && docUrl && (
-          <button
-            type="button"
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold mt-4"
-            onClick={async () => {
-              const { isConfirmed } = await Swal.fire({
-                title: '¿Estás seguro?',
-                text: `¿Quieres eliminar el archivo de ${title}?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-              });
+{/* Botón para eliminar el documento */}
+{!isUploading && docUrl && (
+  <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-4 w-full">
+  {/* Botón para ver el archivo */}
+  <button
+    type="button"
+    className="bg-blue-600 hover:bg-blue-700 hover:shadow-lg text-white p-2 rounded w-full md:w-auto"
+    onClick={() => window.open(docUrl, '_blank', 'noopener,noreferrer')} // Abre el archivo en una nueva pestaña
+  >
+    <i className="fa fa-eye"></i>
+    <span className="ml-2">Ver Archivo</span>
+  </button>
 
-              if (isConfirmed) {
-                try {
-                  // Mostrar alerta de carga
-                  Swal.fire({
-                    title: 'Eliminando...',
-                    text: `Eliminando el archivo de ${title}. Por favor, espera.`,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                      Swal.showLoading();
-                    },
-                  });
+  {/* Botón para eliminar el archivo */}
+  <button
+    type="button"
+    className="bg-red-600 hover:bg-red-700 hover:shadow-lg text-white p-2 rounded w-full md:w-auto"
+    onClick={async () => {
+      const { isConfirmed } = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: `¿Quieres eliminar el archivo de ${title}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+      });
 
-                  console.log(`Iniciando proceso de eliminación de ${title}...`);
-                  await handleDeleteFiles(docUrl, setDocUrl, title); // Pasar el título para la notificación
-                  console.log(`Proceso de eliminación de ${title} completado`);
+      if (isConfirmed) {
+        try {
+          Swal.fire({
+            title: 'Eliminando...',
+            text: `Eliminando el archivo de ${title}. Por favor, espera.`,
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
 
-                  // Cerrar la alerta de carga y mostrar éxito
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Archivo Eliminado',
-                    text: `El archivo de ${title} ha sido eliminado correctamente.`,
-                  });
-                } catch (error) {
-                  // En caso de error, SweetAlert ya lo maneja en handleDeleteFiles
-                }
-              }
-            }}
-          >
-            Eliminar {title}
-          </button>
-        )}
+          await handleDeleteFiles(docUrl, setDocUrl, title); // Pasar el título para la notificación
+          Swal.fire({
+            icon: 'success',
+            title: 'Archivo Eliminado',
+            text: `El archivo de ${title} ha sido eliminado correctamente.`,
+          });
+        } catch (error) {
+          console.error('Error al eliminar el archivo:', error);
+        }
+      }
+    }}
+  >
+    <div className="flex items-center">
+      <i className="fa fa-trash"></i>
+      <span className="ml-2">Eliminar</span>
+    </div>
+  </button>
+</div>
+
+)}
+
       </div>
     </div>
   );

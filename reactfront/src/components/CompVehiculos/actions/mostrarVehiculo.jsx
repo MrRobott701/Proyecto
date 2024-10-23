@@ -9,6 +9,7 @@ import CompViewVehiculo from './viewVehiculo.jsx'; // Asegúrate de que la ruta 
 import CompEditVehiculo from './editarVehiculo.jsx'; // Asegúrate de que la ruta sea correcta
 import Swal from 'sweetalert2'; // Asegúrate de importar Swal si no lo has hecho
 import 'sweetalert2/dist/sweetalert2.min.css'; // Importa el CSS de SweetAlert2
+import EliminarVehiculo from './eliminarVehiculo.jsx';
 
 const URI = 'http://localhost:8000/vehiculos';
 
@@ -67,7 +68,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   const getVehiculos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(URI);
+      const response = await axios.get(`${URI}/activos`);
       setVehiculos(response.data);
     } catch (error) {
       console.error("Error fetching Vehiculos:", error);
@@ -150,6 +151,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                   const fileId = extractFileId(vehiculo.fotoCarro);
                   return (
                     <div key={vehiculo.id} className="bg-white shadow p-6 rounded-lg border mt-4 transform transition-transform hover:scale-105 hover:shadow-lg">
+                      <EliminarVehiculo id={vehiculo.id} idConductor={vehiculo.idConductor} getVehiculos={getVehiculos} />
                       <h3 className="text-xl font-bold mb-2">{vehiculo.marca}</h3>
                       <p><span className="font-semibold">Modelo:</span> {vehiculo.modelo}</p>
                       <p><span className="font-semibold">Color:</span> {vehiculo.color}</p>

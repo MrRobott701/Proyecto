@@ -12,6 +12,22 @@ export const getAllVehiculo = async (req, res) => {
     }
 };
 
+
+// Mostrar todos los registros activos
+export const getAllVehiculosActivos = async (req, res) => {
+    try {
+        const vehiculo = await VehiculoModel.findAll({
+            where: { activo: 1 }
+        });
+        res.status(200).json(vehiculo);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+
+
 // Mostrar un registro por id
 export const getVehiculo = async (req, res) => {
     try {
@@ -37,12 +53,14 @@ export const createVehiculo = async (req, res) => {
 
 // Actualizar un registro
 export const updateVehiculo = async (req, res) => {
+   
     try {
-        const [updated] = await VehiculoModel.update(req.body, {
+         const [updated] = await VehiculoModel.update(req.body, {
             where: { id: req.params.id }
         });
         if (!updated) {
-            return res.status(404).json({ message: "Vehiculo no encontrado" });
+           return res.status(404).json({ message: "Vehiculo no encontrado" });
+            
         }
         res.status(200).json({ message: "Registro actualizado" });
     } catch (error) {
@@ -80,6 +98,30 @@ export const updateConductorVehiculo = async (req, res) => {
 };
 
 
+
+
+// Actualizar un registro
+// Cambiar estado de activo a 0
+export const deleteConductorVehiculo = async (req, res) => {
+    try {
+        // Actualiza el campo 'activo' a 0 para desactivar el vehículo
+        const [updated] = await VehiculoModel.update(
+            { activo: 0,
+                idConductor: 0
+             }, 
+            
+            { where: { id: req.params.id } }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ message: "Vehículo no encontrado" });
+        }
+
+        res.status(200).json({ message: "Registro actualizado" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 
