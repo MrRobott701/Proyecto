@@ -1,8 +1,9 @@
-// DocumentSection.jsx
-
-import React from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import Upload from '../../Upload';
+import Upload2 from '../../Upload2';
+import Flatpickr from 'react-flatpickr';
+import 'flatpickr/dist/themes/material_blue.css'; // Importa el tema que prefieras
+
 
 const DocumentSection = ({
   title,
@@ -16,6 +17,38 @@ const DocumentSection = ({
   handleDeleteFiles,
   docType,
 }) => {
+  const [isUploading, setIsUploading] = useState(false); // Estado para controlar si se está subiendo un archivo
+  const [reDimensions, setReDimensions] = useState(false); // Controla cuándo se debe redimensionar
+
+  // Cuando se selecciona un archivo
+  const handleFileSelected = (file) => {
+    if (file) {
+      setIsUploading(true);  // Indicar que se está usando "Upload"
+      setReDimensions(true);  // Activar el estado de reDimensions para mostrar la vista previa del archivo cargado
+      onFileSelected(file);   // Ejecutar la lógica de selección del archivo (notificar al padre)
+    }
+  };
+
+  // Función para manejar la cancelación de la carga
+  const handleCancelUpload = () => {
+    setIsUploading(false);    // Detener el estado de carga
+    setReDimensions(false);   // Restablecer la vista previa del archivo existente
+    onFileSelected(null);     // Notificar que la subida fue cancelada
+  };
+
+  const handleDateChange = (selectedDates) => {
+    const date = selectedDates[0];
+  
+    // Establecer la hora en 00:00:00
+    const localDate = new Date(date.setHours(0, 0, 0, 0));
+  
+    // Formatear la fecha directamente usando UTC
+    const formattedDate = `${String(localDate.getUTCDate()).padStart(2, '0')}/${String(localDate.getUTCMonth() + 1).padStart(2, '0')}/${localDate.getUTCFullYear()}`;
+    setVencimiento(formattedDate);
+  };
+  
+  
+
   return (
     <div
       className="shadow-2xl"
@@ -25,7 +58,7 @@ const DocumentSection = ({
         border: '5px solid #a811ce',
       }}
     >
-      <div className="mb-16 flex flex-col space-y-4">
+      <div className="flex flex-col space-y-4">
         {/* Renderizar la fecha solo si handleDateSelection está definido */}
         {handleDateSelection && vencimiento ? (
           <>
@@ -33,41 +66,37 @@ const DocumentSection = ({
               <span className="block font-bold">Vencimiento</span>
             </div>
             <div className="flex flex-col w-full">
-              <span
-                className="shadow w-full p-2 rounded border-2 border-gray-400 bg-gray-100 cursor-pointer"
-                onClick={() =>
-                  handleDateSelection(
-                    setVencimiento,
-                    `Seleccione la fecha de vencimiento de ${title}`,
-                    vencimiento
-                  )
-                }
-              >
-                {vencimiento ? vencimiento : new Date().toLocaleDateString('es-ES')}
-              </span>
+            <Flatpickr
+  value={vencimiento}
+  onChange={handleDateChange}
+  options={{ locale: 'es', dateFormat: 'd/m/Y' }}
+  className="shadow w-full p-2 rounded border-2 border-gray-400"
+/>
+
             </div>
           </>
         ) : (
           <div className="flex flex-col w-full">
             {/* Puedes agregar un mensaje o simplemente dejarlo vacío */}
-            <span className="block font-bold">No aplica</span>
+            <span className="block font-bold"></span>
           </div>
         )}
 
-        <Upload onFileSelected={onFileSelected} />
+        {/* Componente de carga de archivos */}
+        <Upload2 onFileSelected={handleFileSelected} reDimensions={reDimensions} onCancelUpload={handleCancelUpload} />
 
-        {/* Vista Previa del Documento */}
-        {docUrl && (
+        {/* Vista Previa del Documento solo si no está en proceso de subida */}
+        {!isUploading && docUrl && (
           <div className="mt-2">
             {renderPreview(docUrl, title)}
           </div>
         )}
 
         {/* Botón para eliminar el documento */}
-        {docUrl && (
+        {!isUploading && docUrl && (
           <button
             type="button"
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 font-bold mt-4"
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold mt-4"
             onClick={async () => {
               const { isConfirmed } = await Swal.fire({
                 title: '¿Estás seguro?',

@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 import 'flatpickr/dist/flatpickr.min.css'; // CSS de Flatpickr
 import flatpickr from 'flatpickr'; // Flatpickr
 import { Spanish } from 'flatpickr/dist/l10n/es.js'; // Localización en español
-import Upload from '../../Upload';
 import { sendUpload } from '../../sendUpload';
 import { deleteFile } from '../../deleteFile';
 import Select from 'react-select';
@@ -301,41 +300,43 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
     });
   };
 
-  // Función para manejar la selección de fecha con Flatpickr dentro de SweetAlert
-  const handleDateSelection = async (setter, title, currentDate) => {
-    let selectedDate = currentDate ? currentDate : new Date().toLocaleDateString('es-ES');
+// Función para manejar la selección de fecha con Flatpickr
+const handleDateSelection = (setter, title, currentDate) => {
+  let selectedDate = currentDate ? currentDate : new Date().toLocaleDateString('es-ES');
 
-    const { value: date } = await Swal.fire({
-      title: title,
-      html: '<input type="text" id="datepicker" class="swal2-input">',
-      showCancelButton: true,
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Seleccionar',
-      confirmButtonColor: '#2ba9fc',
-      cancelButtonColor: '#ce1111',
-      didOpen: () => {
-        flatpickr('#datepicker', {
-          locale: Spanish,
-          defaultDate: selectedDate,
-          dateFormat: 'd/m/Y',
-          allowInput: true,
-          minDate: null,
-          enableTime: false,
-          yearSelectorType: 'static',
-          onChange: (selectedDates, dateStr) => {
-            selectedDate = dateStr;
-          },
-        });
-      },
-      preConfirm: () => {
-        return selectedDate;
-      },
-    });
+  // Crea un contenedor para el input si no existe
+  let datePickerContainer = document.getElementById('datepicker-container');
+  if (!datePickerContainer) {
+    datePickerContainer = document.createElement('div');
+    datePickerContainer.id = 'datepicker-container';
+    document.body.appendChild(datePickerContainer);
+  }
 
-    if (date) {
-      setter(date);
+  // Crea el input para Flatpickr
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'datepicker';
+  datePickerContainer.appendChild(input);
+
+  // Inicializa Flatpickr
+  flatpickr('#datepicker', {
+    locale: Spanish,
+    defaultDate: selectedDate,
+    dateFormat: 'd/m/Y',
+    allowInput: true,
+    enableTime: false,
+    yearSelectorType: 'static',
+    onChange: (selectedDates, dateStr) => {
+      selectedDate = dateStr;
+    },
+    onClose: () => {
+      // Elimina el input después de seleccionar la fecha
+      datePickerContainer.removeChild(input);
+      setter(selectedDate); // Establece la fecha seleccionada
     }
-  };
+  });
+};
+
 
   console.log('ID Conductor:', idConductor);
   console.log('ID Propietario:', idPropietario);
@@ -399,12 +400,24 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
     return true;
   };
 
-  // Función para formatear la fecha de DD/MM/YYYY a YYYY-MM-DD
   const formatFecha = (fecha) => {
     if (!fecha) return null;
+  
+    if (fecha instanceof Date) {
+      // Establecer la hora en 00:00:00 para evitar problemas de zona horaria
+      const localDate = new Date(fecha.setHours(0, 0, 0, 1));
+  
+      const day = String(localDate.getUTCDate()).padStart(2, '0'); // Usar getUTCDate
+      const month = String(localDate.getUTCMonth() + 1).padStart(2, '0'); // Usar getUTCMonth
+      const year = localDate.getUTCFullYear(); // Usar getUTCFullYear
+      return `${year}-${month}-${day}`;
+    }
+  
+    // Para fechas en formato string DD/MM/YYYY
     const [dia, mes, anio] = fecha.split('/');
-    return `${anio}-${mes}-${dia}`;
+    return `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
   };
+  
 
   // Función para extraer el FILE_ID de la URL de Google Drive
   const extractFileId = (url) => {
@@ -830,7 +843,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
             {/* Más Secciones de Documentación */}
             <div className="mt-5 text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
               <h1 className="text-2xl font-bold mb-2">Seguro</h1>
-              <h1 className="text-2xl font-bold mb-2">Tarjeta de Circulacion</h1>
+              <h1 className="text-2xl font-bold mb-2">Tarjeta de Circulación</h1>
               <h1 className="text-2xl font-bold mb-2">Foto del Vehículo</h1>
             </div>
 
