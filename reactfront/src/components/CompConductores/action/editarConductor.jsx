@@ -40,12 +40,93 @@ const CompEditConductores = ({ id, onClose, getConductores }) => {
   const [avalNombre, setavalNombre] = useState('');
   const [avalTelefono, setAvalTelefono] = useState('');
   const [nota, setNota] = useState('');
+  const [ineDoc, setIneDoc] = useState('');
+  const [licenciaDoc, setLicenciaDoc] = useState('');
+  const [reciboLuz, setReciboLuz] = useState('');
+  const [reciboAgua, setReciboAgua] = useState('');
+
   const [avalDoc, setAvalDoc] = useState('');
+  const [avalLuz, setAvalLuz] = useState('');
+  const [avalAgua, setAvalAgua] = useState('');
   const [avalDocFile, setAvalDocFile] = useState(null);
+
+  const [ineDocFile, setIneDocFile] = useState(null);
+  const [licenciaDocFile, setLicenciaDocFile] = useState(null);
+  const [reciboLuzFile, setReciboLuzFile] = useState(null);
+  const [reciboAguaFile, setReciboAguaFile] = useState(null);
+  const [avalLuzFile, setAvalLuzFile] = useState(null);
+  const [avalAguaFile, setAvalAguaFile] = useState(null);
   const [telefonoInput, setTelefonoInput] = useState(''); // Campo con formato
   const[avalTelefonoInput,setAvalTelefonoInput] = useState(''); // Campo con formato
+  const[initialIneDoc, setInitialIneDoc] = useState('');
+  const[initialLicenciaDoc, setInitialLicenciaDoc] = useState('');
+  const[initialReciboLuz, setInitialReciboLuz] = useState('');
+  const[initialReciboAgua, setInitialReciboAgua] = useState('');
+  const [initialAvalDoc, setInitialAvalDoc] = useState('');
+  const [initialAvalLuz, setInitialAvalLuz] = useState('');
+  const [initialAvalAgua, setInitialAvalAgua] = useState('');
+
+  // Estado temporal para almacenar los archivos pendientes de eliminación
+const [pendingDeletions, setPendingDeletions] = useState([]);
 
 
+  useEffect(() => {
+    const loadConductor = async () => {
+         const data = await fetchConductor(id);
+         setConductor(data);
+         setNombre(data.nombre);
+         setColonia(data.colonia);
+         setCalle(data.calle);
+         setDireccion(data.direccion);
+         setTelefono(data.telefono);
+         setNombreDocumento(data.nombreDocumento);
+         setNroDocumento(data.nroDocumento);
+         setIneDoc(data.ineDoc);
+          setLicenciaDoc(data.licenciaDoc);
+          setReciboLuz(data.reciboLuz);
+          setReciboAgua(data.reciboAgua);
+         setavalNombre(data.avalNombre);
+         setAvalTelefono(data.avalTelefono);
+         setAvalDoc(data.avalDoc);
+          setAvalLuz(data.avalLuz);
+          setAvalAgua(data.avalAgua);
+         setNota(data.nota);
+         setInitialAvalDoc(data.avalDoc);
+          setInitialAvalLuz(data.avalLuz);
+          setInitialAvalAgua(data.avalAgua);
+          setInitialIneDoc(data.ineDoc);
+          setInitialLicenciaDoc(data.licenciaDoc);
+          setInitialReciboLuz(data.reciboLuz);
+          setInitialReciboAgua(data.reciboAgua);
+
+   
+         // Save initial values to compare later
+         setInitialValues({
+           nombre: data.nombre,
+           direccion: data.direccion,
+           telefono: data.telefono,
+           nombreDocumento: data.nombreDocumento,
+           nroDocumento: data.nroDocumento,
+           avalNombre: data.avalNombre,
+           avalTelefono: data.avalTelefono,
+           avalDoc: data.avalDoc,
+            avalLuz: data.avalLuz,
+            avalAgua: data.avalAgua,
+           nota: data.nota,
+         });
+       };
+       loadConductor();
+     }, [id]);
+   
+     // Efecto para inicializar los valores formateados
+   useEffect(() => {
+     if (telefono) {
+         setTelefonoInput(formatTelefono(telefono));
+     }
+     if (avalTelefono) {
+         setAvalTelefonoInput(formatTelefono(avalTelefono));
+     }
+   }, [telefono, avalTelefono]);
 
 
 // Función para formatear el número de teléfono
@@ -65,6 +146,37 @@ const formatTelefono = (telefono) => {
   }
   return formattedValue;
 };
+
+// Función para seleccionar documentos, guardando los archivos pendientes de eliminación en `pendingDeletions`
+const handleDocumentSelection = (file, docUrl, setDocUrl, setDocFile, docType) => {
+  if (!file) {
+    console.log("No file selected");
+    return;
+  }
+
+  // Si hay un archivo actual, marca la URL para eliminar
+  if (docUrl) {
+    setPendingDeletions((prev) => [...prev, { url: docUrl, type: docType }]);
+  }
+  const renamedFile = new File(
+    [file],
+    `${formatFileName(docType)}.${file.name.split('.').pop()}`,
+    { type: file.type }
+  );
+  setDocFile(renamedFile); // Actualiza el archivo temporalmente
+  setDocUrl(''); // Limpia la URL temporalmente en la interfaz
+};
+
+// Función para eliminar y subir archivos (debe estar definida antes de `handleSubmit`)
+const handleDeleteAndUpload = async (docFile) => {
+  if (docFile) {
+    const uploadedUrl = await sendUpload({ target: { files: [docFile] } });
+    return uploadedUrl || '';
+  }
+  return '';
+};
+
+
 
 // Al cargar el componente, formatear el número inicial
 useEffect(() => {
@@ -158,6 +270,60 @@ const handleAvalTelefonoChange = (e) => {
       return `${sanitizedNombre}_AVAL_${tipo}`.toUpperCase();
     };
 
+    const handleIneDocSelected = (file) => {
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const renamedFile = new File(
+        [file],
+        `${formatFileName('INE')}.${file.name.split('.').pop()}`,
+        { type: file.type }
+      );
+      setIneDocFile(renamedFile);
+    };
+
+    const handleLicenciaDocSelected = (file) => {
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const renamedFile = new File(
+        [file],
+        `${formatFileName('LICENCIA')}.${file.name.split('.').pop()}`,
+        { type: file.type }
+      );
+
+      setLicenciaDocFile(renamedFile);
+    };
+
+    const handleReciboLuzSelected = (file) => {
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const renamedFile = new File(
+        [file],
+        `${formatFileName('RECIBO_DE_LUZ')}.${file.name.split('.').pop()}`,
+        { type: file.type }
+      );
+      setReciboLuzFile(renamedFile);
+    };
+
+    const handleReciboAguaSelected = (file) => {
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const renamedFile = new File(
+        [file],
+        `${formatFileName('RECIBO_DE_AGUA')}.${file.name.split('.').pop()}`,
+        { type: file.type }
+      );
+      setReciboAguaFile(renamedFile);
+    };
+
+
 
     const handleAvalDocSelected = (file) => {
       if (!file) {
@@ -170,6 +336,32 @@ const handleAvalTelefonoChange = (e) => {
         { type: file.type }
       );
       setAvalDocFile(renamedFile);
+    };
+
+    const handleAvalLuzSelected = (file) => {
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const renamedFile = new File(
+        [file],
+        `${formatFileName('RECIBO_DE_LUZ')}.${file.name.split('.').pop()}`,
+        { type: file.type }
+      );
+      setAvalLuzFile(renamedFile);
+    };
+
+    const handleAvalAguaSelected = (file) => {
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const renamedFile = new File(
+        [file],
+        `${formatFileName('RECIBO_DE_AGUA')}.${file.name.split('.').pop()}`,
+        { type: file.type }
+      );
+      setAvalAguaFile(renamedFile);
     };
     
   
@@ -186,7 +378,7 @@ const handleAvalTelefonoChange = (e) => {
     return match ? match[1] : null;
   };
 
-// Función para manejar la eliminación de archivos (Generalizada)
+// Modifica handleDeleteFiles para actualizar solo en el estado temporal
 const handleDeleteFiles = async (docUrl, setDocUrl, docType) => {
   try {
     const urlId = extractFileId(docUrl); // Obtener el ID del archivo
@@ -201,30 +393,18 @@ const handleDeleteFiles = async (docUrl, setDocUrl, docType) => {
     }
 
     console.log(`Eliminando archivo de Google Drive (${docType}) con ID:`, urlId);
-    // Eliminar el archivo usando la función deleteFile
-    const mensaje = await deleteFile(urlId); // Esperar a que se elimine el archivo
-    console.log('Archivo eliminado exitosamente:', mensaje);
+    await deleteFile(urlId); // Eliminar el archivo en Drive
+    setDocUrl(''); // Actualiza la URL solo en el estado temporal de React
 
-    // Vaciar el estado del documento correspondiente
-    setDocUrl('');
-    // Actualizar el conductor eliminando el archivo del estado
-    const updatedData = {
-      ...conductor, // Asegúrate de que `conductor` sea el estado del conductor actual
-      [`${docType}Url`]: '', // Actualiza el campo correspondiente a este documento
-    };
-
-    // Realiza la actualización de los datos del conductor
-    const response = await axios.put(`${URI}/${id}`, updatedData);
-    console.log('Conductor actualizado exitosamente:', response.data);
+    // Almacenar el cambio temporalmente en deletedFiles
+    setDeletedFiles((prev) => ({ ...prev, [docType]: '' }));
 
     Swal.fire({
       icon: 'success',
-      title: 'Archivo Eliminado y Conductor Actualizado',
+      title: 'Archivo Eliminado',
       showConfirmButton: false,
       timer: 1500,
     });
-
-    return response.data;
   } catch (error) {
     console.error('Error al eliminar el archivo de Google Drive:', error);
     Swal.fire({
@@ -276,47 +456,6 @@ const handleDeleteFiles = async (docUrl, setDocUrl, docType) => {
       );
     };
 
-  useEffect(() => {
- const loadConductor = async () => {
-      const data = await fetchConductor(id);
-      setConductor(data);
-      setNombre(data.nombre);
-      setColonia(data.colonia);
-      setCalle(data.calle);
-      setDireccion(data.direccion);
-      setTelefono(data.telefono);
-      setNombreDocumento(data.nombreDocumento);
-      setNroDocumento(data.nroDocumento);
-      setavalNombre(data.avalNombre);
-      setAvalTelefono(data.avalTelefono);
-      setAvalDoc(data.avalDoc);
-      setNota(data.nota);
-
-      // Save initial values to compare later
-      setInitialValues({
-        nombre: data.nombre,
-        direccion: data.direccion,
-        telefono: data.telefono,
-        nombreDocumento: data.nombreDocumento,
-        nroDocumento: data.nroDocumento,
-        avalNombre: data.avalNombre,
-        avalTelefono: data.avalTelefono,
-        avalDoc: data.avalDoc,
-        nota: data.nota,
-      });
-    };
-    loadConductor();
-  }, [id]);
-
-  // Efecto para inicializar los valores formateados
-useEffect(() => {
-  if (telefono) {
-      setTelefonoInput(formatTelefono(telefono));
-  }
-  if (avalTelefono) {
-      setAvalTelefonoInput(formatTelefono(avalTelefono));
-  }
-}, [telefono, avalTelefono]);
 
   const [erroresCampos, setErroresCampos] = useState({});
 
@@ -376,25 +515,28 @@ useEffect(() => {
       });
 
  
-          // Función para eliminar y luego subir archivos si se ha seleccionado uno nuevo
-          const handleDeleteAndUpload = async (docUrl, setDocUrl, docFile, docType) => {
-            if (docFile) {
-              if (docUrl) {
-                // Primero eliminar el archivo antiguo
-                await handleDeleteFiles(docUrl, setDocUrl, docType);
-              }
-              // Luego subir el nuevo archivo
-              const uploadedUrl = await sendUpload({ target: { files: [docFile] } });
-              return uploadedUrl || '';
-            } else {
-              // Si no hay un nuevo archivo, mantener la URL existente
-              return docUrl || '';
-            }
-          };
+      
+           // Procesar eliminaciones pendientes en Google Drive
+    for (const { url, type } of pendingDeletions) {
+      const fileId = extractFileId(url);
+      if (fileId) {
+        await deleteFile(fileId);
+        console.log(`Archivo de ${type} eliminado exitosamente.`);
+      }
+    }
 
-                    // Manejar cada documento secuencialmente
-                    const avalDocUrl = await handleDeleteAndUpload(avalDoc, setAvalDoc, avalDocFile, 'Identificación');
-                    console.log('URL del documento de identificación:', avalDocUrl);
+    // Procesar subidas de archivos y obtener URLs actualizadas
+    const ineDocUrl = await handleDeleteAndUpload(ineDocFile);
+    const licenciaDocUrl = await handleDeleteAndUpload(licenciaDocFile);
+    const reciboLuzUrl = await handleDeleteAndUpload(reciboLuzFile);
+    const reciboAguaUrl = await handleDeleteAndUpload(reciboAguaFile);
+    const avalDocUrl = await handleDeleteAndUpload(avalDocFile);
+    const avalLuzUrl = await handleDeleteAndUpload(avalLuzFile);
+    const avalAguaUrl = await handleDeleteAndUpload(avalAguaFile);
+
+    console.log('URL del documento de identificación:', avalDocUrl);
+                    console.log('URL del recibo de luz:', avalLuzUrl);
+
                     Swal.close();
             
                     
@@ -410,16 +552,23 @@ useEffect(() => {
                         willClose: () => { }
                       });
 
-    // Si no hay errores, continuar con la lógica de envío
+
+    // Actualizar datos del conductor con las nuevas URLs
     const datosConductor = {
       nombre,
       direccion,
       telefono,
       nombreDocumento,
       nroDocumento,
+      ineDoc: ineDocUrl || ineDoc,
+      licenciaDoc: licenciaDocUrl || licenciaDoc,
+      reciboLuz: reciboLuzUrl || reciboLuz,
+      reciboAgua: reciboAguaUrl || reciboAgua,
       avalNombre,
       avalTelefono,
-      avalDoc: avalDocUrl,
+      avalDoc: avalDocUrl || avalDoc,
+      avalLuz: avalLuzUrl || avalLuz,
+      avalAgua: avalAguaUrl || avalAgua,
       nota,
     };
 
@@ -438,6 +587,18 @@ useEffect(() => {
     showConfirmButton: false,
     timer: 1500,
   });
+   // Limpiar el estado temporal después de guardar
+   setPendingDeletions([]);
+   // Limpiar `pendingDeletions` y el estado de archivos una vez guardado
+setPendingDeletions([]);
+setAvalDocFile(null);
+setAvalLuzFile(null);
+setAvalAguaFile(null);
+setIneDocFile(null);
+setLicenciaDocFile(null);
+setReciboLuzFile(null);
+setReciboAguaFile(null);
+
   onClose();
   getConductores();
   navigate('/conductores');
@@ -445,11 +606,7 @@ useEffect(() => {
                       Swal.close();
         console.error('Error actualizando conuctor:', error);
         const mensajeError = error.response?.data?.error || 'Porfavor, modifique algún dato e intente nuevamente.';
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al Actualizar conuctor',
-          text: mensajeError,
-        });
+onClose();
       }
     } catch (error) {
       Swal.close();
@@ -473,6 +630,8 @@ useEffect(() => {
       avalNombre,
       avalTelefono,
       avalDoc,
+      avalLuz,
+      avalAgua,
       nota,
     };
     return JSON.stringify(currentValues) !== JSON.stringify(initialValues);
@@ -485,7 +644,7 @@ useEffect(() => {
     } else {
       setHasUnsavedChanges(false);
     }
-  }, [nombre, direccion, telefono, nombreDocumento, nroDocumento, avalNombre, avalTelefono, avalDoc, nota]);
+  }, [nombre, direccion, telefono, nombreDocumento, nroDocumento, avalNombre, avalTelefono, avalDoc,avalLuz,avalAgua, nota]);
 
   // Function to handle modal close with unsaved changes alert
   const onCloseSinGuardar = () => {
@@ -512,13 +671,14 @@ useEffect(() => {
   return (
     <>
 
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-40 max-h-screen overflow-y-auto " onClick={(e) => e.target === e.currentTarget && onCloseSinGuardar()}>
-      <div className="relative bg-white rounded-lg p-6 w-full max-w-2xl items-start mt-10 mb-8">
+    <div className="text-xl fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-50 max-h-screen overflow-y-auto"
+     onClick={(e) => e.target === e.currentTarget && onCloseSinGuardar()}>
+      <div className="relative bg-white rounded-lg p-6 w-full max-w-7xl items-start mt-10 mb-8">
 
 
         <div className="flex items-center justify-between mb-6">
         <i className="fa-solid fa-person-circle-exclamation text-5xl text-gray-900"></i>
-        <h2 className="text-2xl font-bold mb-4 text-center">Editar Conductor</h2>
+        <h2 className="text-4xl font-bold mb-4 text-center">Editar Conductor</h2>
   <button className="-mt-11 -mr-4 text-red-500 hover:text-red-800 text-4xl" onClick={onClose} aria-label="Cerrar modal">
     <i className="fa-solid fa-circle-xmark"></i>
   </button>
@@ -541,42 +701,54 @@ useEffect(() => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            {/* Campo Nombre */}
-            <label className="block text-gray-900 text-lg font-bold mb-2" htmlFor="nombre">Nombre Completo</label>
-            <strong>
-              <input
-                type="text"
-                id="nombre"
-                className={`shadow appearance-none border ${erroresCampos.nombre ? 'border-red-500' : ''} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                placeholder="Ingresa el nombre"
-                value={nombre}
-                maxLength={80}
-                onChange={(e) => setNombre(e.target.value)}
-              />
-            </strong>
 
-            {/* Campo Teléfono */}
-            <label className="block text-gray-900 text-lg font-bold mb-2 mt-4" htmlFor="telefono">Teléfono</label>
+          <div className="mb-4 text-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 w-full">
+  {/* Campo Nombre */}
+  <div className=" items-center">
+    <label className="text-gray-900 font-bold mr-2" htmlFor="nombre">
+      Nombre Completo
+    </label>
+    <strong className="w-full">
+      <input
+        type="text"
+        id="nombre"
+        className={`shadow appearance-none border ${
+          erroresCampos.nombre ? 'border-red-500' : ''
+        } rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+        placeholder="Ingresa el nombre"
+        value={nombre}
+        maxLength={80}
+        onChange={(e) => setNombre(e.target.value)}
+      />
+    </strong>
+  </div>
 
-            <strong>
-            <input
-            type="text"
-            id="telefono"
-            className={`shadow rounded border-2 ${
-              erroresCampos.telefono ? 'border-red-500' : ''
-            } rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-            placeholder="Número de teléfono"
-            value={telefonoInput}
-            onChange={handleTelefonoChange}
-          />
-            </strong>
+  {/* Campo Teléfono */}
+  <div className=" items-center">
+    <label className="text-gray-900 font-bold mr-2" htmlFor="telefono">
+      Teléfono
+    </label>
+    <strong className="w-full">
+      <input
+        type="text"
+        id="telefono"
+        className={`shadow rounded border-2 ${
+          erroresCampos.telefono ? 'border-red-500' : ''
+        } rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+        placeholder="Número de teléfono"
+        value={telefonoInput}
+        onChange={handleTelefonoChange}
+      />
+    </strong>
+  </div>
+</div>
 
 
             
 
             {/* Campo Dirección */}
-            <label className="block text-gray-900 text-lg font-bold mb-2 mt-4">Dirección</label>
+            <label className="block text-gray-900 font-bold mb-2 mt-4">Dirección</label>
             <strong>
               <input
                 type="text"
@@ -598,7 +770,7 @@ useEffect(() => {
     <div className="relative">
       <select
         id="nombreDocumento"
-        className={`block appearance-none w-full bg-white border border-gray-300 hover:border-gray-800 px-4 py-2 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 leading-tight ${
+        className={`block appearance-none w-full bg-white border border-gray-300 hover:border-gray-800 px-4 py-2 pr-8 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 leading-tight ${
           erroresCampos.nombreDocumento ? 'border-red-500' : ''
         }`}
         value={nombreDocumento}
@@ -615,7 +787,7 @@ useEffect(() => {
   </div>
 
               <div className="flex-1 px-2">
-                <label className="block text-gray-900 text-lg font-bold mb-2" htmlFor="nroDocumento">Nro Documento</label>
+                <label className="block text-gray-900 font-bold mb-2" htmlFor="nroDocumento">Nro Documento</label>
                 <input
                   type="text"
                   id="nroDocumento"
@@ -630,11 +802,88 @@ useEffect(() => {
           </div>
 
 
+
+          <div className="flex flex-col items-center">
+  <h1 className="text-2xl font-bold mb-4 text-center">Documentos</h1>
+  
+  {/* Contenedor de documentos responsivo */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4">
+    <div className="w-full">
+    <div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-id-card mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Identificación</h2>
+</div>
+
+      <DocumentSection
+        title="Identificación"
+        docUrl={ineDoc}
+        setDocUrl={setIneDoc}
+        onFileSelected={handleIneDocSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Identificación"
+      />
+    </div>
+
+    <div className="w-full mb-4">
+    <div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-id-badge mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Licencia</h2>
+</div>
+      <DocumentSection
+        title="Licencia"
+        docUrl={licenciaDoc}
+        setDocUrl={setLicenciaDoc}
+        onFileSelected={handleLicenciaDocSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Identificación"
+      />
+    </div>
+
+    <div className="w-full">
+    <div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-file-invoice-dollar mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Recibo de Luz</h2>
+</div>
+      <DocumentSection
+        title="Recibo de Luz"
+        docUrl={reciboLuz}
+        setDocUrl={setReciboLuz}
+        onFileSelected={handleReciboLuzSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Recibo de Luz"
+      />
+    </div>
+
+    <div className="w-full">
+      
+<div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-file-invoice mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Recibo de Agua</h2>
+</div>
+<DocumentSection
+        title="Recibo de Agua"
+        docUrl={reciboAgua}
+        setDocUrl={setReciboAgua}
+        onFileSelected={handleReciboAguaSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Recibo de Agua"
+      />
+    </div>
+  </div>
+</div>
+
+
           <hr className="mb-4 my-0 border-gray-800 border-t-4" />
-          <label className="block text-gray-900 text-lg font-bold mb-2 text-center" htmlFor="aval">AVAL</label>
-          <div className="mb-4">
+          <label className="block text-gray-900 font-bold mb-2 text-center" htmlFor="aval">AVAL</label>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 w-full mb-4">
+          <div className=" items-center">
             {/* Campo Aval */}
-            <label className="block text-gray-900 text-lg font-bold mb-2" htmlFor="avalNombre">Nombre</label>
+            <label className="block text-gray-900 font-bold mb-2" htmlFor="avalNombre">Nombre</label>
             <input
               type="text"
               id="avalNombre"
@@ -643,9 +892,10 @@ useEffect(() => {
               value={avalNombre}
               onChange={(e) => setavalNombre(e.target.value)}
             />
-
+            </div>
+            <div className=" items-center">
             {/* Campo Aval Teléfono */}
-            <label className="block text-gray-900 text-lg font-bold mb-2 mt-4" htmlFor="avalTelefono">Teléfono</label>
+            <label className="block text-gray-900 font-bold mb-2" htmlFor="avalTelefono">Teléfono</label>
             <input
               type="text"
               id="avalTelefono"
@@ -655,25 +905,68 @@ useEffect(() => {
               onChange={handleAvalTelefonoChange}
               maxLength={10}
             />
-          </div>
-          <div className="flex justify-between">
-            <h1 className="text-2xl font-bold mb-4 text-center">Documentos</h1>
-          <DocumentSection
-              title="Identificación"
-              docUrl={avalDoc}
-              setDocUrl={setAvalDoc}
-              onFileSelected={handleAvalDocSelected}
-              renderPreview={renderPreview}
-              handleDeleteFiles={handleDeleteFiles}
-              docType="Identificación"
-              />
-
             </div>
+          </div>
+          <div className="flex flex-col items-center mb-4">
+  <h1 className="text-2xl font-bold mb-4 text-center">Documentos</h1>
+  
+  {/* Contenedor de documentos responsivo */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-4">
+    <div className="w-full">
+    <div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-id-card mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Identificación</h2>
+</div>
+      <DocumentSection
+        title="Identificación"
+        docUrl={avalDoc}
+        setDocUrl={setAvalDoc}
+        onFileSelected={handleAvalDocSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Identificación"
+      />
+    </div>
+
+    <div className="w-full">
+    <div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-file-invoice-dollar mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Recibo de Luz</h2>
+</div>
+      <DocumentSection
+        title="Recibo de Luz"
+        docUrl={avalLuz}
+        setDocUrl={setAvalLuz}
+        onFileSelected={handleAvalLuzSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Recibo de Luz"
+      />
+    </div>
+
+    <div className="w-full">
+    <div className="flex items-center justify-center text-center">
+  <i className="fa-solid fa-file-invoice mb-2 mr-2"></i>
+  <h2 className="text-xl font-bold mb-2">Recibo de Agua</h2>
+</div>
+      <DocumentSection
+        title="Recibo de Agua"
+        docUrl={avalAgua}
+        setDocUrl={setAvalAgua}
+        onFileSelected={handleAvalAguaSelected}
+        renderPreview={renderPreview}
+        handleDeleteFiles={handleDeleteFiles}
+        docType="Recibo de Agua"
+      />
+    </div>
+  </div>
+</div>
+
 
           <hr className="mb-4 my-0 border-gray-800 border-t-4" />
           <div className="mb-4">
             {/* Campo Nota */}
-            <label className="block text-gray-900 text-lg font-bold mb-2" htmlFor="nota">Nota</label> 
+            <label className="block text-gray-900 font-bold mb-2" htmlFor="nota">Nota</label> 
             <input
               id="nota"
               className="font-bold shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -697,5 +990,6 @@ useEffect(() => {
     </>
   );
 };
+
 
 export default CompEditConductores;

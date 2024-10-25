@@ -44,10 +44,54 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
   const [selectedReciboAguaFile, setSelectedReciboAguaFile] = useState(null);
   const [nota, setNota] = useState('');
   const [activo] = useState(1);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialValues, setInitialValues] = useState({});
+
   const formatFileName = (originalName, tipo) => {
     const nombreFormateado = nombre.toUpperCase().replace(/\s+/g, '');
     return `${nombreFormateado}${tipo}.${originalName.split('.').pop()}`;
   };
+
+    // Establecer los valores iniciales del formulario
+    useEffect(() => {
+      setInitialValues({
+        nombre: '',
+        telefono: '',
+        calle: '',
+        colonia: '',
+        codigoPostal: '',
+        nroDocumento: '',
+        avalNombre: '',
+        avalTelefono: '',
+        nota: '',
+       });
+    }, []);
+  
+  // Función para comparar los valores actuales del formulario con los valores iniciales
+  const checkForChanges = () => {
+    const currentValues = {
+      nombre,
+      telefono,
+      calle,
+      colonia,
+      codigoPostal,
+      nroDocumento,
+      avalNombre,
+      avalTelefono,
+      nota,
+    };
+    return JSON.stringify(currentValues) !== JSON.stringify(initialValues);
+  };
+
+    // useEffect para detectar cambios
+    useEffect(() => {
+      if (checkForChanges()) {
+        setHasUnsavedChanges(true);
+      } else {
+        setHasUnsavedChanges(false);
+      }
+    }, [nombre, telefono, calle, colonia, codigoPostal, nroDocumento, avalNombre, avalTelefono, nota, initialValues]);
+  
   
   
   // Errores en los campos
@@ -78,6 +122,9 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
     avalLuz: false,
     avalAgua: false,
   });
+
+
+
 
   // Estados para los campos opcionales
   const [numeroExterior, setNumeroExterior] = useState('');
@@ -521,11 +568,33 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
     
   };
 
+// Función para manejar el cierre del modal con alerta de cambios no guardados
+const onCloseSinGuardar = () => {
+  if (hasUnsavedChanges) {
+    Swal.fire({
+      title: 'HAY CAMBIOS SIN GUARDAR',
+      text: 'Si cierras perderás los cambios no guardados',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: 'red',
+      cancelButtonColor: 'green',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onClose(); // Aquí se cierra el modal si el usuario confirma
+      }
+    });
+  } else {
+    onClose(); // Aquí se cierra el modal si no hay cambios
+  }
+};
+
   return (
 
     <div
       className="font-bold fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-50 max-h-screen overflow-y-auto"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => e.target === e.currentTarget && onCloseSinGuardar()}
     >
       <div className="relative bg-white rounded-lg p-6 w-full max-w-4xl items-start mt-10 mb-8">
 
@@ -630,7 +699,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
             <input
               type="text"
               id="codigoPostal"
-              className="shadow rounded border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              className="shadow border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
               placeholder="Código Postal"
               value={codigoPostalInput}
               onChange={handleCodigoPostalChange}
@@ -713,7 +782,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
                 <input
                   type="text"
                   id="numeroExterior"
-                  className="shadow rounded border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="No Exterior"
                   value={numeroExterior}
                   onChange={handleNumeroExteriorChange}
@@ -729,7 +798,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
                 <input
                   type="text"
                   id="numeroInterior"
-                  className="shadow rounded border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="No Interior"
                   value={numeroInterior}
                   onChange={handleNumeroInteriorChange}
@@ -745,7 +814,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
                 <input
                   type="text"
                   id="manzana"
-                  className="shadow rounded border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Manzana"
                   value={manzana}
                   onChange={handleManzanaChange}
@@ -761,7 +830,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
                 <input
                   type="text"
                   id="lote"
-                  className="shadow rounded border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Lote"
                   value={lote}
                   onChange={handleLoteChange}
@@ -778,7 +847,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
               <input
                 type="text"
                 id="notaDireccion"
-                className="shadow rounded border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Agrega una nota a dirección"
                 value={notaDireccion}
                 onChange={handleNotaChange}
@@ -803,7 +872,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
     <div className="relative">
       <select
         id="nombreDocumento"
-        className={`block appearance-none w-full bg-white border border-gray-300 hover:border-gray-800 px-4 py-2 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 leading-tight ${
+        className={`block appearance-none w-full bg-white border border-gray-300 hover:border-gray-800 px-4 py-2 pr-8 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 leading-tight ${
           erroresCampos.nombreDocumento ? 'border-red-500' : ''
         }`}
         value={nombreDocumento}

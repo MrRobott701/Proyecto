@@ -65,7 +65,7 @@ const DocumentSection = ({
     onClick={() => window.open(docUrl, '_blank', 'noopener,noreferrer')} // Abre el archivo en una nueva pestaña
   >
     <i className="fa fa-eye"></i>
-    <span className="ml-2">Ver Archivo</span>
+    <span className="ml-2">Ver</span>
   </button>
 
   {/* Botón para eliminar el archivo */}

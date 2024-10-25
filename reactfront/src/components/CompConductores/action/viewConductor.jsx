@@ -25,17 +25,17 @@ const CompViewConductor = ({ id, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-50 max-h-screen overflow-y-auto" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="relative bg-white rounded-lg p-6 w-full max-w-2xl items-start mt-10 mb-8">
+    <div className="fixed text-xl inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-50 max-h-screen overflow-y-auto" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="relative bg-white rounded-lg p-6 w-full max-w-4xl items-start mt-10 mb-8">
 
         <div className="flex items-center justify-between mb-6">
           <i className="fa-solid fa-eye text-5xl text-gray-900"></i>
-          <h2 className="text-2xl font-bold mb-4 text-center">Información del Conductor</h2>
+          <h2 className="text-4xl font-bold mb-4 text-center">Información del Conductor</h2>
           <button className="-mt-11 -mr-4 text-red-500 hover:text-red-800 text-4xl" onClick={onClose} aria-label="Cerrar modal">
           <i className="fa-solid fa-circle-xmark"></i>
         </button>
         </div>
-
+ 
 <hr className="my-0 border-gray-800 border-t-4 mb-2" />
 <div>
   <p><strong>Nombre:</strong> {conductor.nombre}</p>
