@@ -153,3 +153,26 @@ export const deleteConductor = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+export const getConductores = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    try {
+        const { rows: conductores, count: total } = await ConductorModel.findAndCountAll({
+            offset: offset,
+            limit: limit,
+        });
+
+        res.json({
+            conductores,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+

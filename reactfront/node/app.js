@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import db from './db/db.js';
+import db from './models/db/db.js';
 import propietariosRoutes from './routes/propietarios.js';
 import conductoresRoutes from './routes/conductores.js';
 import vehiculosRoutes from './routes/vehiculos.js';
@@ -16,6 +16,7 @@ app.use('/propietarios', propietariosRoutes);
 app.use('/conductores', conductoresRoutes);
 app.use('/vehiculos', vehiculosRoutes);
 
+
 // Conexión a la base de datos
 const startServer = async () => {
     try {
@@ -29,5 +30,6 @@ const startServer = async () => {
         console.log('Error de conexión', error);
     }
 };
+
 
 startServer();

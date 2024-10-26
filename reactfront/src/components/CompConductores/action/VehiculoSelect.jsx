@@ -4,7 +4,7 @@ import Select from 'react-select';
 
 const VehiculoSelect = ({ vehiculos, selectedVehiculo, onChange, isClearable = true }) => {
   const vehiculosOptions = [
-    { value: 0, label: "Sin Vehículo" },
+    { value: 0, label: "Seleccionar Vehículo" },
     ...vehiculos.map((vehiculo) => ({
       value: vehiculo.id,
       label: `${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.color} ${vehiculo.anio} Placas: ${vehiculo.placas}`,

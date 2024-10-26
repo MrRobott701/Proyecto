@@ -7,7 +7,10 @@ const Switch = ({ isActive, onToggle }) => {
         type="checkbox"
         className="sr-only"
         checked={isActive}
-        onChange={onToggle}
+        onChange={(e) => {
+          e.stopPropagation(); // Evita la propagación
+          onToggle(e); // Llama a la función para cambiar el estado
+        }}
       />
       <div className={`w-11 h-6 rounded-full relative transition-all ${
         isActive ? "bg-green-600" : "bg-gray-600"

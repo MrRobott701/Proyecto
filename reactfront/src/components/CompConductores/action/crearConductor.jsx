@@ -958,19 +958,6 @@ const onCloseSinGuardar = () => {
             </div>
           )}
 <br/>
-
-
-
-<div>
-          <label>Vehículo:</label>
-          <VehiculoSelect
-            vehiculos={vehiculos}
-            selectedVehiculo={idVehiculo}
-            onChange={handleChangeVehiculo}
-          />
-        </div>
-
-
 {/* Campo Nombre del Documento y Nro Documento */}
 <div className="flex flex-wrap -mx-2 mb-4 font-bold text-center">
   <div className=" w-60 px-2">
@@ -1099,7 +1086,6 @@ const onCloseSinGuardar = () => {
         </div>
       )}
 </div>
-<hr className="my-0 border-gray-800 border-t-4 mb-4 mt-4" />
 <label id='LBine' className="block text-gray-900 text-xl text-center font-bold mb-2 mt-4">
             INFORMACIÓN DEL AVAL
           </label>
@@ -1219,6 +1205,23 @@ const onCloseSinGuardar = () => {
       </div>
                     </div> 
                 )}
+
+
+
+
+                
+<hr className="my-0 border-gray-800 border-t-4 mb-2 mt-2" />
+<div className='mb-4'>
+          <label className='text-xl'>Vehículo:</label>
+          <VehiculoSelect
+            vehiculos={vehiculos}
+            selectedVehiculo={idVehiculo}
+            onChange={handleChangeVehiculo}
+            className='border-gray-950'
+          />
+        </div>
+
+
                                    {/* Campos Opcionales Condicionales */}
                                    <hr className="my-0 border-gray-800 border-t-4 mb-4 mt-4" />
  <div className="flex flex-wrap">
