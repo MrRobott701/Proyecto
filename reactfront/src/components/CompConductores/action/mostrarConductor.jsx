@@ -169,6 +169,7 @@ const CompSowConductores = ({ isCollapsed }) => {
 
                       <EliminarConductor
                         id={conductor.id}
+                        idVehiculo={conductor.idVehiculo}
                         getConductores={getConductores}
                       />
                     </td>

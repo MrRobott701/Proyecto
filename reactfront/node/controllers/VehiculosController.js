@@ -41,15 +41,40 @@ export const getVehiculo = async (req, res) => {
     }
 };
 
-// Crear un registro
+// Crear un registro de vehículo y actualizar otros registros
 export const createVehiculo = async (req, res) => {
+    const { idConductor } = req.body;
+
+    // Iniciar una transacción
+    const transaction = await VehiculoModel.sequelize.transaction();
     try {
-        const newVehiculo = await VehiculoModel.create(req.body);
+        // Crear el nuevo vehículo dentro de la transacción
+        const newVehiculo = await VehiculoModel.create(req.body, { transaction });
+
+        // Actualizar otros vehículos asignados al mismo conductor para desasignarlos
+        await VehiculoModel.update(
+            { idConductor: 0 },
+            {
+                where: {
+                    idConductor: idConductor,
+                    id: { [Op.ne]: newVehiculo.id } // Exceptuar el nuevo vehículo creado
+                },
+                transaction
+            }
+        );
+
+        // Confirmar la transacción
+        await transaction.commit();
+
+        // Responder con éxito
         res.status(201).json({ message: "Registro creado", vehiculo: newVehiculo });
     } catch (error) {
+        // Revertir la transacción en caso de error
+        await transaction.rollback();
         res.status(400).json({ error: error.message });
     }
 };
+
 
 // Actualizar un registro
 export const updateVehiculo = async (req, res) => {
@@ -64,6 +89,24 @@ export const updateVehiculo = async (req, res) => {
         }
         res.status(200).json({ message: "Registro actualizado" });
     } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+export const quitConductor = async (req, res) => {
+    try {
+        const [updated] = await VehiculoModel.update(
+            { idConductor: 0 },
+            {
+                where: { id: req.params.id }
+            }
+        );
+        if (!updated) {
+            return res.status(404).json({ message: "Vehiculo no encontrado" });
+        }
+        res.status(200).json({ message: "Registro actualizado" });
+    }
+    catch (error) {
         res.status(400).json({ error: error.message });
     }
 };

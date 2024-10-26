@@ -40,10 +40,27 @@ export const getConductor = async (req, res) => {
 
 // Crear un registro
 export const createConductor = async (req, res) => {
+    const {idVehiculo}  = req.body;
+    //INICIAR UNA TRANSACCION
+    const transaction = await ConductorModel.sequelize.transaction();
     try {
-        const newConductor = await ConductorModel.create(req.body);
+        const newConductor = await ConductorModel.create(req.body, { transaction });
+
+        await ConductorModel.update(
+            { idVehiculo: 0 },
+            {
+                where: {
+                    idVehiculo: idVehiculo,
+                    id: { [Op.ne]: newConductor.id }
+                },
+                transaction
+            }
+        );
+        //CONFIRMAR LA TRANSACCION
+        await transaction.commit();
         res.status(201).json({ message: "Registro creado", conductor: newConductor });
     } catch (error) {
+        await transaction.rollback();
         res.status(400).json({ error: error.message });
     }
 };

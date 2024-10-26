@@ -3,8 +3,9 @@ import axios from 'axios';
 import 'tailwindcss/tailwind.css'; // Importa los estilos de Tailwind
 
 const URI = 'http://localhost:8000/Conductores';
+const URI_VEHICULOS = 'http://localhost:8000/Vehiculos';
 
-const EliminarConductor = ({ id, getConductores }) => {
+const EliminarConductor = ({ id,idVehiculo, getConductores }) => {
 
     // Función para confirmar y eliminar conductor
     const deleteConductor = async () => {
@@ -28,6 +29,7 @@ const EliminarConductor = ({ id, getConductores }) => {
             if (result.isConfirmed) {
                 // Eliminar el conductor
                 await axios.delete(`${URI}/${id}`);
+                await axios.put(`${URI_VEHICULOS}/quitConductor/${idVehiculo}`);
                 getConductores(); // Refrescar la lista de Conductores
                 swalWithTailwindButtons.fire(
                     '¡Eliminado!',
