@@ -551,9 +551,11 @@ console.log('ID DEL CONDUCTOR CREADO:', respuestaConductor.data.id);
 Swal.close();
 console.log('Conductor creado:', respuestaConductor.data);
 
-const idConductor = respuestaConductor.data.id;
+const idConductor = respuestaConductor.data.conductor.id;
+console.log('ID del conductor:', idConductor);
+console.log('ID del vehículo:', idVehiculo);
 
-if (idConductor){
+if (idConductor !== null && idConductor !== 0 && idConductor != '' && idVehiculo !== null && idVehiculo !== 0 && idVehiculo !== '') {
   await updateVehiculo(idVehiculo, { idConductor });
 }
 /*
@@ -662,7 +664,7 @@ const onCloseSinGuardar = () => {
   // Función para actualizar el vehiculo con el ID del conductor
   const updateVehiculo = async (id, data) => {
     try {
-        const response = await axios.put(`${URI_VEHICULOS}/${id}`, data);
+        const response = await axios.put(`${URI_VEHICULOS}/asignar/${id}`, data);
         return response.data;
     } catch (error) {
         console.error('Error al actualizar el conductor:', error);
