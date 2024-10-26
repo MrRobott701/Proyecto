@@ -2,9 +2,9 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Upload from '../../Upload';
+import Swal from 'sweetalert2';
 import { sendUpload } from '../../sendUpload';
-
-
+import VehiculoSelect from './VehiculoSelect';
 import {
   validarVacio,
   validarNombreLongitud,
@@ -14,13 +14,12 @@ import {
   validarDireccionLongitud,
   validarTelefonoLongitud,
 } from '../../validations/validaciones';
-import Swal from 'sweetalert2';
 
 const URI = 'http://localhost:8000/conductores';
+const URI_VEHICULOS = 'http://localhost:8000/vehiculos';
 
 const CompCreateConductores = ({ onClose, getConductores }) => {
   const navigate = useNavigate();
-  // Estados de los campos individuales
   const [nombre, setNombre] = useState('');
   const [avalNombre, setAvalNombre] = useState('');
   const [colonia, setColonia] = useState('');
@@ -46,10 +45,10 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
   const [activo] = useState(1);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [initialValues, setInitialValues] = useState({});
-
+  
   const formatFileName = (originalName, tipo) => {
-    const nombreFormateado = nombre.toUpperCase().replace(/\s+/g, '');
-    return `${nombreFormateado}${tipo}.${originalName.split('.').pop()}`;
+  const nombreFormateado = nombre.toUpperCase().replace
+  return `${nombreFormateado}${tipo}.${originalName.split('.').pop()}`;
   };
 
     // Establecer los valores iniciales del formulario
@@ -122,10 +121,6 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
     avalLuz: false,
     avalAgua: false,
   });
-
-
-
-
   // Estados para los campos opcionales
   const [numeroExterior, setNumeroExterior] = useState('');
   const [numeroInterior, setNumeroInterior] = useState('');
@@ -139,7 +134,26 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
   const [licenciaDoc, setLicenciaDoc] = useState('');
   const [reciboLuz, setReciboLuz] = useState('');
   const [reciboAgua, setReciboAgua] = useState('');
-  
+  const [vehiculos, setVehiculos] = useState([]);
+  const [idVehiculo, setIdVehiculo] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    const getVehiculos = async () => {
+      try {
+        const response = await axios.get(`${URI_VEHICULOS}/activos`);
+        setVehiculos(response.data);
+      } catch (error) {
+        console.error('Error al obtener los vehiculos:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al Obtener Vehiculos',
+          text: 'No se pudieron obtener los vehiculos, por favor intente nuevamente.',
+        });
+      }
+    };
+
+    getVehiculos();
+  }, []);
 
   useEffect(() => {
     // Deshabilitar scroll al mostrar modal
@@ -364,7 +378,6 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
     setNotaDireccion(e.target.value);
   };
 
-
   // Método para crear conductor
   const createConductor = async (e) => {
     e.preventDefault();
@@ -421,7 +434,6 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
   
     
     try {
-
             // Crear conductor
   let timerInterval;
   const swalInstance = Swal.fire({
@@ -515,27 +527,73 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
 
     
 
-      await axios.post(URI, {
-        nombre,
-        direccion,
-        telefono,
-        nombreDocumento,
-        nroDocumento,
-        ineDoc: ineDocUrl,
-        licenciaDoc: licenciaDocUrl,
-        reciboLuz: reciboLuzUrl,
-        reciboAgua: reciboAguaUrl,
-        avalNombre,
-        avalTelefono,
-        avalDoc: avalDocUrl,
-        avalLuz: avalLuzUrl,
-        avalAgua: avalAguaUrl,
-        nota,
-        activo,
-      }
-    );
-    Swal.close();
-    
+ // Crear el conductor y asignar respuesta a una variable
+ const respuestaConductor = await axios.post(URI, {
+  nombre,
+  direccion,
+  telefono,
+  nombreDocumento,
+  nroDocumento,
+  ineDoc: ineDocUrl,
+  licenciaDoc: licenciaDocUrl,
+  reciboLuz: reciboLuzUrl,
+  reciboAgua: reciboAguaUrl,
+  avalNombre,
+  avalTelefono,
+  avalDoc: avalDocUrl,
+  avalLuz: avalLuzUrl,
+  avalAgua: avalAguaUrl,
+  nota,
+  activo,
+  idVehiculo,
+});
+console.log('ID DEL CONDUCTOR CREADO:', respuestaConductor.data.id);
+Swal.close();
+console.log('Conductor creado:', respuestaConductor.data);
+
+const idConductor = respuestaConductor.data.id;
+
+if (idConductor){
+  await updateVehiculo(idVehiculo, { idConductor });
+}
+/*
+const newConductor = response.data.conductor;
+console.log('Conductor creado:', newConductor);
+
+if (!newConductor || !newConductor.id) {
+  throw new Error('El vehículo no se creó correctamente.');
+}
+
+if (idVehiculo) {
+  await updateVehiculo(idVehiculo, { idConductor: newConductor.id });
+}
+*/
+
+
+
+/*
+// Obtener el ID del nuevo conductor
+const nuevoConductor = respuestaConductor.data;
+const nuevoIdConductor = nuevoConductor.id;
+
+// Asignar el vehículo si se seleccionó alguno
+if (idVehiculo && idVehiculo !== 0) {
+  // Primero, asignar el vehículo al conductor
+  await axios.put(`${URI}/asignar/${nuevoIdConductor}`, {
+    idVehiculo: idVehiculo,
+  });
+
+  // Luego, actualizar el vehículo para asignarle al conductor
+  await axios.put(`${URI_VEHICULOS}/asignar/${idVehiculo}`, {
+    idConductor: nuevoIdConductor,
+  });
+
+  showSuccessAlert('Vehículo Asignado', 'El vehículo se asignó correctamente.');
+
+  }
+*/    
+
+
 
       Swal.fire({        
         position: 'center',
@@ -549,6 +607,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
         onClose();
       });
     } catch (error) {
+      Swal.close(); // Asegurarse de cerrar cualquier Swal abierto
       if (error.response) {
         console.error('Error en la respuesta:', error.response.data);
         Swal.fire({
@@ -556,16 +615,26 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
           title: 'Error al crear el conductor',
           text: error.response.data.error || 'Verifique los datos y vuelva a intentarlo.',
         });
-      } else {
-        console.error('Error:', error.message);
+      } else if (error.request) {
+        console.error('Error en la solicitud:', error.request);
         Swal.fire({
           icon: 'error',
           title: 'Error de red',
           text: 'No se pudo conectar con el servidor.',
         });
+      } else {
+        console.error('Error:', error.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error inesperado.',
+        });
       }
     }
-    
+  };
+
+  const handleChangeVehiculo = (selectedVehiculoId) => {
+    setIdVehiculo(selectedVehiculoId);
   };
 
 // Función para manejar el cierre del modal con alerta de cambios no guardados
@@ -589,6 +658,22 @@ const onCloseSinGuardar = () => {
     onClose(); // Aquí se cierra el modal si no hay cambios
   }
 };
+
+  // Función para actualizar el vehiculo con el ID del conductor
+  const updateVehiculo = async (id, data) => {
+    try {
+        const response = await axios.put(`${URI_VEHICULOS}/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Error al actualizar el conductor:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar conductor',
+            text: error.response?.data?.error || 'Error desconocido',
+        });
+    }
+  };
+
 
   return (
 
@@ -715,6 +800,14 @@ const onCloseSinGuardar = () => {
               onChange={(e) => setCiudad(e.target.value)}
             />
           </div>
+
+
+
+
+
+
+
+
           <hr className="my-0 border-gray-800 border-t-4 mb-4 mt-4" />
           {/* Checkboxes para Campos Opcionales */}
           <div className="mb-4 font-bold">
@@ -863,6 +956,19 @@ const onCloseSinGuardar = () => {
             </div>
           )}
 <br/>
+
+
+
+<div>
+          <label>Vehículo:</label>
+          <VehiculoSelect
+            vehiculos={vehiculos}
+            selectedVehiculo={idVehiculo}
+            onChange={handleChangeVehiculo}
+          />
+        </div>
+
+
 {/* Campo Nombre del Documento y Nro Documento */}
 <div className="flex flex-wrap -mx-2 mb-4 font-bold text-center">
   <div className=" w-60 px-2">

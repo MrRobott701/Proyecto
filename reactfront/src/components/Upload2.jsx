@@ -108,7 +108,7 @@ const Upload2 = ({ onFileSelected, reDimensions, onCancelUpload }) => {
             <div className="cursor-pointer">
             {reDimensions ? (
             <>
-             <p>Previsualización:</p>
+             <h3 className='font-bold text-center'>Previsualización</h3>
           
               <img
                 src={URL.createObjectURL(selectedFile)}
@@ -134,7 +134,7 @@ const Upload2 = ({ onFileSelected, reDimensions, onCancelUpload }) => {
             <div className="cursor-pointer">
               {reDimensions ? (
                 <>
-                 <p>Previsualización:</p>
+                 <h3 className='font-bold text-center'>Previsualización</h3>
           
                   <iframe
                     src={URL.createObjectURL(selectedFile)}

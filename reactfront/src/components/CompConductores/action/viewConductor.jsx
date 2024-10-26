@@ -1,16 +1,39 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import CompViewVehiculo from './viewVehiculo';
 
 const URI = 'http://localhost:8000/conductores';
+const URI_VEHICULOS = 'http://localhost:8000/vehiculos';
 
 const CompViewConductor = ({ id, onClose }) => {
   const [conductor, setConductor] = useState(null);
+  const [vehiculo, setVehiculo] = useState(null);
+  const [showVehiculo, setShowVehiculo] = useState(false);
+
+  const handleViewVehiculo = () => {
+    setShowVehiculo(true);
+  };
+
+  const handleCloseVehiculo = () => {
+    document.body.style.overflow = 'auto'; // Restaura el scroll cuando se cierra el modal
+    
+    setShowVehiculo(false);
+  };
 
   const fetchConductor = async (id) => {
     try {
       const response = await axios.get(`${URI}/${id}`);
       setConductor(response.data);
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden'
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchVehiculo = async (id) => {
+    try {
+      const response = await axios.get(`${URI_VEHICULOS}/${id}`);
+      return response.data;
     } catch (error) {
       console.error(error);
     }
@@ -18,32 +41,82 @@ const CompViewConductor = ({ id, onClose }) => {
 
   useEffect(() => {
     fetchConductor(id);
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [id]);
+  
+
+  useEffect(() => {
+    if (conductor?.idVehiculo) {
+      const getVehiculo = async () => {
+        const data = await fetchVehiculo(conductor.idVehiculo);
+        setVehiculo(data);
+      };
+      getVehiculo();
+    }
+  }, [conductor]);
 
   if (!conductor) {
-    return <div>Cargando...</div>; 
+    return <div>Cargando...</div>;
   }
 
   return (
-    <div className="fixed text-xl inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-50 max-h-screen overflow-y-auto" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div
+      className="fixed text-xl inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-start z-50 max-h-screen overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+          document.body.style.overflow = 'auto'; // Reset scroll when closing the modal
+        }
+      }}
+    >
       <div className="relative bg-white rounded-lg p-6 w-full max-w-4xl items-start mt-10 mb-8">
-
         <div className="flex items-center justify-between mb-6">
           <i className="fa-solid fa-eye text-5xl text-gray-900"></i>
           <h2 className="text-4xl font-bold mb-4 text-center">Información del Conductor</h2>
-          <button className="-mt-11 -mr-4 text-red-500 hover:text-red-800 text-4xl" onClick={onClose} aria-label="Cerrar modal">
-          <i className="fa-solid fa-circle-xmark"></i>
-        </button>
+          <button
+            className="-mt-11 -mr-4 text-red-500 hover:text-red-800 text-4xl"
+            onClick={() => {
+              onClose();
+              document.body.style.overflow = 'auto'; // Reset scroll when closing the modal
+            }}
+            aria-label="Cerrar modal"
+          >
+            <i className="fa-solid fa-circle-xmark"></i>
+          </button>
         </div>
- 
-<hr className="my-0 border-gray-800 border-t-4 mb-2" />
-<div>
-  <p><strong>Nombre:</strong> {conductor.nombre}</p>
-  <p><strong>Dirección:</strong> {conductor.direccion}</p>
-  <p><strong>Teléfono:</strong> {conductor.telefono}</p>
-  <p><strong>Documento:</strong> {conductor.nombreDocumento}</p>
-  <p><strong>Número de Documento:</strong> {conductor.nroDocumento}</p>
 
+        <hr className="my-0 border-gray-800 border-t-4 mb-2" />
+        <div>
+          <p><strong>Nombre:</strong> {conductor.nombre}</p>
+          <p><strong>Dirección:</strong> {conductor.direccion}</p>
+          <p><strong>Teléfono:</strong> {conductor.telefono}</p>
+          <p><strong>Documento:</strong> {conductor.nombreDocumento}</p>
+          <p><strong>Número de Documento:</strong> {conductor.nroDocumento}</p>
+          <div className="flex items-center">
+  <p>
+    <strong>Vehículo Asignado: </strong>
+    {vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.color} ${vehiculo.anio}` : 'Sin Vehículo Asignado'}
+  </p>
+  {vehiculo && (
+      <>
+      <p className="ml-2">
+      <strong>Placas: </strong>{vehiculo ? vehiculo.placas : ''}
+    </p>
+    <button
+      className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-2 py-2 rounded ml-5"
+      onClick={handleViewVehiculo}
+    >
+      Información del Vehículo
+    </button>
+    </>
+  )}
+</div>
+
+          
   {conductor.ineDoc || conductor.licenciaDoc || conductor.reciboLuz || conductor.reciboAgua ? (
     <>
       <hr className="mt-4 my-0 border-gray-800 border-t-4" />
@@ -171,6 +244,10 @@ const CompViewConductor = ({ id, onClose }) => {
           </button>
         </div>
       </div>
+      {showVehiculo && (
+        
+        <CompViewVehiculo id={conductor?.idVehiculo} onClose={handleCloseVehiculo} />
+      )}
     </div>
   );
 };

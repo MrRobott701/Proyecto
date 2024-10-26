@@ -74,7 +74,7 @@ const CompViewVehiculo = ({ id, onClose }) => {
   };
 
   const handleClose = () => {
-    document.body.style.overflow = 'auto'; // Restaura el scroll cuando se cierra el modal
+    document.body.style.overflow = 'hidden'; // Restaura el scroll cuando se cierra el modal
     onClose();
   };
 
@@ -83,7 +83,7 @@ const CompViewVehiculo = ({ id, onClose }) => {
 
     // Limpia el estilo del body cuando el componente se desmonte
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'hidden';
     };
   }, [id]);
 

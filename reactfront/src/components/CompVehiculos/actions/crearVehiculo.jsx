@@ -49,7 +49,8 @@ const [fotoCarro, setFotoCarro] = useState(null);
 const [fotoCarroDocFile, setFotoCarroDocFile] = useState(null);
 const [tarjetaCirculacionDocFile, setTarjetaCirculacionDocFile] = useState(null);
 const [idPropietario, setIdPropietario] = useState('');
-const [idConductor, setIdConductor] = useState('');
+const [idConductor, setIdConductor] = useState('0');
+const [activo, setActivo] = useState('1');
   const [erroresCampos, setErroresCampos] = useState({
     marca: false,
     modelo: false,
@@ -180,7 +181,13 @@ const [idConductor, setIdConductor] = useState('');
   // Función para actualizar el conductor con el ID del vehículo
 const updateConductor = async (id, data) => {
   try {
-      const response = await axios.put(`${URI_CONDUCTOR}/${id}`, data);
+      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, {
+        idVehiculo: data.idVehiculo,
+      }, {
+        headers : {
+          'Content-Type': 'application/json',
+        },
+      });
       return response.data;
   } catch (error) {
       console.error('Error al actualizar el conductor:', error);
@@ -367,6 +374,7 @@ const storeVehiculo = async (e) => {
       idPropietario,
       idConductor: idConductor || null,
       fotoCarro: fotoCarroDocUrl,
+      activo:1,
     });
 
     console.log('Respuesta de la creación del vehículo:', response.data);
@@ -376,7 +384,7 @@ const storeVehiculo = async (e) => {
     if (!newVehiculo || !newVehiculo.id) {
       throw new Error('El vehículo no se creó correctamente.');
     }
-
+console.log('id nuevo vehiculo:', newVehiculo.id);
     if (idConductor) {
       await updateConductor(idConductor, { idVehiculo: newVehiculo.id });
     }

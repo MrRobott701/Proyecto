@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { sendUpload } from '../../sendUpload';
 import { deleteFile } from '../../deleteFile';
 import DocumentSection from './DocumentSection';
+import AsignarVehiculoAConductor from './asignarVehiculo';
 
 // Importar las validaciones
 import { 
@@ -18,7 +19,6 @@ import {
 } from '../../validations/validaciones';
 
 const URI = 'http://localhost:8000/conductores';
-const URI_VEHICULO = 'http://localhost:8000/vehiculos';
 
 const CompEditConductores = ({ id, onClose, getConductores }) => {
   const navigate = useNavigate();
@@ -30,6 +30,7 @@ const CompEditConductores = ({ id, onClose, getConductores }) => {
 
   // Cambiar el estado para que se mantenga los datos del conductor
   const [conductor, setConductor] = useState(null);
+  const [idConductor, setIdConductor] = useState('');
   const [nombre, setNombre] = useState('');
   const [colonia, setColonia] = useState('');
   const [calle, setCalle] = useState('');
@@ -65,7 +66,7 @@ const CompEditConductores = ({ id, onClose, getConductores }) => {
   const [initialAvalDoc, setInitialAvalDoc] = useState('');
   const [initialAvalLuz, setInitialAvalLuz] = useState('');
   const [initialAvalAgua, setInitialAvalAgua] = useState('');
-
+  const [initialVehiculo, setInitialVehiculo] = useState('');
   // Estado temporal para almacenar los archivos pendientes de eliminación
 const [pendingDeletions, setPendingDeletions] = useState([]);
 
@@ -74,6 +75,7 @@ const [pendingDeletions, setPendingDeletions] = useState([]);
     const loadConductor = async () => {
          const data = await fetchConductor(id);
          setConductor(data);
+         setIdConductor(data.id);
          setNombre(data.nombre);
          setColonia(data.colonia);
          setCalle(data.calle);
@@ -90,6 +92,7 @@ const [pendingDeletions, setPendingDeletions] = useState([]);
          setAvalDoc(data.avalDoc);
           setAvalLuz(data.avalLuz);
           setAvalAgua(data.avalAgua);
+          
          setNota(data.nota);
          setInitialAvalDoc(data.avalDoc);
           setInitialAvalLuz(data.avalLuz);
@@ -98,10 +101,12 @@ const [pendingDeletions, setPendingDeletions] = useState([]);
           setInitialLicenciaDoc(data.licenciaDoc);
           setInitialReciboLuz(data.reciboLuz);
           setInitialReciboAgua(data.reciboAgua);
+          
 
    
          // Save initial values to compare later
          setInitialValues({
+          
            nombre: data.nombre,
            direccion: data.direccion,
            telefono: data.telefono,
@@ -112,6 +117,7 @@ const [pendingDeletions, setPendingDeletions] = useState([]);
            avalDoc: data.avalDoc,
             avalLuz: data.avalLuz,
             avalAgua: data.avalAgua,
+            
            nota: data.nota,
          });
        };
@@ -322,8 +328,6 @@ const handleAvalTelefonoChange = (e) => {
       );
       setReciboAguaFile(renamedFile);
     };
-
-
 
     const handleAvalDocSelected = (file) => {
       if (!file) {
@@ -632,6 +636,7 @@ onClose();
       avalDoc,
       avalLuz,
       avalAgua,
+      
       nota,
     };
     return JSON.stringify(currentValues) !== JSON.stringify(initialValues);
@@ -645,6 +650,7 @@ onClose();
       setHasUnsavedChanges(false);
     }
   }, [nombre, direccion, telefono, nombreDocumento, nroDocumento, avalNombre, avalTelefono, avalDoc,avalLuz,avalAgua, nota]);
+  
 
   // Function to handle modal close with unsaved changes alert
   const onCloseSinGuardar = () => {
@@ -801,8 +807,16 @@ onClose();
             </div>
           </div>
 
-
-
+          <div className='mb-4'>
+          <h1 className="text-2xl font-bold mb-4">Asignar Vehículo</h1>
+          
+          <AsignarVehiculoAConductor 
+          idConductor = {idConductor}
+          onAsignacionExitosa = {() => {
+          getConductores();
+          }}
+          />
+          </div>
           <div className="flex flex-col items-center">
   <h1 className="text-2xl font-bold mb-4 text-center">Documentos</h1>
   

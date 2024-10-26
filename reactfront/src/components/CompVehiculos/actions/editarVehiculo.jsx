@@ -301,7 +301,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
   // Función para actualizar el conductor con el ID del vehículo
   const updateConductor = async (id, data) => {
     try {
-      const response = await axios.put(`${URI_CONDUCTOR}/${id}`, data);
+      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, data);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar el conductor:', error);
@@ -530,9 +530,6 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
           fotoCarro: fotoCarroDocUrl,
         };
 
-        if (idConductor) {
-          datosVehiculo.idConductor = parseInt(idConductor, 10);
-        }
 
         console.log('Datos del Vehículo:', datosVehiculo, 'ID:', vehiculoId);
         const response = await axios.put(`${URI}/${vehiculoId}`, datosVehiculo);
@@ -559,12 +556,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
       } catch (error) {
         Swal.close();
         console.error('Error actualizando vehículo:', error);
-        const mensajeError = error.response?.data?.error || 'Porfavor, modifique algún dato e intente nuevamente.';
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al Actualizar Vehículo',
-          text: mensajeError,
-        });
+        onClose();
       }
     } catch (error) {
       Swal.close();
