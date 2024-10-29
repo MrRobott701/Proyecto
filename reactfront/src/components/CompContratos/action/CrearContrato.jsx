@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { es } from 'date-fns/locale';
-import Upload from '../../Upload'; // Asegúrate de que la ruta es correcta
+import Upload2 from '../../Upload2';
+import {handleGenerarPdfContrato} from './GenerateContrato'; 
 import {
   validarVacio2,
   validarFecha,
@@ -294,7 +295,14 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
       };
 
       const response = await axios.post(URI_CONTRATOS, nuevoContrato);
+  const contrato = response.data.contrato;
+    console.log('Contrato creado:', contrato);
+  Swal.close();
 
+  // Llama a la función generarContratoPdf con el objeto completo
+  handleGenerarPdfContrato(contrato);
+
+      
       Swal.fire({
         icon: 'success',
         title: 'Contrato creado con éxito',
