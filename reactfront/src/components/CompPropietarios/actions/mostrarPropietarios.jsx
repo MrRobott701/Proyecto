@@ -5,7 +5,7 @@ import CompEditPropietarios from './editarPropietarios.jsx';
 import CompViewPropietario from './viewPropietario.jsx';
 import EliminarPropietario from './eliminarPropietario.jsx';
 import Encabezado from '../others/Encabezado.jsx';
-
+import MostrarCarros from './mostrarCarros.jsx';
 const URI = 'http://localhost:8000/propietarios';
 
 const CompSowPropietarios = ({ isCollapsed }) => {
@@ -84,7 +84,7 @@ const CompSowPropietarios = ({ isCollapsed }) => {
               <input
                 id='search'
                 type="text"
-                placeholder="Buscar"
+                placeholder="Buscar Propietario..."
                 className="rounded border-2 border-black pl-10 pr-10 py-2 font-bold focus:ring-4 focus:ring-blue-600"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -94,67 +94,69 @@ const CompSowPropietarios = ({ isCollapsed }) => {
           </div>
         </div>
 
-        <table className="shadow-2xl rounded-b-3xl font-bold table-fixed w-full border-2">
-          <thead className="bg-gray-800 text-white text-lg">
-            <tr>
-              <th className="w-10 border-2 text-center ">No</th>
-              <th className="w-60 border-2">Nombre</th>
-              <th className="w-64 border-2">Dirección</th>
-              <th className="w-28 border-2 text-center">Teléfono</th>
-              <th className="w-32 border-2 text-center">Documento</th>
-              <th className="w-40 border-2 text-center">No Documento</th>
-              <th className="w-32 border-2 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className='text-lg'>
-            {currentPropietarios.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="text-center border-2 text-2xl">No Hay Registros</td>
-              </tr>
-            ) : (
-              currentPropietarios.map((propietario, index) => (
-                <tr
-                  key={propietario.id}
-                  className="hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    setSelectedPropietarioId(propietario.id);
-                    setIsViewModalOpen(true);
-                  }}
-                >
-                  <td className="py-2 text-center border-2">{index + 1 + (currentPage - 1) * itemsPerPage}</td>
-                  <td className="border-2 text-center truncate">{propietario.nombre}</td>
-                  <td className="border-2 text-center truncate">{propietario.direccion}</td>
-                  <td className="border-2 text-center truncate">{propietario.telefono}</td>
-                  <td className="border-2 text-center truncate">{propietario.nombreDocumento}</td>
-                  <td className="border-2 text-center truncate">{propietario.nroDocumento}</td>
-                  <td className="border-2 py-2 text-center">
-                    <button
-                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-800 mr-2 font-bold text-lg"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPropietarioId(propietario.id);
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      <i className="fa-solid fa-user-pen"></i>
-                    </button>
-                    <button
-                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-800 font-bold text-lg ml-1 mr-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPropietarioId(propietario.id);
-                        setIsViewModalOpen(true);
-                      }}
-                    >
-                      <i className="fa-solid fa-eye"></i>
-                    </button>
-                    <EliminarPropietario id={propietario.id} getPropietarios={getPropietarios} />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <table className="shadow-2xl font-bold table-fixed w-full border-2 border-gray-300 rounded-lg overflow-hidden">
+  <thead className="bg-gray-800 text-white text-lg rounded-t-lg">
+    <tr>
+      <th className="w-10 border-2 text-center">No</th>
+      <th className="w-60 border-2">Nombre</th>
+      <th className="w-64 border-2">Dirección</th>
+      <th className="w-28 border-2 text-center">Teléfono</th>
+      <th className="w-32 border-2 text-center">Documento</th>
+      <th className="w-40 border-2 text-center">No Documento</th>
+      <th className="w-32 border-2 text-center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody className="text-lg rounded-b-lg">
+    {currentPropietarios.length === 0 ? (
+      <tr>
+        <td colSpan="7" className="text-center border-2 text-2xl">No Hay Registros</td>
+      </tr>
+    ) : (
+      currentPropietarios.map((propietario, index) => (
+        <tr
+          key={propietario.id}
+          className="hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setSelectedPropietarioId(propietario.id);
+            setIsViewModalOpen(true);
+          }}
+        >
+          <td className="py-2 text-center border-2">{index + 1 + (currentPage - 1) * itemsPerPage}</td>
+          <td className="border-2 text-center truncate">{propietario.nombre}</td>
+          <td className="border-2 text-center truncate">{propietario.direccion}</td>
+          <td className="border-2 text-center truncate">{propietario.telefono}</td>
+          <td className="border-2 text-center truncate">{propietario.nombreDocumento}</td>
+          <td className="border-2 text-center truncate">{propietario.nroDocumento}</td>
+          <td className="border-2 py-2 text-center" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-800 mr-2 font-bold text-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPropietarioId(propietario.id);
+                setIsEditModalOpen(true);
+              }}
+            >
+              <i className="fa-solid fa-user-pen"></i>
+            </button>
+            <button
+              className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-800 font-bold text-lg ml-1 mr-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPropietarioId(propietario.id);
+                setIsViewModalOpen(true);
+              }}
+            >
+              <i className="fa-solid fa-eye"></i>
+            </button>
+            <EliminarPropietario id={propietario.id} getPropietarios={getPropietarios} />
+          </td>
+        </tr>
+      ))
+    )}
+  </tbody>
+</table>
+
+
 
         {/* Paginación con flechas */}
         <div className="flex justify-center mt-4">
@@ -196,6 +198,9 @@ const CompSowPropietarios = ({ isCollapsed }) => {
             <i className="fa-solid fa-angles-right"></i>
           </button>
         </div>
+        <hr className="my-full border-gray-400 border-t-8 mt-4" />
+
+        <MostrarCarros />
 
         {/* Modales */}
         {isEditModalOpen && (
@@ -204,9 +209,16 @@ const CompSowPropietarios = ({ isCollapsed }) => {
         {isCreateModalOpen && (
           <CompCreatePropietarios onClose={() => setIsCreateModalOpen(false)} getPropietarios={getPropietarios} />
         )}
-        {isViewModalOpen && (
-          <CompViewPropietario id={selectedPropietarioId} onClose={() => setIsViewModalOpen(false)} />
-        )}
+{isViewModalOpen && (
+  <CompViewPropietario 
+    id={selectedPropietarioId} 
+    onClose={() => {
+      setIsViewModalOpen(false);  
+      document.body.style.overflow = 'visible';
+    }} 
+  />
+)}
+
       </div>
     </>
   );

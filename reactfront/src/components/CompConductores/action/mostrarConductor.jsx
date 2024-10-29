@@ -122,7 +122,7 @@ const CompSowConductores = ({ isCollapsed }) => {
             </div>
           </div>
         </div>
-        <table className="font-bold shadow-2xl rounded-b-3xl table-fixed w-full border-2 mb-2">
+        <table className="font-bold shadow-2xl rounded-lg table-fixed w-full border-2 mb-2 overflow-hidden">
           <thead className="bg-gray-800 text-white text-lg">
             <tr>
               <th className="w-10 border-2 text-center">No</th>
@@ -226,7 +226,7 @@ const CompSowConductores = ({ isCollapsed }) => {
           </tbody>
         </table>
 
-        <div className="flex justify-center font-bold">
+        <div className="flex justify-center font-bold mb-4 mt-4">
   {/* Flecha doble hacia la izquierda - ir a la primera página */}
   <button
     onClick={() => handlePageChange(1)}

@@ -28,7 +28,7 @@ const CompCreatePropietarios = ({ onClose, getPropietarios }) => {
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
   const [telefonoInput, setTelefonoInput] = useState(''); // Campo con formato
-  const [nombreDocumento, setNombreDocumento] = useState('');
+  const [nombreDocumento, setNombreDocumento] = useState('LICENCIA');
   const [nroDocumento, setNroDocumento] = useState('');
 
   useEffect(() => {

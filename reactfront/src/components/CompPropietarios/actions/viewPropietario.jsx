@@ -7,10 +7,12 @@ const CompViewPropietario = ({ id, onClose }) => {
   const [propietario, setPropietario] = useState(null);
 
   const fetchPropietario = async (id) => {
+    
     try {
       const response = await axios.get(`${URI}/${id}`);
       setPropietario(response.data);
       document.body.style.overflow = 'hidden';
+      
     } catch (error) {
       console.error(error);
     }
