@@ -110,9 +110,6 @@ const CompSowVehiculos = ({ isCollapsed }) => {
     return match ? match[1] : null;
   };
 
-  if (loading) {
-    return <p className="text-center text-xl mt-10">Cargando...</p>;
-  }
 
   return (
     <>

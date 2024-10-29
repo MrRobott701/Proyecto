@@ -123,6 +123,30 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
       <span className={`ml-4 ${isCollapsed ? "" : "block"}`}>Vehículos</span>
     </Link>
   </li>
+
+  <li>
+    <Link
+      to="/contratos"
+      className={`flex items-center p-2 border rounded ${
+        location.pathname === "/contratos"
+          ? "border-white text-gray-800 bg-white"
+          : "border-black text-white bg-gray-700"
+      } hover:border-black`}
+      style={{
+        boxShadow: location.pathname === "/contratos" ? "0px 0px 5px 2px rgba(3, 244, 251, 0.8)" : "0px 0px 5px 2px rgba(101, 101, 101, 0.8)",
+      }}
+    >
+      <i
+        className={`fa-duotone fa-solid fa-file-shield ${
+          location.pathname === "/contratos"
+            ? "text-gray-800"
+            : "text-white"
+        }`}
+      ></i>
+      <span className={`ml-4 ${isCollapsed ? "" : "block"}`}>Contratos</span>
+    </Link>
+  </li>
+
 </ul>
 
 

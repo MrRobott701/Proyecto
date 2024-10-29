@@ -8,7 +8,7 @@ import { sendUpload } from '../../sendUpload';
 import { deleteFile } from '../../deleteFile';
 import Select from 'react-select';
 import AsignarChofer from './asignarChofer.jsx';
-import DocumentSection from './DocumentSection.jsx'; // Asegúrate de que la ruta sea correcta
+import DocumentSection from './DocumentSection.jsx';
 
 import {
   validarVacio,

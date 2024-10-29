@@ -7,6 +7,28 @@ export const validarVacio = (value, fieldName) => {
     return '';
 };
 
+// Función para validar si el campo está vacío
+export const validarVacio2 = (value, fieldName) => {
+    if (value.length <= 0 || value == null) {
+        return `El campo <strong>${fieldName}</strong> no puede estar vacío.`;
+    }
+    return '';
+};
+
+
+  
+  export const validarFecha = (fechaInicio, fechaFin) => {
+    if (fechaInicio && fechaFin) {
+      const inicio = new Date(fechaInicio);
+      const fin = new Date(fechaFin);
+      if (fin <= inicio) {
+        return 'La fecha de fin debe ser posterior a la fecha de inicio.';
+      }
+    }
+    return null;
+  };
+
+
 // Función para validar si el nombre tiene menos de 80 caracteres
 export const validarNombreLongitud = (nombre) => {
     if (nombre.length > 80) {
@@ -51,6 +73,16 @@ export const validarSoloNumeros = (value) => {
     if(value.length != 0){
         if (!regex.test(value)) {
             return 'El <strong>Número de Teléfono</strong> solo puede contener números.';
+        }
+    }
+    return '';
+};
+
+export const validarPrecio = (value,campo) => {
+    const regex = /^[0-9]+$/;
+    if(value.length != 0){
+        if (!regex.test(value)) {
+            return `El campo <strong>${campo}</strong> no puede estar vacío.`;
         }
     }
     return '';

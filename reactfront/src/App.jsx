@@ -9,6 +9,7 @@ import CompEditConductores from "./components/CompConductores/action/editarCondu
 import CompShowVehiculos from "./components/CompVehiculos/actions/mostrarVehiculo.jsx";
 import CompCreateVehiculos from "./components/CompVehiculos/actions/crearVehiculo.jsx";
 import CompEditVehiculos from "./components/CompVehiculos/actions/editarVehiculo.jsx";
+import CompContratos from "./components/CompContratos/action/mostrarContratos.jsx";
 import NotFound from "./components/NotFound.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./components/Home.jsx";
@@ -41,6 +42,9 @@ function App() {
               <Route path="/vehiculos" element={<CompShowVehiculos isCollapsed={isCollapsed} />} />
               <Route path="/createVehiculo" element={<CompCreateVehiculos />} />
               <Route path="/editVehiculo/:id" element={<CompEditVehiculos />} />
+              <Route path="/contratos" element={<CompContratos />} />
+
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
