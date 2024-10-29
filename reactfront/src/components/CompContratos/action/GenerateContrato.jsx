@@ -71,4 +71,5 @@ export const handleGenerarPdfContrato = async (contrato) => {
     const { conductor, vehiculo, propietario } = data;
     generarContratoPdf(contrato, conductor, vehiculo, propietario);
   }
+  document.body.style.overflow = 'visible';
 };
