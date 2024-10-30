@@ -299,8 +299,8 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
     console.log('Contrato creado:', contrato);
   Swal.close();
 
-  // Llama a la función generarContratoPdf con el objeto completo
-  handleGenerarPdfContrato(contrato);
+   // Llama a la función para generar el PDF con el contrato recién creado
+   await handleGenerarPdfContrato(contrato);
 
       
       Swal.fire({

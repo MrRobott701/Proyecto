@@ -5,6 +5,7 @@ import Encabezado from "../others/Encabezado";
 import ContratoCard from "./ContratoCard";
 import CrearContrato from "./CrearContrato";
 import Swal from "sweetalert2";
+import PlantillaContrato from "./PlantillaContrato";
 
 const MostrarContratos = () => {
   const [contratos, setContratos] = useState([]);
@@ -189,6 +190,9 @@ const MostrarContratos = () => {
           onSubmitSuccess={handleCreateSuccess} 
         />
       )}
+
+      {/* Renderizar el Modal para Ver Plantilla de Contrato */}
+      <PlantillaContrato />
     </div>
   );
 };
