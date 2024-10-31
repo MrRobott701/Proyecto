@@ -1,4 +1,5 @@
-export const GenerarP9 = (doc) => {
+import { numeroALetras } from "./Funciones";
+export const GenerarP9 = (doc,contrato) => {
     doc.addPage();
     doc.setFont("Helvetica", "bold");
     const pageWidth = 170; // Ancho disponible en mm para el contenido
@@ -10,7 +11,7 @@ export const GenerarP9 = (doc) => {
     doc.text("VIGÉSIMA TERCERA: GARANTÍA", 10, posY);
     doc.setFont("Helvetica", "normal");
     posY += 5;
-    const textoVigesimaTercera = "EL CONDUCTOR, se obliga a firmar como garantía sobre el VEHÍCULO un pagaré por la cantidad de $PAGARE pesos(cantidad en letra pesos mxn). Dicho pagaré le será devuelto una vez que se haya dado por terminado el presente contrato.";
+    const textoVigesimaTercera = `EL CONDUCTOR, se obliga a firmar como garantía sobre el VEHÍCULO un pagaré por la cantidad de $${contrato.precioPagare}.00 Pesos(${numeroALetras(contrato.precioPagare)} pesos mxn). Dicho pagaré le será devuelto una vez que se haya dado por terminado el presente contrato.`;
     const lineasVigesimaTercera = doc.splitTextToSize(textoVigesimaTercera, pageWidth);
     doc.text(lineasVigesimaTercera, 10, posY + lineSpacing);
     posY += lineasVigesimaTercera.length * lineSpacing + 10;

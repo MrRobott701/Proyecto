@@ -87,6 +87,11 @@ const ConductorModel = db.define("conductores", {
             allowNull: true,
             field: 'idVehiculo',
         },
+        idContrato: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            field: 'idContrato',
+        },
     
 }, {
     // Desactiva la columna de sequelize

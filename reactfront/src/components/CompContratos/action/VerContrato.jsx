@@ -31,7 +31,7 @@ const VerContrato = ({ contrato, onClose }) => {
           <h2 className="text-2xl font-bold text-center">Detalles del Contrato</h2>
         </div>
 
-        <hr className="mb-4 border-t-4 border-gray-300" />
+        <hr className="mb-4 border-t-4 border-gray-800" />
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Columna 1: Detalles del Conductor */}
@@ -80,7 +80,7 @@ const VerContrato = ({ contrato, onClose }) => {
           </div>
         </div>
 
-        <hr className="my-4 border-t-4 border-gray-300" />
+        <hr className="my-4 border-t-4 border-gray-800" />
 
         {/* Detalles del contrato y arrendador */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

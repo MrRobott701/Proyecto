@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import CompViewVehiculo from '../../CompVehiculos/actions/viewVehiculo.jsx';
 
 export const MostrarCarros = () => {
-    const URI_VEHICULOS = `http://localhost:8000/vehiculos`;
+    const URI_VEHICULOS = `http://localhost:8000/vehiculos/activos`;
     const URI_PROPIETARIOS = `http://localhost:8000/propietarios`;
 
     const [vehiculos, setVehiculos] = useState([]);

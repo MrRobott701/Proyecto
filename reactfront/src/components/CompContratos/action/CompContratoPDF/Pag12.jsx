@@ -1,4 +1,4 @@
-export const GenerarP12 = (doc) => {
+export const GenerarP12 = (doc,propietario,conductor) => {
     doc.addPage();
     doc.setFont("Helvetica", "bold");
     const pageWidth = 170; // Ancho disponible en mm para el contenido
@@ -15,8 +15,8 @@ export const GenerarP12 = (doc) => {
     doc.text(lineasTrigesimaCuarta, 10, posY + lineSpacing);
     posY += lineasTrigesimaCuarta.length * lineSpacing + 5;
 
-    posY = agregarDeclaracionConTab("• EL SOCIO en: $DIRECCION ARRENDADOR.", posY + 5, doc);
-    posY = agregarDeclaracionConTab("• EL CONDUCTOR en: $DIRECCION CONDUCTOR.", posY + 5, doc);
+    posY = agregarDeclaracionConTab(`• EL SOCIO en: ${propietario.direccion.toUpperCase()}.`, posY + 5, doc);
+    posY = agregarDeclaracionConTab(`• EL CONDUCTOR en: ${conductor.direccion.toUpperCase()}.`, posY + 5, doc);
 
     posY += 10;
     const textoCambioDomicilio = "LAS PARTES deberán informar del cambio en su domicilio, con cuando menos 10 (diez) días hábiles de anticipación. En caso de no hacerlo, todos los avisos, notificaciones y demás diligencias judiciales o extrajudiciales que se hagan en el domicilio indicado por las mismas, en esta cláusula, surtirán plenamente sus efectos.";

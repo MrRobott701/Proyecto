@@ -17,7 +17,7 @@ import {
 
 const URI_CONTRATOS = 'http://localhost:8000/contratos';
 const URI_CONDUCTORES = 'http://localhost:8000/conductores';
-const URI_VEHICULOS = 'http://localhost:8000/vehiculos';
+const URI_VEHICULOS = 'http://localhost:8000/vehiculos/activos';
 const URI_PROPIETARIOS = 'http://localhost:8000/propietarios';
 
 const CrearContrato = ({ onClose, onSubmitSuccess }) => {
@@ -66,7 +66,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
   const [precioDeposito, setPrecioDeposito] = useState('3000');
   const [precioRenta, setPrecioRenta] = useState('3000');
   const [precioPagare, setPrecioPagare] = useState('10000');
-  const [penalidad, setPenalidad] = useState('100');
+  const [penalidad, setPenalidad] = useState('75');
   
   const [duracionMeses, setDuracionMeses] = useState(2);
 
@@ -129,7 +129,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
       precioDeposito: '3000',
       precioRenta: '3000',
       precioPagare: '10000',
-      penalidad: '100',
+      penalidad: '75',
       duracionMeses: 2,
     });
   }, [fetchData, today, twoMonthsLater]);
@@ -301,6 +301,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
 
    // Llama a la función para generar el PDF con el contrato recién creado
    await handleGenerarPdfContrato(contrato);
+
 
       
       Swal.fire({

@@ -139,6 +139,35 @@ export const updateVehiculoConductor = async (req, res) => {
     }
 };
 
+export const updateContrato = async (req, res) => {
+    try {
+        // Actualizar el conductor con el idContrato que viene en los parámetros
+        const [updated] = await ConductorModel.update(req.body, {
+            where: { id: req.params.id }
+        });
+
+        if (!updated) {
+            return res.status(404).json({ message: "Conductor no encontrado" });
+        }
+
+        // Cambiar el idContrato a 0 para todos los conductores con el mismo idContrato
+        // excepto el conductor actual (id pasado en los parámetros)
+        await ConductorModel.update(
+            { idContrato: 0 },
+            {
+                where: {
+                    idContrato: req.body.idContrato, // Mismo idContrato que en el request
+                    id: { [Op.ne]: req.params.id } // Que sean diferentes del conductor actual
+                }
+            }
+        );
+
+        res.status(200).json({ message: "Registro actualizado y otros conductores reasignados" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 // Eliminar un registro
 export const deleteConductor = async (req, res) => {
     try {

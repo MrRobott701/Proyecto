@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import './Upload.css';  
+import construccion from '../images/construccion.jpg';
 
 const Upload = ({ onFileSelected }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -92,8 +93,8 @@ const Upload = ({ onFileSelected }) => {
 
   return (
     <div>
-      <button type="button" onClick={handleFileSelection} className="shadow w-full border-2  bg-blue-600 hover:bg-blue-800 text-white p-2 rounded">
-        Subir Archivo
+      <button type="button" className="shadow w-full border-2  bg-blue-600 hover:bg-blue-800 text-white p-4 rounded">
+        
       </button>
       {selectedFile && (
         <div className="flex flex-col items-center justify-center">
@@ -128,7 +129,11 @@ const Upload = ({ onFileSelected }) => {
             </div>
           ) : null}
         </div>
+        
       )}
+      <div className="flex flex-col items-center justify-center">
+      <img src={construccion} alt="En construcción" className="construccion" />
+      </div>
     </div>
   );
 };

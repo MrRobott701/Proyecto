@@ -1,4 +1,5 @@
 import ContratoModel from '../models/ContratoModel.js';
+import ConductorModel from '../models/ConductorModel.js';
 
 // Mostrar todos los registros
 export const getAllContrato = async (req, res) => {
@@ -51,44 +52,23 @@ export const updateContrato = async (req, res) => {
 // Eliminar un registro
 export const deleteContrato = async (req, res) => {
     try {
+        // Eliminar el contrato
         const deleted = await ContratoModel.destroy({
             where: { id: req.params.id },
         });
+
         if (!deleted) {
             return res.status(404).json({ message: 'Contrato no encontrado' });
         }
-        res.status(200).json({ message: 'Registro eliminado' });
+
+        // Actualizar idContrato de los conductores asociados a 0
+        await ConductorModel.update(
+            { idContrato: 0 },
+            { where: { idContrato: req.params.id } }
+        );
+
+        res.status(200).json({ message: 'Registro y relaciones actualizadas correctamente' });
     } catch (error) {
         res.status(500).json({ error: error.message });
-    }
-};
-
-//Actualizar idVehiculo en un contrato
-export const updateContratoVehiculo = async (req, res) => {
-    try {
-        const [updated] = await ContratoModel.update(req.body, {
-            where: { id: req.params.id },
-        });
-        if (!updated) {
-            return res.status(404).json({ message: 'Contrato no encontrado' });
-        }
-        res.status(200).json({ message: 'Registro actualizado' });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-//Actualizar idConductor en un contrato
-export const updateContratoConductor = async (req, res) => {
-    try {
-        const [updated] = await ContratoModel.update(req.body, {
-            where: { id: req.params.id },
-        });
-        if (!updated) {
-            return res.status(404).json({ message: 'Contrato no encontrado' });
-        }
-        res.status(200).json({ message: 'Registro actualizado' });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
     }
 };

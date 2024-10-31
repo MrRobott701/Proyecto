@@ -1,4 +1,5 @@
-export const GenerarP13 = (doc) => {
+import { formatearFecha } from "./Funciones";
+export const GenerarP13 = (doc,contrato) => {
     doc.addPage();
     doc.setFont("Helvetica", "bold");
     const pageWidth = 170; // Ancho disponible en mm para el contenido
@@ -46,7 +47,7 @@ export const GenerarP13 = (doc) => {
     posY += lineasCuadragesimaTercera.length * lineSpacing + 10;
 
     // Texto Final
-    const textoFinal = "LAS PARTES estando conformes con el contenido y clausulado del presente contrato lo firman en Ensenada Baja California, el $FECHA DE FIRMA, al margen en cada una de sus hojas y al final en esta última para todos los efectos legales a que haya lugar.";
+    const textoFinal = `LAS PARTES estando conformes con el contenido y clausulado del presente contrato lo firman en Ensenada Baja California, el ${formatearFecha(contrato.fechaFirma)}, al margen en cada una de sus hojas y al final en esta última para todos los efectos legales a que haya lugar.`;
     const lineasTextoFinal = doc.splitTextToSize(textoFinal, pageWidth);
     doc.text(lineasTextoFinal, 10, posY + lineSpacing);
 

@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { sendUpload } from "../../sendUpload";
 import { GenerarPortada } from "./CompContratoPDF/Portada";
 import { GenerarP1 } from "./CompContratoPDF/Pag1";
 import { GenerarP2 } from "./CompContratoPDF/Pag2";
@@ -48,33 +49,80 @@ export const fetchContratoData = async (contrato) => {
 
 // Función para generar el PDF del contrato con las diferentes páginas
 export const generarContratoPdf = (contrato, conductor, vehiculo, propietario) => {
+  
   const doc = new jsPDF();
 
   // Generación de cada página
   GenerarPortada(doc, contrato, conductor, vehiculo, propietario);
-  GenerarP1(doc);
-  GenerarP2(doc);
+  GenerarP1(doc,contrato,conductor,vehiculo,propietario);
+  GenerarP2(doc,conductor);
   GenerarP3(doc);
   GenerarP4(doc);
-  GenerarP5(doc);
+  GenerarP5(doc,contrato);
   GenerarP6(doc);
   GenerarP7(doc);
   GenerarP8(doc);
-  GenerarP9(doc);
+  GenerarP9(doc,contrato);
   GenerarP10(doc);
   GenerarP11(doc);
-  GenerarP12(doc);
-  GenerarP13(doc);
-  GenerarP14(doc);
+  GenerarP12(doc,propietario,conductor);
+  GenerarP13(doc,contrato);
+  GenerarP14(doc,contrato,propietario,conductor);
 
-  doc.save(`Contrato_${contrato.id}.pdf`);
+  return doc;
 };
 
-// Función principal que combina la recuperación de datos y la generación del PDF
+// Función principal que combina la recuperación de datos, la generación del PDF y la carga en Google Drive
 export const handleGenerarPdfContrato = async (contrato) => {
+  const URI_CONTRATOS = "http://localhost:8000/contratos";
+  const URI_CONDUCTORES = "http://localhost:8000/conductores";
+  
   const data = await fetchContratoData(contrato);
   if (data) {
     const { conductor, vehiculo, propietario } = data;
-    generarContratoPdf(contrato, conductor, vehiculo, propietario);
+    const doc = generarContratoPdf(contrato, conductor, vehiculo, propietario);
+
+    // Convertir el PDF en Blob
+    const pdfBlob = doc.output('blob');
+
+    // Crear un objeto de archivo para subirlo
+    const file = new File([pdfBlob], `${conductor.nombre.toUpperCase()}_CONTRATO.pdf`, {
+      type: "application/pdf"
+    });
+
+    // Mostrar la alerta de carga
+    Swal.fire({
+      title: 'GUARDANDO CONTRATO',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Subir a Google Drive usando la función sendUpload
+    const event = { target: { files: [file] } };  // Simula el evento de input
+    try {
+      const url = await sendUpload(event);
+      // Actualizar el contrato con la URL del archivo en Google Drive
+      await axios.put(`${URI_CONTRATOS}/${contrato.id}`, { contratoDoc: url });
+      // Actualziar idContrato en conductor
+      await axios.put(`${URI_CONDUCTORES}/upContrato/${contrato.idConductor}`, { idContrato: contrato.id });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Contrato guardado',
+        allowOutsideClick: false,
+      });
+      console.log("URL del archivo en Drive:", url);
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar en Drive',
+        allowOutsideClick: false,
+      });
+      console.error('Error al subir el PDF a Drive:', error);
+    }
   }
+  document.body.style.overflow = 'visible';
 };
+

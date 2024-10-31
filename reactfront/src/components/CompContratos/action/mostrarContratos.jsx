@@ -1,18 +1,20 @@
-// MostrarContratos.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Encabezado from "../others/Encabezado";
 import ContratoCard from "./ContratoCard";
 import CrearContrato from "./CrearContrato";
+import VerContrato from "./VerContrato";
+import EditarContrato from "./EditarContrato";
 import Swal from "sweetalert2";
-import PlantillaContrato from "./PlantillaContrato";
 
 const MostrarContratos = () => {
   const [contratos, setContratos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [selectedContratoParaVer, setSelectedContratoParaVer] = useState(null);
+  const [selectedContratoParaEditar, setSelectedContratoParaEditar] = useState(null);
+
   const URI_CONTRATOS = "http://localhost:8000/contratos";
   const URI_CONDUCTORES = "http://localhost:8000/conductores";
   const URI_VEHICULOS = "http://localhost:8000/vehiculos";
@@ -51,36 +53,45 @@ const MostrarContratos = () => {
     } finally {
       setIsLoading(false);
     }
-    
   }, [URI_CONTRATOS, URI_CONDUCTORES, URI_VEHICULOS, URI_PROPIETARIOS]);
 
   useEffect(() => {
     fetchContracts();
   }, [fetchContracts]);
 
-  // Funciones manejadoras para acciones sobre contratos
   const handleView = useCallback((id) => {
-    console.log("Ver contrato con ID:", id);
-    // Implementar la lógica para ver detalles del contrato
-  }, []);
+    const contrato = contratos.find(c => c.id === id);
+    if (contrato) {
+      setSelectedContratoParaVer(contrato);
+    }
+  }, [contratos]);
 
   const handleEdit = useCallback((id) => {
-    console.log("Editar contrato con ID:", id);
-    // Implementar la lógica para editar el contrato
-  }, []);
+    const contrato = contratos.find(c => c.id === id);
+    if (contrato) {
+      setSelectedContratoParaEditar(contrato);
+    }
+  }, [contratos]);
+
+  const closeViewModal = useCallback(() => setSelectedContratoParaVer(null), []);
+  const closeEditModal = useCallback(() => setSelectedContratoParaEditar(null), []);
 
   const handleDelete = useCallback(async (id) => {
     try {
       const result = await Swal.fire({
-        title: '¿Estás seguro?',
+        
+        title: 'ELIMINAR CONTRATO',
         text: "¡No podrás revertir esto!",
         icon: 'warning',
+        iconColor: '#d33', // Icono de alerta roja
         showCancelButton: true,
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
+        confirmButtonColor: '#28a745', // Botón "Sí" en verde
+        cancelButtonColor: '#d33', // Botón "Cancelar" en rojo
+        reverseButtons: true, // Pone "Sí" a la derecha y "Cancelar" a la izquierda
       });
+    
 
       if (result.isConfirmed) {
         await axios.delete(`${URI_CONTRATOS}/${id}`);
@@ -101,22 +112,17 @@ const MostrarContratos = () => {
     }
   }, [fetchContracts, URI_CONTRATOS]);
 
-  // Funciones para manejar el modal de creación de contratos
   const openCreateModal = useCallback(() => setIsCreateModalOpen(true), []);
   const closeCreateModal = useCallback(() => setIsCreateModalOpen(false), []);
-
-  // Función para refrescar la lista de contratos después de crear uno nuevo
   const handleCreateSuccess = useCallback(() => {
     fetchContracts();
     closeCreateModal();
   }, [fetchContracts, closeCreateModal]);
 
-  // Función para manejar la búsqueda
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
   }, []);
 
-  // Función para filtrar los contratos basados en el término de búsqueda
   const filteredContratos = contratos.filter(contrato => {
     const term = searchTerm.toLowerCase();
     return (
@@ -158,7 +164,10 @@ const MostrarContratos = () => {
             />
           </div>
         </div>
-        <h1 className="text-2xl font-bold mb-4">Contratos</h1>
+        <div className="flex mb-4">
+        <i class="text-4xl fa-solid fa-table-cells-row-lock"></i>
+        <h1 className="text-4xl font-bold mb-4">Contratos</h1>
+        </div>
 
         {isLoading ? (
           <div className="flex justify-center items-center">
@@ -177,13 +186,12 @@ const MostrarContratos = () => {
                 />
               ))
             ) : (
-              <p className="text-gray-700">No se encontraron contratos que coincidan con la búsqueda.</p>
+              <p className="text-center text-2xl mt-10">No Hay Registros</p>
             )}
           </div>
         )}
       </div>
 
-      {/* Renderizar el Modal para Crear Contrato */}
       {isCreateModalOpen && (
         <CrearContrato 
           onClose={closeCreateModal} 
@@ -191,8 +199,20 @@ const MostrarContratos = () => {
         />
       )}
 
-      {/* Renderizar el Modal para Ver Plantilla de Contrato */}
-      <PlantillaContrato />
+      {selectedContratoParaVer && (
+        <VerContrato 
+          contrato={selectedContratoParaVer} 
+          onClose={closeViewModal}
+        />
+      )}
+
+      {selectedContratoParaEditar && (
+        <EditarContrato 
+          contratoId={selectedContratoParaEditar.id} 
+          onClose={closeEditModal}
+          onEditSuccess={fetchContracts}
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-export const GenerarP2 = (doc) => {
+export const GenerarP2 = (doc,conductor) => {
     doc.addPage();
     doc.setFont("Helvetica", "bold");
     const pageWidth = 180; // Ancho disponible en mm para el contenido
@@ -7,7 +7,7 @@ export const GenerarP2 = (doc) => {
     doc.setFontSize(10);
 
     // Título de la sección II
-    doc.text("II. “EL CONDUCTOR” ($NOMBRECHOFER) declara por su parte:", 10, 20);
+    doc.text(`II. “EL CONDUCTOR” (${conductor.nombre}) declara por su parte:`, 10, 20);
 
     // Función para agregar declaraciones con sangría y espaciado adecuado
     const agregarDeclaracionConTab = (texto, posY) => {
@@ -21,9 +21,9 @@ export const GenerarP2 = (doc) => {
     // Declaraciones de la sección II
     doc.setFont("Helvetica", "normal");
     let posY = 30;
-    posY = agregarDeclaracionConTab("1. Ser persona de nacionalidad mexicana o extranjero con permiso de trabajo y residencia, acreditando su identidad con el documento oficial $DOCUMENTO número $NUM DE DOC.", posY);
+    posY = agregarDeclaracionConTab(`1. Ser persona de nacionalidad mexicana o extranjero con permiso de trabajo y residencia, acreditando su identidad con el documento oficial ${conductor.nombreDocumento} número ${conductor.nroDocumento}.`, posY);
     posY = agregarDeclaracionConTab("2. Ser mayor de edad, querer celebrar este contrato por voluntad propia, cumplir con los elementos necesarios para ello y contar con la capacidad para cumplir las obligaciones aquí descritas.", posY + 5);
-    posY = agregarDeclaracionConTab("3. Tener domicilio en $DIRECCIO CONDUCTOR.", posY + 5);
+    posY = agregarDeclaracionConTab(`3. Tener domicilio en ${conductor.direccion} CONDUCTOR.`, posY + 5);
     posY = agregarDeclaracionConTab("4. No tener antecedentes penales u otras obligaciones que impidan el cumplimiento de este contrato.", posY + 5);
     posY = agregarDeclaracionConTab("5. Tener la capacidad y voluntad para aportar sus servicios como conductor y estar calificado para este fin.", posY + 5);
 

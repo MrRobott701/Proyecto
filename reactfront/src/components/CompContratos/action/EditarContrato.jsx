@@ -96,10 +96,11 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
 
       // Generate PDF after successful update
       await handleGenerarPdfContrato(contrato);
+      
 
       Swal.fire({
         icon: 'success',
-        title: 'Contrato actualizado y PDF generado con éxito',
+        title: 'CONTRATO ACTUALIZADO',
         showConfirmButton: false,
         timer: 1500,
       });
@@ -110,7 +111,7 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
       console.error('Error updating contract:', error);
       Swal.fire({
         icon: 'error',
-        title: 'Error al actualizar contrato',
+        title: 'ERROR AL ACTUALIZAR',
         text: 'Intenta nuevamente.',
       });
     }
@@ -140,7 +141,7 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
           <i className="text-4xl fa-solid fa-file-contract mr-2"></i>
           <h2 className="text-2xl font-bold">Editar Contrato</h2>
         </div>
-        <hr className="mb-4 border-gray-300" />
+        <hr className="mb-4 border-t-4 border-gray-800" />
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {/* Estructura del formulario con 3 columnas en pantallas XL */}

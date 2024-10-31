@@ -1,4 +1,6 @@
-export const GenerarP5 = (doc) => {
+import { numeroALetras, formatearFecha } from "./Funciones";
+
+export const GenerarP5 = (doc,contrato) => {
     doc.addPage();
     doc.setFont("Helvetica", "bold");
     const pageWidth = 170; // Ancho disponible en mm para el contenido
@@ -16,9 +18,9 @@ export const GenerarP5 = (doc) => {
     posY += lineasSeptima.length * lineSpacing + 5;
 
     // Sub-apartados de la séptima cláusula
-    posY = agregarDeclaracionConTab("Por la cantidad de: $RENTA Pesos (Cantidad en letra pesos mxn).", posY + 2, doc);
-    posY = agregarDeclaracionConTab("Se aplicará una penalidad de pago tardío, esta será por $PENALIDAD pesos (NUMERO EN LETRA pesos mxn) por día.", posY + 2, doc);
-    posY = agregarDeclaracionConTab("Y un depósito de $DEPOSITO pesos (Cantidad en letra pesos mxn). Que serán reembolsables.", posY + 2, doc);
+    posY = agregarDeclaracionConTab(`Por la cantidad de: $${contrato.precioRenta}.00 Pesos (${numeroALetras(contrato.precioRenta)} pesos mxn).`, posY + 2, doc);
+    posY = agregarDeclaracionConTab(`Se aplicará una penalidad de pago tardío, esta será por $${contrato.penalidad}.00 Pesos (${numeroALetras(contrato.penalidad)} pesos mxn) por día.`, posY + 2, doc);
+    posY = agregarDeclaracionConTab(`Y un depósito de $${contrato.precioDeposito}.00 Pesos (${numeroALetras(contrato.precioDeposito)} pesos mxn). Que serán reembolsables.`, posY + 2, doc);
     posY = agregarDeclaracionConTab("En dado caso de ser requerida la cancelación del presente contrato antes del tiempo establecido, dicho depósito no podrá ser reembolsable.", posY + 2, doc);
 
     // Octava Cláusula
@@ -27,7 +29,7 @@ export const GenerarP5 = (doc) => {
     doc.text("OCTAVA: VIGENCIA", 10, posY);
     doc.setFont("Helvetica", "normal");
     posY += 5;
-    const textoOctava = "El presente contrato de asociación en participación es de duración determinada. En ese sentido, el período de duración del presente contrato es de $DURACION (duracion en letra) meses contados a partir de la fecha de firma del presente, por lo que vence el día $FECHA DE FIN. Una vez concluida la vigencia del presente instrumento, el Contrato se renovará de manera automática e indefinida, a excepción de que cualquiera de LAS PARTES notifique lo contrario a la otra con 20 (veinte) días de anticipación.";
+    const textoOctava = `El presente contrato de asociación en participación es de duración determinada. En ese sentido, el período de duración del presente contrato es de ${contrato.duracionMeses} (${numeroALetras(contrato.duracionMeses)}) meses contados a partir de la fecha de firma del presente, por lo que vence el día ${formatearFecha(contrato.fechaFin)}. Una vez concluida la vigencia del presente instrumento, el Contrato se renovará de manera automática e indefinida, a excepción de que cualquiera de LAS PARTES notifique lo contrario a la otra con 20 (veinte) días de anticipación.`;
     const lineasOctava = doc.splitTextToSize(textoOctava, pageWidth);
     doc.text(lineasOctava, 10, posY + lineSpacing);
     posY += lineasOctava.length * lineSpacing + 3;
