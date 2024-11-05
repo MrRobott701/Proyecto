@@ -114,7 +114,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   return (
     <>
       <Encabezado />
-      <div className='pt-24 ml-20 mr-12 mb-12'>
+      <div className='pt-24 ml-24 mr-12 mb-12'>
         {!modalType ? (
           <>
             <div className='flex flex-col md:flex-row justify-between items-start'>

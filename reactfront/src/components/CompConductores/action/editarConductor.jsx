@@ -577,7 +577,7 @@ const handleDeleteFiles = async (docUrl, setDocUrl, docType) => {
     };
 
   if (!conductor) {
-    return <div>Cargando...</div>; // Puedes mostrar un spinner de carga
+    return <div></div>; // Puedes mostrar un spinner de carga
   }
 
   const response = await axios.put(`${URI}/${id}`, datosConductor);

@@ -173,7 +173,7 @@ const handleTelefonoChange = (e) => {
   };
 
   if (!propietario) {
-    return <div>Cargando...</div>; // Puedes mostrar un spinner de carga
+    return <div></div>; // Puedes mostrar un spinner de carga
   }
 
   return (

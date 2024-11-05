@@ -87,13 +87,13 @@ const ContratoCard = ({ contrato, onView, onEdit, onDelete }) => {
       className="text-xl font-bold mb-2 no-select"
       style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}
     >
-      {conductor ? conductor.nombre : "Cargando..."}
+      {conductor ? conductor.nombre : ""}
     </h2>
   </div>
 
 
       <hr className="my-2 border-t-4 border-yellow-600 " />
-      <p><strong>Arrendador:</strong><br/> {propietario ? propietario.nombre : "Cargando..."}</p>
+      <p><strong>Arrendador:</strong><br/> {propietario ? propietario.nombre : ""}</p>
       <hr className="my-2 border-t-2" />
       
       <div className="flex justify-center ">
@@ -126,7 +126,7 @@ const ContratoCard = ({ contrato, onView, onEdit, onDelete }) => {
       <strong>Placas:</strong> {vehiculo.placas}
     </>
   ) : (
-    "Cargando..."
+    ""
   )}
 </p>
 

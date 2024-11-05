@@ -109,7 +109,7 @@ const CompViewVehiculo = ({ id, onClose }) => {
     return (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-center z-50">
         <div className="bg-white p-6 rounded-lg">
-          <p>Cargando...</p>
+          <p></p>
         </div>
       </div>
     );

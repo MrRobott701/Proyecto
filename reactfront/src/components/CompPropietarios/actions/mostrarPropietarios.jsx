@@ -49,14 +49,14 @@ const CompSowPropietarios = ({ isCollapsed }) => {
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <p>Cargando...</p>;
+    return <p></p>;
   }
 
   return (
     <>
       {isCollapsed && <Encabezado isCollapsed={isCollapsed} />}
       {!isCollapsed && <div className='mr-96'><Encabezado /></div>}
-      <div className='pt-24 mr-12 ml-20'>
+      <div className='pt-24 mr-12 ml-24'>
         <div className="flex justify-between items-center mb-4">
           <button
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 font-bold"

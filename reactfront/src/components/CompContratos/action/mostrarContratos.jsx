@@ -139,7 +139,7 @@ const MostrarContratos = () => {
   return (
     <div>
       <Encabezado />
-      <div className="pt-24 ml-20 mr-12 mb-12">
+      <div className="pt-24 ml-24 mr-12">
         <div className="flex flex-col md:flex-row justify-between items-start mb-6">
           <button
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 font-bold flex items-center mb-4 md:mb-0"

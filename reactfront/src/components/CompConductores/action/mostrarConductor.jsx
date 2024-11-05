@@ -59,7 +59,7 @@ const CompSowConductores = ({ isCollapsed }) => {
     : filteredConductores.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (loading) {
-    return <p>Cargando...</p>;
+    return <p></p>;
   }
 
   const actualizarActivo = async (id, nuevoValor) => {
@@ -84,7 +84,7 @@ const CompSowConductores = ({ isCollapsed }) => {
   return (
     <>
       <Encabezado />
-      <div className='pt-24 mr-12 ml-20'>
+      <div className='pt-24 mr-12 ml-24'>
         <div className="flex justify-between items-center mb-2">
           <button
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 inline-block font-bold"
@@ -277,15 +277,6 @@ const CompSowConductores = ({ isCollapsed }) => {
   </button>
 </div>
 
-
-
-          {/* Modal de vista */}
-          {isViewModalOpen && (
-            <CompViewConductor
-              id={selectedConductorId}
-              onClose={() => setIsViewModalOpen(false)}
-            />
-          )}
           
         {/* Modales */}
         {isViewModalOpen && (

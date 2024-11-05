@@ -60,7 +60,7 @@ const CompViewConductor = ({ id, onClose }) => {
   }, [conductor]);
 
   if (!conductor) {
-    return <div>Cargando...</div>;
+    return <div></div>;
   }
 
   return (
@@ -69,7 +69,7 @@ const CompViewConductor = ({ id, onClose }) => {
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
-          document.body.style.overflow = 'auto'; // Reset scroll when closing the modal
+          document.body.style.overflow = 'auto';
         }
       }}
     >

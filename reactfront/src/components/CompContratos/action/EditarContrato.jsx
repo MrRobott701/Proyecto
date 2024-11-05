@@ -121,7 +121,7 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
     return (
       <div className="text-center p-6">
         <i className="fa-solid fa-spinner fa-spin text-2xl text-gray-600"></i>
-        <p className="mt-4 text-gray-600">Cargando...</p>
+        <p className="mt-4 text-gray-600"></p>
       </div>
     );
   }
