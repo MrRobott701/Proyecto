@@ -36,7 +36,7 @@ const handleDelete = async () => {
             const result2 = await Swal.fire({
                 html: `
                     <div>
-                        <i class="fa-solid fa-exclamation-triangle" style="font-size: 86px; color: red;"></i>
+                        <i className="fa-solid fa-exclamation-triangle" style="font-size: 86px; color: red;"></i>
                         <strong><h1>ÚLTIMA ALERTA</h1></strong>
                         <p>¿ESTÁS SEGURO DE ELIMINAR EL VEHÍCULO?<br/>¡No podrás revertir esta acción!</p>
                     </div>

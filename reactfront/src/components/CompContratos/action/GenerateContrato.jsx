@@ -49,7 +49,6 @@ export const fetchContratoData = async (contrato) => {
 
 // Función para generar el PDF del contrato con las diferentes páginas
 export const generarContratoPdf = (contrato, conductor, vehiculo, propietario) => {
-  
   const doc = new jsPDF();
 
   // Generación de cada página

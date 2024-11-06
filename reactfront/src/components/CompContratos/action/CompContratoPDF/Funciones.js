@@ -1,3 +1,34 @@
+export function formatearTextoConNegrita(texto) {
+    const partes = [];
+    const regex = /\{bold\}(.*?)\{\/bold\}/g;
+    let ultimaPos = 0;
+    
+    let match;
+    while ((match = regex.exec(texto)) !== null) {
+        // Parte de texto antes del marcador {bold}
+        if (match.index > ultimaPos) {
+            partes.push({ texto: texto.substring(ultimaPos, match.index), negrita: false });
+        }
+        
+        // Parte en negrita dentro de {bold}...{/bold}
+        partes.push({ texto: match[1], negrita: true });
+        
+        ultimaPos = regex.lastIndex;
+    }
+    
+    // Parte restante del texto después del último marcador
+    if (ultimaPos < texto.length) {
+        partes.push({ texto: texto.substring(ultimaPos), negrita: false });
+    }
+
+    return partes;
+}
+
+
+
+
+
+
 export const numeroALetras = (numero) => {
     const unidades = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
     const decenas = ["", "diez", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];

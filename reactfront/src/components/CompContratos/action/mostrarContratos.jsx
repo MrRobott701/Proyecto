@@ -165,7 +165,7 @@ const MostrarContratos = () => {
           </div>
         </div>
         <div className="flex mb-4">
-        <i class="text-4xl fa-solid fa-table-cells-row-lock"></i>
+        <i className="text-4xl fa-solid fa-table-cells-row-lock"></i>
         <h1 className="text-4xl font-bold mb-4">Contratos</h1>
         </div>
 
