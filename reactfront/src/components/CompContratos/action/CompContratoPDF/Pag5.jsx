@@ -59,11 +59,11 @@ export const GenerarP5 = (doc, contrato) => {
         posY + 5
     );
     posY = agregarDeclaracionEnLinea(
-        `Se aplicará una penalidad de pago tardío, esta será por{bold}$${contrato.penalidad}.00 Pesos (${numeroALetras(contrato.penalidad)}pesos mxn){/bold}por día.`,
+        `Se aplicará una penalidad de pago tardío, esta será por{bold}$${contrato.penalidad}.00 Pesos (${numeroALetras(contrato.penalidad)} pesos mxn){/bold}por día.`,
         posY + 5
     );
     posY = agregarDeclaracionEnLinea(
-        `Y un depósito de{bold}$${contrato.precioDeposito}.00 Pesos(${numeroALetras(contrato.precioDeposito)}pesos mxn){/bold}. Que serán reembolsables.`,
+        `Y un depósito de{bold}$${contrato.precioDeposito}.00 Pesos(${numeroALetras(contrato.precioDeposito)} pesos mxn){/bold}. Que serán reembolsables.`,
         posY + 5
     );
     posY = agregarDeclaracionEnLinea(

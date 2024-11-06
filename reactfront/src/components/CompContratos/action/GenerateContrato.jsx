@@ -17,6 +17,7 @@ import { GenerarP11 } from "./CompContratoPDF/Pag11";
 import { GenerarP12 } from "./CompContratoPDF/Pag12";
 import { GenerarP13 } from "./CompContratoPDF/Pag13";
 import { GenerarP14 } from "./CompContratoPDF/Pag14";
+import { GenerarDeposito } from "./CompContratoPDF/Deposito";
 
 // Función para obtener los datos del contrato
 export const fetchContratoData = async (contrato) => {
@@ -67,9 +68,16 @@ export const generarContratoPdf = (contrato, conductor, vehiculo, propietario) =
   GenerarP12(doc,propietario,conductor);
   GenerarP13(doc,contrato);
   GenerarP14(doc,contrato,propietario,conductor);
-
   return doc;
 };
+
+export const generarDepositoPdf = (contrato, conductor, propietario) => {
+  const doc = new jsPDF();
+
+  GenerarDeposito(doc, contrato, propietario, conductor);
+
+  return doc;
+}
 
 // Función principal que combina la recuperación de datos, la generación del PDF y la carga en Google Drive
 export const handleGenerarPdfContrato = async (contrato) => {
@@ -80,12 +88,17 @@ export const handleGenerarPdfContrato = async (contrato) => {
   if (data) {
     const { conductor, vehiculo, propietario } = data;
     const doc = generarContratoPdf(contrato, conductor, vehiculo, propietario);
+    const docDeposito = generarDepositoPdf(contrato, conductor, propietario);
 
     // Convertir el PDF en Blob
     const pdfBlob = doc.output('blob');
+    const pdfDepositoBlob = docDeposito.output('blob');
 
     // Crear un objeto de archivo para subirlo
     const file = new File([pdfBlob], `${conductor.nombre.toUpperCase()}_CONTRATO.pdf`, {
+      type: "application/pdf"
+    });
+    const fileDeposito = new File([pdfDepositoBlob], `${conductor.nombre.toUpperCase()}_DEPOSITO.pdf`, {
       type: "application/pdf"
     });
 
@@ -100,12 +113,16 @@ export const handleGenerarPdfContrato = async (contrato) => {
 
     // Subir a Google Drive usando la función sendUpload
     const event = { target: { files: [file] } };  // Simula el evento de input
+    const eventDeposito = { target: { files: [fileDeposito] } };  // Simula el evento de input
     try {
       const url = await sendUpload(event);
+      const urlDeposito = await sendUpload(eventDeposito);
+      
       // Actualizar el contrato con la URL del archivo en Google Drive
-      await axios.put(`${URI_CONTRATOS}/${contrato.id}`, { contratoDoc: url });
+      await axios.put(`${URI_CONTRATOS}/${contrato.id}`, { contratoDoc: url, depositoDoc: urlDeposito });
+
       // Actualziar idContrato en conductor
-      await axios.put(`${URI_CONDUCTORES}/upContrato/${contrato.idConductor}`, { idContrato: contrato.id });
+      await axios.put(`${URI_CONDUCTORES}/upContrato/${contrato.idConductor}`, { idContrato: contrato.id});
 
       Swal.fire({
         icon: 'success',

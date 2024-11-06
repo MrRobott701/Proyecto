@@ -106,6 +106,17 @@ const VerContrato = ({ contrato, onClose }) => {
                 </a>
               </div>
             )}
+            {contrato.depositoDoc && (
+              <div className="mt-4 flex justify-center">
+                <a href={contrato.depositoDoc} target="_blank" rel="noopener noreferrer">
+                  <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold px-4 py-2 rounded flex items-center">
+                    <i className="fa-solid fa-eye mr-2"></i>
+                    Ver Depósito
+                  </button>
+                
+                </a>
+              </div>
+            )}
           </div>
         </div>
 
