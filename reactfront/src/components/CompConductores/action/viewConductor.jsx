@@ -4,19 +4,21 @@ import CompViewVehiculo from './viewVehiculo';
 
 const URI = 'http://localhost:8000/conductores';
 const URI_VEHICULOS = 'http://localhost:8000/vehiculos';
+const URI_CONTRATOS = 'http://localhost:8000/contratos';
 
 const CompViewConductor = ({ id, onClose }) => {
   const [conductor, setConductor] = useState(null);
   const [vehiculo, setVehiculo] = useState(null);
   const [showVehiculo, setShowVehiculo] = useState(false);
+  const [contrato, setContrato] = useState(null);
+  const [deposito, setDeposito] = useState(null);
 
   const handleViewVehiculo = () => {
     setShowVehiculo(true);
   };
 
   const handleCloseVehiculo = () => {
-    document.body.style.overflow = 'auto'; // Restaura el scroll cuando se cierra el modal
-    
+    document.body.style.overflow = 'auto'; 
     setShowVehiculo(false);
   };
 
@@ -24,7 +26,7 @@ const CompViewConductor = ({ id, onClose }) => {
     try {
       const response = await axios.get(`${URI}/${id}`);
       setConductor(response.data);
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     } catch (error) {
       console.error(error);
     }
@@ -39,6 +41,15 @@ const CompViewConductor = ({ id, onClose }) => {
     }
   };
 
+  const fetchContrato = async (id) => {
+    try {
+      const response = await axios.get(`${URI_CONTRATOS}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchConductor(id);
     document.body.style.overflow = 'hidden';
@@ -47,7 +58,6 @@ const CompViewConductor = ({ id, onClose }) => {
       document.body.style.overflow = 'auto';
     };
   }, [id]);
-  
 
   useEffect(() => {
     if (conductor?.idVehiculo) {
@@ -56,6 +66,16 @@ const CompViewConductor = ({ id, onClose }) => {
         setVehiculo(data);
       };
       getVehiculo();
+    }
+  }, [conductor]);
+
+  useEffect(() => {
+    if (conductor?.idContrato) {
+      const getContrato = async () => {
+        const data = await fetchContrato(conductor.idContrato);
+        setContrato(data);
+      };
+      getContrato();
     }
   }, [conductor]);
 
@@ -81,7 +101,7 @@ const CompViewConductor = ({ id, onClose }) => {
             className="-mt-11 -mr-4 text-red-500 hover:text-red-800 text-4xl"
             onClick={() => {
               onClose();
-              document.body.style.overflow = 'auto'; // Reset scroll when closing the modal
+              document.body.style.overflow = 'auto';
             }}
             aria-label="Cerrar modal"
           >
@@ -95,75 +115,100 @@ const CompViewConductor = ({ id, onClose }) => {
           <p><strong>Dirección:</strong> {conductor.direccion}</p>
           <p><strong>Teléfono:</strong> {conductor.telefono}</p>
           <p><strong>Documento:</strong> {conductor.nombreDocumento}</p>
-          <p><strong>Número de Documento:</strong> {conductor.nroDocumento}</p>
-          <div className="flex items-center">
-  <p>
-    <strong>Vehículo Asignado: </strong>
-    {vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.color} ${vehiculo.anio}` : 'Sin Vehículo Asignado'}
-  </p>
-  {vehiculo && (
-      <>
-      <p className="ml-2">
-      <strong>Placas: </strong>{vehiculo ? vehiculo.placas : ''}
-    </p>
-    <button
-      className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-2 py-2 rounded ml-5"
-      onClick={handleViewVehiculo}
-    >
-      Información del Vehículo
-    </button>
-    </>
-  )}
-</div>
+          <p><strong>Número de Documento:</strong> {conductor.nroDocumento}</p> 
+          <br/>     
+            <p>
+              <strong>Vehículo Asignado: </strong>
+              {vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.color} ${vehiculo.anio}` : 'Sin Vehículo Asignado'}
+            </p>
+            {vehiculo && (
+              <>
+                <p>
+                
+                  <strong>Placas: </strong>{vehiculo ? vehiculo.placas : ''}
+                </p>
+                <button
+                  className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-2 py-2 rounded ml-3 flex items-center"
+                  onClick={handleViewVehiculo}
+                >
+                  <i className="fa-solid fa-eye mr-2"></i> Información del Vehículo
+                </button>
+              </>
+            )}
+         
 
-          
-  {conductor.ineDoc || conductor.licenciaDoc || conductor.reciboLuz || conductor.reciboAgua ? (
-    <>
-      <hr className="mt-4 my-0 border-gray-800 border-t-4" />
-      <p className="text-center"><strong>DOCUMENTACIÓN</strong></p>
-    </>
-  ) : (
-    <p></p>
-  )}
+          {conductor.ineDoc || conductor.licenciaDoc || conductor.reciboLuz || conductor.reciboAgua ? (
+            <>
+              <hr className="mt-4 my-0 border-gray-800 border-t-4" />
+              <p className="text-center"><strong>DOCUMENTACIÓN</strong></p>
+            </>
+          ) : null}
 
-  {/* Contenedor para botones en una misma línea */}
-  <div className="flex flex-wrap space-x-4 mt-4 justify-center">
-    {/* Verificar si el enlace INE existe */}
-    {conductor.ineDoc && (
-      <a href={conductor.ineDoc} target="_blank" rel="noopener noreferrer">
-        <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-          INE
-        </button>
-      </a>
-    )}
+          <div className="flex flex-wrap space-x-4 mt-4 justify-center">
+            {conductor.ineDoc && (
+              <a href={conductor.ineDoc} target="_blank" rel="noopener noreferrer">
+                <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded flex items-center">
+                  <i className="fa-solid fa-eye mr-2"></i> INE
+                </button>
+              </a>
+            )}
+            {conductor.licenciaDoc && (
+              <a href={conductor.licenciaDoc} target="_blank" rel="noopener noreferrer">
+                <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded flex items-center">
+                  <i className="fa-solid fa-eye mr-2"></i> Licencia
+                </button>
+              </a>
+            )}
+            {conductor.reciboLuz && (
+              <a href={conductor.reciboLuz} target="_blank" rel="noopener noreferrer">
+                <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded flex items-center">
+                  <i className="fa-solid fa-eye mr-2"></i> Recibo de Luz
+                </button>
+              </a>
+            )}
+            {conductor.reciboAgua && (
+              <a href={conductor.reciboAgua} target="_blank" rel="noopener noreferrer">
+                <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded flex items-center">
+                  <i className="fa-solid fa-eye mr-2"></i> Recibo de Agua
+                </button>
+              </a>
+            )}
+          </div>
 
-    {/* Verificar si el enlace Licencia existe */}
-    {conductor.licenciaDoc && (
-      <a href={conductor.licenciaDoc} target="_blank" rel="noopener noreferrer">
-        <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-          Licencia
-        </button>
-      </a>
-    )}
+          {conductor.idContrato ? (
+  <>
+    <hr className="mt-4 my-0 border-gray-800 border-t-4" />
+    <div className="flex flex-col lg:flex-row mt-4 justify-center space-y-4 lg:space-y-0 lg:space-x-12 text-center">
+      {/* Columna para el Contrato */}
+      <div className="w-full lg:w-60">
+        <p><strong>CONTRATO</strong></p>
+        <div className="flex justify-center mt-2">
+          <a href={contrato?.contratoDoc} target="_blank" rel="noopener noreferrer">
+            <button className="bg-blue-600 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded flex items-center">
+              <i className="fa-solid fa-eye mr-2"></i> Ver Contrato
+            </button>
+          </a>
+        </div>
+      </div>
 
-    {/* Verificar si el enlace Recibo de Luz existe */}
-    {conductor.reciboLuz && (
-      <a href={conductor.reciboLuz} target="_blank" rel="noopener noreferrer">
-        <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-          Recibo de Luz
-        </button>
-      </a>
-    )}
+      {/* Columna para el Depósito */}
+      <div className="w-full lg:w-60">
+        <p><strong>DEPÓSITO</strong></p>
+        <div className="flex justify-center mt-2">
+          <a href={contrato?.depositoDoc} target="_blank" rel="noopener noreferrer">
+            <button className="bg-blue-600 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded flex items-center">
+              <i className="fa-solid fa-eye mr-2"></i> Ver Depósito
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </>
+) : null}
 
-    {/* Verificar si el enlace Recibo de Agua existe */}
-    {conductor.reciboAgua && (
-      <a href={conductor.reciboAgua} target="_blank" rel="noopener noreferrer">
-        <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-          Recibo de Agua
-        </button>
-      </a>
-    )}
-  </div>
+
+
+
   {/* Verificar si el Aval existe */}
   {conductor.avalNombre || conductor.avalDoc || conductor.avalReciboLuz || conductor.avalReciboAgua ? (
     <>
@@ -201,7 +246,7 @@ const CompViewConductor = ({ id, onClose }) => {
   {conductor.avalDoc && (
     <a href={conductor.avalDoc} target="_blank" rel="noopener noreferrer">
       <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-        Identificación
+      <i className="fa-solid fa-eye mr-2"></i>Identificación
       </button>
     </a>
   )}
@@ -210,7 +255,7 @@ const CompViewConductor = ({ id, onClose }) => {
   {conductor.avalLuz && (
     <a href={conductor.avalLuz} target="_blank" rel="noopener noreferrer">
       <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-        Recibo de Luz
+        <i className="fa-solid fa-eye mr-2"></i>Recibo de Luz
       </button>
     </a>
   )}
@@ -219,24 +264,17 @@ const CompViewConductor = ({ id, onClose }) => {
   {conductor.avalAgua && (
     <a href={conductor.avalAgua} target="_blank" rel="noopener noreferrer">
       <button className="bg-slate-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded">
-        Recibo de Agua
+        <i className="fa-solid fa-eye mr-2"></i>Recibo de Agua
       </button>
     </a>
   )}
 </div>
 
-  <hr className="mt-4 my-0 border-gray-800 border-t-4" />
-    {/* Notas */}
-    {conductor.nota ? (
-      <p className='mt-5 mb-10'><strong>Nota:</strong> {conductor.nota}</p>
-    ) : (
-      <p></p>
-    )}
-
-
-
-
-</div>
+          <hr className="mt-4 my-0 border-gray-800 border-t-4" />
+          {conductor.nota && (
+            <p className='mt-5 mb-10'><strong>Nota:</strong> {conductor.nota}</p>
+          )}
+        </div>
 
         <div className="flex justify-between mt-4">
           <button type="button" className="font-bold bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700" onClick={onClose}>
@@ -244,8 +282,8 @@ const CompViewConductor = ({ id, onClose }) => {
           </button>
         </div>
       </div>
+
       {showVehiculo && (
-        
         <CompViewVehiculo id={conductor?.idVehiculo} onClose={handleCloseVehiculo} />
       )}
     </div>

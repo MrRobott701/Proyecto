@@ -23,7 +23,7 @@ function App() {
       <div className="flex flex-col h-screen">
         <Nav isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
         <div
-          className={`flex-grow transition-all duration-300 ${isCollapsed ? "" : "ml-48"}`} // Ajuste importante
+          className={`flex-grow transition-all duration-300 ${isCollapsed ? "" : "ml-32"}`} // Ajuste importante
         >
           <div className=""> {/* Este contenedor debe ajustarse */}
             <Routes>
@@ -42,7 +42,7 @@ function App() {
               <Route path="/vehiculos" element={<CompShowVehiculos isCollapsed={isCollapsed} />} />
               <Route path="/createVehiculo" element={<CompCreateVehiculos />} />
               <Route path="/editVehiculo/:id" element={<CompEditVehiculos />} />
-              <Route path="/contratos" element={<CompContratos />} />
+              <Route path="/contratos" element={<CompContratos isCollapsed={isCollapsed} />} />
 
 
               <Route path="*" element={<NotFound />} />

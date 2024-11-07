@@ -28,7 +28,7 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
 
       {/* Sidebar vertical con transición */}
       <div
-        className={`fixed h-screen bg-gray-800 shadow-md z-30 transition-all duration-300 ease-in-out ${
+        className={`fixed h-screen bg-gray-800 z-40 transition-all duration-300 ease-in-out ${
           isCollapsed ? "w-20" : "w-48"
         }`}
       >

@@ -1,29 +1,36 @@
 // mostrarVehiculo.jsx
 
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { useState, useEffect, useMemo } from 'react';
+import Swal from 'sweetalert2';
+import Select from 'react-select';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import CompCreateVehiculos from './crearVehiculo.jsx'; // Componente del formulario
 import Encabezado from '../others/Encabezado.jsx';
-import AsignarChofer from './asignarChofer.jsx';
 import CompViewVehiculo from './viewVehiculo.jsx'; // Asegúrate de que la ruta sea correcta
 import CompEditVehiculo from './editarVehiculo.jsx'; // Asegúrate de que la ruta sea correcta
-import Swal from 'sweetalert2'; // Asegúrate de importar Swal si no lo has hecho
-import 'sweetalert2/dist/sweetalert2.min.css'; // Importa el CSS de SweetAlert2
 import EliminarVehiculo from './eliminarVehiculo.jsx';
+import { showSuccessAlert, showErrorAlert } from './../../alerts.jsx'; // Asegúrate de que esta ruta sea correcta
 
 const URI = 'http://localhost:8000/vehiculos';
+const URI_CONDUCTOR = 'http://localhost:8000/conductores';
 
 const CompSowVehiculos = ({ isCollapsed }) => {
   const [Vehiculos, setVehiculos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Nuevo estado para manejar el modal de "Ver Vehículo"
+  // Estados para manejar los modales
   const [showViewModalver, setShowViewModalver] = useState(false);
-  
-  // Nuevo estado para manejar el tipo de modal abierto: null, 'create', 'edit', 'view'
-  const [modalType, setModalType] = useState(null);
+  const [modalType, setModalType] = useState(null); // null, 'create', 'edit', 'view'
   const [selectedVehiculoId, setSelectedVehiculoId] = useState(null);
+
+  // Estados para manejar conductores
+  const [conductores, setConductores] = useState([]);
+  const [conductoresLoading, setConductoresLoading] = useState(false);
+
+  // Estados para asignación de conductores por vehículo
+  const [asignaciones, setAsignaciones] = useState({}); // { [vehiculoId]: { idConductor, conductorAsignado } }
 
   // Función para abrir el modal de creación
   const openCreateModal = () => {
@@ -37,22 +44,14 @@ const CompSowVehiculos = ({ isCollapsed }) => {
     setModalType('edit');
   };
 
-
-    // Función para manejar cuando se hace clic en "Ver"
-    const handleViewVehiculo = (id) => {
-      setSelectedVehiculoId(id);
-      setShowViewModalver(true);
-    };
-
-    const handleViewModalClose = () => {
-      setShowViewModalver(false);
-    };
-  
-
-  // Función para abrir el modal de vista
-  const openViewModal = (id) => {
+  // Función para manejar cuando se hace clic en "Ver"
+  const handleViewVehiculo = (id) => {
     setSelectedVehiculoId(id);
-    setModalType('view');
+    setShowViewModalver(true);
+  };
+
+  const handleViewModalClose = () => {
+    setShowViewModalver(false);
   };
 
   // Función para cerrar cualquier modal
@@ -63,13 +62,43 @@ const CompSowVehiculos = ({ isCollapsed }) => {
 
   useEffect(() => {
     getVehiculos();
+    getConductores();
   }, []);
 
+  // Función para obtener vehículos
   const getVehiculos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${URI}/activos`);
+      const response = await axios.get(URI);
       setVehiculos(response.data);
+
+      // Inicializar asignaciones para cada vehículo
+      const asignacionesIniciales = {};
+      response.data.forEach((vehiculo) => {
+        asignacionesIniciales[vehiculo.id] = {
+          idConductor: vehiculo.idConductor || 0,
+          conductorAsignado: vehiculo.idConductor ? '' : null, // Se actualizará después
+        };
+      });
+      setAsignaciones(asignacionesIniciales);
+
+      // Obtener nombres de conductores asignados
+      response.data.forEach(async (vehiculo) => {
+        if (vehiculo.idConductor && vehiculo.idConductor !== 0) {
+          try {
+            const conductorResponse = await axios.get(`${URI_CONDUCTOR}/${vehiculo.idConductor}`);
+            setAsignaciones((prev) => ({
+              ...prev,
+              [vehiculo.id]: {
+                ...prev[vehiculo.id],
+                conductorAsignado: conductorResponse.data.nombre,
+              },
+            }));
+          } catch (error) {
+            console.error('Error al obtener conductor asignado:', error);
+          }
+        }
+      });
     } catch (error) {
       console.error("Error fetching Vehiculos:", error);
       Swal.fire({
@@ -82,8 +111,26 @@ const CompSowVehiculos = ({ isCollapsed }) => {
     }
   };
 
+  // Función para obtener conductores
+  const getConductores = async () => {
+    setConductoresLoading(true);
+    try {
+      const response = await axios.get(`${URI_CONDUCTOR}/activo`);
+      setConductores(response.data);
+    } catch (error) {
+      console.error('Error al obtener los conductores:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al Obtener Conductores',
+        text: 'No se pudieron obtener los conductores, por favor intente nuevamente.',
+      });
+    } finally {
+      setConductoresLoading(false);
+    }
+  };
+
+  // Función para manejar asignación exitosa
   const handleAsignacionExitosa = () => {
-    // Aquí puedes actualizar el estado de los vehículos o hacer una recarga de datos
     Swal.fire({
       icon: 'success',
       title: 'Asignación completada',
@@ -92,8 +139,9 @@ const CompSowVehiculos = ({ isCollapsed }) => {
     getVehiculos(); // Refresca la lista de vehículos
   };
 
+  // Filtrado de vehículos basado en searchTerm
   const filteredVehiculos = useMemo(() => {
-    return Vehiculos.filter(vehiculo =>
+    return Vehiculos.filter((vehiculo) =>
       (vehiculo.marca && vehiculo.marca.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (vehiculo.modelo && vehiculo.modelo.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (vehiculo.placas && vehiculo.placas.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -110,17 +158,91 @@ const CompSowVehiculos = ({ isCollapsed }) => {
     return match ? match[1] : null;
   };
 
+  // Función para actualizar el conductor en la API
+  const updateConductor = async (id, idVehiculo) => {
+    try {
+      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, {
+        idVehiculo: idVehiculo,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log('Error al actualizar el conductor:', error);
+      showErrorAlert('ERROR AL ACTUALIZAR CONDUCTOR');
+    }
+  };
+
+  // Función para asignar conductor
+  const asignarConductor = async (idVehiculo, idConductor) => {
+    try {
+      await axios.put(`${URI}/asignar/${idVehiculo}`, {
+        idConductor: idConductor,
+      });
+      if (idConductor && idConductor !== 0) {
+        await updateConductor(idConductor, idVehiculo);
+      }
+      handleAsignacionExitosa();
+    } catch (error) {
+      console.error('Error al asignar el conductor:', error);
+      showErrorAlert('ERROR AL ASIGNAR CONDUCTOR');
+    }
+  };
+
+  // Manejar cambio de conductor
+  const handleChangeConductor = (vehiculoId, selectedOption) => {
+    const selectedConductorId = selectedOption ? selectedOption.value : 0;
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      html: `
+        <p>Está a punto de cambiar el conductor asignado.</p>
+        <p>¿Desea continuar?</p>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cambiar conductor',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // Actualizar estado local
+        setAsignaciones((prev) => ({
+          ...prev,
+          [vehiculoId]: {
+            ...prev[vehiculoId],
+            idConductor: selectedConductorId,
+            conductorAsignado: selectedConductorId === 0 ? null : selectedOption.label,
+          },
+        }));
+
+        // Asignar conductor en la API
+        await asignarConductor(vehiculoId, selectedConductorId);
+      }
+    });
+  };
+
+  if (loading || conductoresLoading) {
+    return <p className="text-center text-xl mt-10">Cargando...</p>;
+  }
 
   return (
     <>
+      {/* Encabezado Fijo */}
       <Encabezado />
-      <div className='pt-24 ml-24 mr-12 mb-12'>
+
+      {/* Contenedor Principal con Padding Superior para Evitar Superposición con Encabezado */}
+      <div className={`pt-24 mr-12 mb-12 z-10 transition-all duration-300 ${isCollapsed ? "ml-28" : "ml-28"}`}>
         {!modalType ? (
           <>
-            <div className='flex flex-col md:flex-row justify-between items-start'>
+            {/* Sección de creación y búsqueda */}
+            <div className="flex flex-col md:flex-row justify-between items-start">
               <button
                 className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 font-bold mb-4 md:mb-0"
-                onClick={openCreateModal} 
+                onClick={openCreateModal}
               >
                 <i className="fa-solid fa-user-plus"></i> Crear Vehículo
               </button>
@@ -131,7 +253,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                 <input
                   id='search'
                   type="text"
-                  placeholder="MARCA / MODELO / PLACAS / COLOR / AÑO" 
+                  placeholder="MARCA / MODELO / PLACAS / COLOR / AÑO"
                   className="w-full rounded border-2 border-black pl-10 pr-4 py-2 font-bold focus:ring-4 focus:ring-blue-600"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -140,50 +262,36 @@ const CompSowVehiculos = ({ isCollapsed }) => {
               </div>
             </div>
 
+            {/* Lista de vehículos */}
             {filteredVehiculos.length === 0 ? (
               <p className="text-center text-2xl mt-10">No Hay Registros</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
                 {filteredVehiculos.map((vehiculo) => {
                   const fileId = extractFileId(vehiculo.fotoCarro);
+                  const asignacion = asignaciones[vehiculo.id] || { idConductor: 0, conductorAsignado: null };
+                  const selectedOptionConductor = [
+                    { value: 0, label: "Sin conductor" },
+                    ...conductores.map((conductor) => ({
+                      value: conductor.id,
+                      label: conductor.nombre,
+                    }))
+                  ].find(option => option.value === asignacion.idConductor) || { value: 0, label: "Sin conductor" };
+
                   return (
-                    <div key={vehiculo.id} className="bg-white shadow p-6 rounded-lg border mt-4 transform transition-transform hover:scale-105 hover:shadow-lg">
+                    <div key={vehiculo.id} className="text-lg bg-white p-6 rounded-lg border mt-4 transform transition-transform hover:scale-105 hover:shadow-lg relative z-20"
+                      style={{ boxShadow: "0px 0px 15px rgba(39, 235, 245, 0.8)" }}>
+                      
+                      {/* Botón para eliminar vehículo */}
                       <EliminarVehiculo id={vehiculo.id} idConductor={vehiculo.idConductor} getVehiculos={getVehiculos} />
-                      <h3 className="text-xl font-bold mb-2">{vehiculo.marca}</h3>
-                      <p><span className="font-semibold">Modelo:</span> {vehiculo.modelo}</p>
-                      <p><span className="font-semibold">Color:</span> {vehiculo.color}</p>
-                      <p><span className="font-semibold">Año:</span> {vehiculo.anio}</p>
-                      <p><span className="font-semibold">Placas:</span> {vehiculo.placas}</p>
-                      <div className='relative mt-2'>
-                      <div className="flex">
-          <div className="flex">
-            <button onClick={() =>
-              Swal.fire({
-                title: "Asignación de Conductores",
-                html: `<p>Seleccione un <strong>conductor</strong> para asignar al vehículo.</p>
-                   <p>Solo se puede asignar <strong>un conductor</strong> a la vez.</p>
-                   <p>Si selecciona un <strong>conductor</strong> con un vehículo, el vehículo anterior quedará sin conductor.</p>
-                   <p>Si selecciona <strong>'Sin Conductor'</strong>, se <strong>desasignará</strong> el conductor actual.</p>`,
-                icon: "info",
-                confirmButtonText: "Entendido",
-                width: '800px',
-                padding: '1.5rem',
-                backdrop: true,
-              })
-            }
-            className="fa-solid fa-info-circle text-2xl mr-2 hover:scale-125 hover:shadow-xl"
-            style={{ "color": "#0000ff" }}></button>
-            <label className="block font-bold pt-0.5">Conductor Asignado</label>
-          </div>
-        </div>
-                        <AsignarChofer 
-                          idVehiculo={vehiculo.id} 
-                          onAsignacionExitosa={handleAsignacionExitosa}  
-                          className="absolute z-10 bg-white shadow-lg p-4 rounded"
-                        />
+
+                      {/* Información del vehículo */}
+                      <div className="text-3xl font-bold flex justify-center items-center space-x-2">
+                        <i className="fa-solid fa-taxi"></i>
+                        <div>{vehiculo.marca}</div>
                       </div>
 
-                      <div className="border-2 border-gray-200 shadow-lg mt-4 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg hover:scale-105 hover:shadow-lg">
+                      <div className="border-2 border-gray-200 shadow-lg mt-2 mb-2 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg hover:scale-105 hover:shadow-lg">
                         {fileId ? (
                           <iframe
                             src={`https://drive.google.com/file/d/${fileId}/preview?disablezoom=true`}
@@ -195,9 +303,64 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                           <span>Sin imagen</span>
                         )}
                       </div>
-  
+
+                      <p><strong>Modelo:</strong> {vehiculo.modelo}</p>
+                      <p><strong>Color:</strong> {vehiculo.color}</p>
+                      <p><strong>Año:</strong> {vehiculo.anio}</p>
+                      <p><strong>Placas:</strong> {vehiculo.placas}</p>
+
+                      {/* Sección de Asignación de Conductor */}
+                      <div className="relative mt-2">
+                        <div className="flex items-center mb-2">
+                          <button
+                            onClick={() =>
+                              Swal.fire({
+                                title: "Asignación de Conductores",
+                                html: (
+                                  <>
+                                    <p>Seleccione un <strong>conductor</strong> para asignar al vehículo.</p>
+                                    <p>Solo se puede asignar <strong>un conductor</strong> a la vez.</p>
+                                    <p>Si selecciona un <strong>conductor</strong> con un vehículo, el vehículo anterior quedará sin conductor.</p>
+                                    <p>Si selecciona <strong>'Sin Conductor'</strong>, se <strong>desasignará</strong> el conductor actual.</p>
+                                  </>
+                                ),
+                                icon: "info",
+                                confirmButtonText: "Entendido",
+                                width: '800px',
+                                padding: '1.5rem',
+                                backdrop: true,
+                              })
+                            }
+                            className="fa-solid fa-info-circle text-2xl mr-2 hover:scale-125 hover:shadow-xl"
+                            style={{ color: "#0000ff" }}
+                          ></button>
+                          <label className="block font-bold pt-0.5">Conductor Asignado</label>
+                        </div>
+                        <div className="relative">
+                          <Select
+                            className="shadow rounded border-2 border-gray-400 mt-2"
+                            value={selectedOptionConductor}
+                            onChange={(option) => handleChangeConductor(vehiculo.id, option)}
+                            options={[
+                              { value: 0, label: "Sin conductor" },
+                              ...conductores.map((conductor) => ({
+                                value: conductor.id,
+                                label: conductor.nombre,
+                              }))
+                            ]}
+                            placeholder={asignacion.idConductor && asignacion.idConductor !== 0 ? asignacion.conductorAsignado : "Seleccionar Conductor"}
+                            isClearable
+                            menuPortalTarget={document.body} // Renderiza el menú en el body
+                            styles={{
+                              menuPortal: base => ({ ...base, zIndex: 9999 }),
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Botones de acción */}
                       <div className="mt-4 flex justify-between">
-                      <button
+                        <button
                           className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 font-bold"
                           onClick={() => handleViewVehiculo(vehiculo.id)} // Abrir modal al hacer clic
                         >
@@ -221,8 +384,8 @@ const CompSowVehiculos = ({ isCollapsed }) => {
         {/* Renderizar el Modal correspondiente basado en modalType */}
         {modalType === 'create' && (
           <CompCreateVehiculos
-            onClose={closeModal} 
-            getVehiculos={getVehiculos} 
+            onClose={closeModal}
+            getVehiculos={getVehiculos}
           />
         )}
 

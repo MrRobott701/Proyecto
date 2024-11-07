@@ -67,6 +67,11 @@ const ContratoModel = db.define("contratos", {
         allowNull: true,
         field: 'idPropietario',
     },
+    estado: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'estado',
+    },
 
 }, {
     // Desactiva la columna de sequelize

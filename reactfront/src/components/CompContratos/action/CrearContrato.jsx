@@ -68,6 +68,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
   const [precioPagare, setPrecioPagare] = useState('10000');
   const [penalidad, setPenalidad] = useState('75');
   
+  
   const [duracionMeses, setDuracionMeses] = useState(2);
 
   // Estados para los datos select
@@ -292,6 +293,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
         idConductor: parseInt(idConductor, 10),
         idVehiculo: parseInt(idVehiculo, 10),
         idPropietario: parseInt(idPropietario, 10),
+        estado:1,
       };
 
       const response = await axios.post(URI_CONTRATOS, nuevoContrato);

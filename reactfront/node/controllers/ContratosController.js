@@ -4,7 +4,9 @@ import ConductorModel from '../models/ConductorModel.js';
 // Mostrar todos los registros
 export const getAllContrato = async (req, res) => {
     try {
-        const contratos = await ContratoModel.findAll();
+        const contratos = await ContratoModel.findAll({
+            where: { estado: 1 }
+        });
         res.status(200).json(contratos);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -53,9 +55,10 @@ export const updateContrato = async (req, res) => {
 export const deleteContrato = async (req, res) => {
     try {
         // Eliminar el contrato
-        const deleted = await ContratoModel.destroy({
-            where: { id: req.params.id },
-        });
+        const deleted = await ContratoModel.update(
+            {estado: 0},
+            { where: { id: req.params.id } }
+        );
 
         if (!deleted) {
             return res.status(404).json({ message: 'Contrato no encontrado' });

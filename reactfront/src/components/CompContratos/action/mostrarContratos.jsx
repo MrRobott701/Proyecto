@@ -7,7 +7,7 @@ import VerContrato from "./VerContrato";
 import EditarContrato from "./EditarContrato";
 import Swal from "sweetalert2";
 
-const MostrarContratos = () => {
+const MostrarContratos = (isCollapsed) => {
   const [contratos, setContratos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -61,20 +61,23 @@ const MostrarContratos = () => {
 
   const handleView = useCallback((id) => {
     const contrato = contratos.find(c => c.id === id);
+    document.body.style.overflow = "visible";
     if (contrato) {
       setSelectedContratoParaVer(contrato);
+      document.body.style.overflow = "visible";
     }
   }, [contratos]);
 
   const handleEdit = useCallback((id) => {
     const contrato = contratos.find(c => c.id === id);
+    document.body.style.overflow = "visible";
     if (contrato) {
       setSelectedContratoParaEditar(contrato);
     }
   }, [contratos]);
 
-  const closeViewModal = useCallback(() => setSelectedContratoParaVer(null), []);
-  const closeEditModal = useCallback(() => setSelectedContratoParaEditar(null), []);
+  const closeViewModal = useCallback(() => setSelectedContratoParaVer(null), document.body.style.overflow = "visible");
+  const closeEditModal = useCallback(() => setSelectedContratoParaEditar(null),document.body.style.overflow = "visible");
 
   const handleDelete = useCallback(async (id) => {
     try {
@@ -139,16 +142,18 @@ const MostrarContratos = () => {
   return (
     <div>
       <Encabezado />
-      <div className="pt-24 ml-24 mr-12">
+      <div className= {`pt-24 mr-12 mb-12 transition-all duration-300 ${
+    isCollapsed ? "ml-28" : ""
+  }`}>
         <div className="flex flex-col md:flex-row justify-between items-start mb-6">
           <button
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 font-bold flex items-center mb-4 md:mb-0"
+            className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-800 font-bold flex items-center md:mb-0"
             onClick={openCreateModal}
             aria-label="Crear Contrato"
           >
-            <i className="fa-solid fa-user-plus mr-2"></i> Crear Contrato
+            <i className="text-lg fa-solid fa-user-plus mr-2"></i> Crear Contrato
           </button>
-          <div className="relative w-full md:w-3/6">
+          <div className="text-lg relative w-full md:w-3/6">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i className="fas fa-search text-gray-400"></i>
             </div>
@@ -164,7 +169,7 @@ const MostrarContratos = () => {
             />
           </div>
         </div>
-        <div className="flex mb-4">
+        <div className="flex">
         <i className="text-4xl fa-solid fa-table-cells-row-lock"></i>
         <h1 className="text-4xl font-bold mb-4">Contratos</h1>
         </div>

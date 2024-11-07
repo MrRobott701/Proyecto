@@ -123,7 +123,7 @@ const ContratoCard = ({ contrato, onView, onEdit, onDelete }) => {
   {vehiculo ? (
     <>
       {vehiculo.marca} {vehiculo.modelo} {vehiculo.color} {vehiculo.anio}{" "}
-      <strong>Placas:</strong> {vehiculo.placas}
+      <br/><strong>Placas:</strong> {vehiculo.placas}
     </>
   ) : (
     ""

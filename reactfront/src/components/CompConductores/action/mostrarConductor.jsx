@@ -84,7 +84,10 @@ const CompSowConductores = ({ isCollapsed }) => {
   return (
     <>
       <Encabezado />
-      <div className='pt-24 mr-12 ml-24'>
+      <div className= {`pt-24 mr-12 mb-12 transition-all duration-300 ${
+    isCollapsed ? "ml-28" : "ml-28"
+  }`}
+      >
         <div className="flex justify-between items-center mb-2">
           <button
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800 inline-block font-bold"

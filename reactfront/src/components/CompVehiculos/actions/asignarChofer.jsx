@@ -97,6 +97,7 @@ const AsignarChofer = ({ idVehiculo, onAsignacionExitosa }) => {
       if (idConductor && idConductor !== 0) {
         await updateConductor(idConductor, idVehiculo);
       }
+      
       onAsignacionExitosa();
 
     } catch (error) {

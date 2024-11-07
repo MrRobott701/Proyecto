@@ -29,7 +29,7 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
   const [vehiculos, setVehiculos] = useState([]);
   const [propietarios, setPropietarios] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  document.body.style.overflow = "hidden";
   useEffect(() => {
     const fetchData = async () => {
       try {
