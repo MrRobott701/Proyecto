@@ -5,6 +5,7 @@ import propietariosRoutes from './routes/propietarios.js';
 import conductoresRoutes from './routes/conductores.js';
 import vehiculosRoutes from './routes/vehiculos.js';
 import contratosRoutes from './routes/contratos.js';
+import cobrosRoutes from './routes/cobros.js';
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use('/propietarios', propietariosRoutes);
 app.use('/conductores', conductoresRoutes);
 app.use('/vehiculos', vehiculosRoutes);
 app.use('/contratos', contratosRoutes);
-
+app.use('/cobros', cobrosRoutes);
 
 
 // Conexión a la base de datos

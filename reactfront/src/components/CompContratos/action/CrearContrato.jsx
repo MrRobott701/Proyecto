@@ -412,7 +412,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
             {/* Campo Propietario */}
             <div>
               <label className="block text-gray-900 text-xl font-bold mb-2" htmlFor="propietario">
-                Propietario
+                Arrendador
               </label>
               <select
                 id="propietario"
@@ -422,7 +422,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
                 value={idPropietario}
                 onChange={(e) => setIdPropietario(e.target.value)}
               >
-                <option value="">Selecciona un propietario</option>
+                <option value="">Selecciona un arrendador</option>
                 {propietarios.map((propietario) => (
                   <option key={propietario.id} value={propietario.id}>
                     {propietario.nombre}

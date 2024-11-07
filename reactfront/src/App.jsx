@@ -10,10 +10,12 @@ import CompShowVehiculos from "./components/CompVehiculos/actions/mostrarVehicul
 import CompCreateVehiculos from "./components/CompVehiculos/actions/crearVehiculo.jsx";
 import CompEditVehiculos from "./components/CompVehiculos/actions/editarVehiculo.jsx";
 import CompContratos from "./components/CompContratos/action/mostrarContratos.jsx";
+import CompCobros from "./components/CompCobros/action/mostrarCobros.jsx";
 import NotFound from "./components/NotFound.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./components/Home.jsx";
 import Nav from "./components/Nav.jsx";
+
 function App() {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
@@ -42,9 +44,9 @@ function App() {
               <Route path="/vehiculos" element={<CompShowVehiculos isCollapsed={isCollapsed} />} />
               <Route path="/createVehiculo" element={<CompCreateVehiculos />} />
               <Route path="/editVehiculo/:id" element={<CompEditVehiculos />} />
+
               <Route path="/contratos" element={<CompContratos isCollapsed={isCollapsed} />} />
-
-
+              <Route path="/cobros" element={<CompCobros isCollapsed={isCollapsed} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
