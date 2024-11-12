@@ -5,7 +5,7 @@ import HojaCobros from "./hojaCobros";
 const MostrarCobros = (isCollapsed) => {
     const URI_COBROS = "http://localhost:8000/cobros";
     const URI_VEHICULOS = "http://localhost:8000/vehiculos";
-    const URI_CONDUCTORES = "http://localhost:8000/conductores";
+    const URI_CONDUCTORES = "http://localhost:8000/conductores/activo";
     const URI_PROPIETARIOS = "http://localhost:8000/propietarios";
     const URI_CONTRATOS = "http://localhost:8000/contratos";
 
@@ -112,6 +112,7 @@ const MostrarCobros = (isCollapsed) => {
                     conductores={conductores}
                     propietarios={propietarios}
                     contratos={contratos}
+                    setShowHojaCobros={setShowHojaCobros}
                 />
             )}
         </>

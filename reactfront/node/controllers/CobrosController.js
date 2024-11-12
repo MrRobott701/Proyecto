@@ -37,6 +37,7 @@ export const createCobro = async (req, res) => {
         res.status(201).json({ message: "Registro creado", cobro: newCobro });
     } catch (error) {
         res.status(500).json({ error: error.message });
+        console.log(error);
     }
 };
 

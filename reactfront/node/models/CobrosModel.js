@@ -31,6 +31,10 @@ const CobrosModel = db.define("cobros", {
         type: DataTypes.FLOAT(10, 2),
         allowNull: true,
     },
+    pago:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     fechaInicio: {
         type: DataTypes.DATE,
         allowNull: true,
