@@ -32,12 +32,17 @@ export const getCobro = async (req, res) => {
 
 // Crear un registro
 export const createCobro = async (req, res) => {
+    console.log(req.body);
+    console.log("Creando cobro");
+
     try {
         const newCobro = await CobrosModel.create(req.body);
         res.status(201).json({ message: "Registro creado", cobro: newCobro });
+        console.log("Cobro creado");
     } catch (error) {
         res.status(500).json({ error: error.message });
         console.log(error);
+        console.log("Error al crear cobro");
     }
 };
 

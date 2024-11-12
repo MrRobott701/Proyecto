@@ -51,9 +51,9 @@ const CobrosModel = db.define("cobros", {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
-},
-    {
-        timestamps: false,
-    });
+}, {
+    // Desactiva la columna de sequelize
+    timestamps: false, 
+});
 
 export default CobrosModel;

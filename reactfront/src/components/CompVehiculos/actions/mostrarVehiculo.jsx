@@ -291,7 +291,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                         <div>{vehiculo.marca}</div>
                       </div>
 
-                      <div className="border-2 border-gray-200 shadow-lg mt-2 mb-2 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg hover:scale-105 hover:shadow-lg">
+                      <div className="border-2 border-gray-200 mt-2 mb-2 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg hover:scale-105 hover:shadow-lg">
                         {fileId ? (
                           <iframe
                             src={`https://drive.google.com/file/d/${fileId}/preview?disablezoom=true`}

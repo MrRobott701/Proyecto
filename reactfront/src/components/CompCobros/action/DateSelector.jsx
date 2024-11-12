@@ -101,7 +101,7 @@ const DateSelector = ({ onFechaChange, onSearchChange }) => { // Recibe onSearch
                         &lt;
                     </button>
                     
-                    <span className="font-bold text-gray-700 text-center w-full">
+                    <span className="text-xl font-bold text-black text-center w-full">
                         {weekStart} al {weekEnd}
                     </span>
                     
