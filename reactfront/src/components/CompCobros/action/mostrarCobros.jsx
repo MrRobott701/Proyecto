@@ -98,7 +98,7 @@ const MostrarCobros = (isCollapsed) => {
     isCollapsed ? "ml-28" : "ml-28"}`}>
                         {/* Botón para crear Hoja de Cobros */}
                         <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                             onClick={() => setShowHojaCobros(true)} // Al hacer clic, muestra HojaCobros
                         >
                             Crear Hoja de Cobros
@@ -108,8 +108,6 @@ const MostrarCobros = (isCollapsed) => {
                         cobros={cobros}
                         propietarios={propietarios}
                             />
-
-
                     </div>
                 </>
             )}

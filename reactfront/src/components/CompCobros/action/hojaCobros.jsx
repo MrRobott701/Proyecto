@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 import axios from 'axios';
 import Encabezado from "../others/Encabezado";
@@ -22,6 +23,7 @@ const HojaCobros = ({ isCollapsed, vehiculos, contratos, propietarios, conductor
     const [activo, setActivo] = useState(1);
     const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
     const URI = 'http://localhost:8000/cobros';
+    const navigate = useNavigate();
 
     useEffect(() => {
         const mapPropietariosConConductores = () => {
@@ -247,7 +249,9 @@ const handleSave = async () => {
             icon: "success",
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Aceptar",
-        });
+        }).then(() => {
+            setShowHojaCobros(false);
+          });
     } catch (error) {
         Swal.fire({
             title: "¡Error!",
@@ -345,38 +349,38 @@ const handleSave = async () => {
                                         <tr key={conductor.id} className="shadow-md">
                                             <td className="border bg-gray-100 border-red-500 p-2 text-center">{conductor.index}</td>
                                             <td className="border bg-gray-100 border-gray-300 p-2 text-center">{conductor.nombre}</td>
-                                            <td className="border bg-gray-100 border-gray-300 p-2 text-right">
+                                            <td className="border bg-gray-100 border-gray-300 p-2 text-center">
                                                 <div className="flex items-center justify-end">
                                                     <span className="mr-1">$</span>
                                                     <input
                                                         type="number"
                                                         value={conductor.renta}
                                                         dir="ltr"  // Esto asegura que el texto se escriba de izquierda a derecha
-                                                        className="w-full text-right border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full text-center border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         onChange={(e) => handleInputChange(e, conductor.id, "renta")}
                                                     />
                                                 </div>
                                             </td>
-                                            <td className="border bg-gray-100 border-gray-300 p-2 text-right">
+                                            <td className="border bg-gray-100 border-gray-300 p-2 text-center">
                                                 <div className="flex items-center justify-end">
                                                     <span className="mr-1">$</span>
                                                     <input
                                                         type="number"
                                                         value={conductor.saldo}
                                                         dir="ltr"  // Esto asegura que el texto se escriba de izquierda a derecha
-                                                        className="w-full text-right border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full text-center border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         onChange={(e) => handleInputChange(e, conductor.id, "saldo")}
                                                     />
                                                 </div>
                                             </td>
-                                            <td className="border bg-gray-100 border-gray-300 p-2 text-right">
+                                            <td className="border bg-gray-100 border-gray-300 p-2 text-center">
                                                 <div className="flex items-center justify-end">
                                                     <span className="mr-1">$</span>
                                                     <input
                                                         type="number"
                                                         value={conductor.total}
                                                         dir="ltr"  // Esto asegura que el texto se escriba de izquierda a derecha
-                                                        className="w-full text-right bg-white rounded-md shadow-sm"
+                                                        className="w-full text-center bg-white rounded-md shadow-sm"
                                                         readOnly
                                                         disabled  // Esto deshabilita el campo para evitar la selección y edición
                                                     />

@@ -235,7 +235,7 @@ const TablaCobros = () => {
     const groupedCobros = groupByPropietario();
 
     return (
-        <div className="p-4">
+        <div className="mt-2">
             {/* Componente DateSelector para seleccionar el rango de fechas */}
             <DateSelector onFechaChange={handleFechaChange} onSearchChange={setSearchTerm} /> {/* Pasando setSearchTerm como prop */}
 
@@ -253,22 +253,24 @@ const TablaCobros = () => {
                             <table className="text-xl font-bold table-auto w-full">
                                 <thead className="shadow-md">
                                     <tr className="bg-black text-white">
-                                        <th className="border border-gray-300 p-2 text-center">No</th>
-                                        <th className="border border-gray-300 p-2 text-center">Nombre Conductor</th>
-                                        <th className="border border-gray-300 p-2 text-center">Renta</th>
-                                        <th className="border border-gray-300 p-2 text-center">Saldo</th>
-                                        <th className="border border-gray-300 p-2 text-center">Cobro</th>
-                                        <th className="border border-gray-300 p-2 text-center">Deuda</th>
-                                        <th className="border border-gray-300 p-2 text-center">Pago</th>
-                                        <th className="border border-gray-300 p-2 text-center">Nota</th>
+                                        <th className="border border-gray-300 p-2 text-center w-8">No</th>
+                                        <th className="border border-gray-300 p-2 text-center w-96">Nombre Conductor</th>
+                                        <th className="border border-gray-300 p-2 text-center w-32">Renta</th>
+                                        <th className="border border-gray-300 p-2 text-center w-32">Saldo</th>
+                                        <th className="border border-gray-300 p-2 text-center w-32">Cobro</th>
+                                        <th className="border border-gray-300 p-2 text-center w-32">Deuda</th>
+                                        <th className="border border-gray-300 p-2 text-center w-16">Pago</th>
+                                        <th className="border border-gray-300 p-2 text-center ">Nota</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="text-lg">
                                     {groupedCobros[propietarioId].map((cobro, index) => (
                                         <tr key={cobro.id} className="shadow-md">
-                                            <td className="border p-2 text-center">{index + 1}</td>
-                                            <td className="border p-2 text-center">{getConductorNombre(cobro.idConductor)}</td>
-                                            <td className="border p-2 text-right">
+                                            <td className="border bg-gray-100 p-2 text-center">{index + 1}</td>
+                                            <td className="border bg-gray-100 p-2 text-center">{getConductorNombre(cobro.idConductor)}</td>
+                                            <td className="border bg-gray-100 p-2 text-center">
+                                            <div className="flex items-center justify-end">                                            
+<span className="mr-1">$</span>
     <input
         type="number"
         value={cobro.renta}
@@ -277,10 +279,13 @@ const TablaCobros = () => {
             handleEdit(cobro.id, 'renta', newRenta); // Actualizar renta en el estado
             updateCobroo(cobro.id, newRenta, cobro.saldo); // Actualizar cobro en la base de datos
         }}
-        className="text-right w-full"
+        className="w-full text-center border-gray-300 rounded-md shadow-sm"
     />
+</div>
 </td>
-<td className="border p-2 text-right">
+<td className="border bg-gray-100 p-2 text-center">
+<div className="flex items-center justify-end">                                            
+<span className="mr-1">$</span>
     <input
         type="number"
         value={cobro.saldo}
@@ -289,24 +294,35 @@ const TablaCobros = () => {
             handleEdit(cobro.id, 'saldo', newSaldo); // Actualizar saldo en el estado
             updateCobroo(cobro.id, cobro.renta, newSaldo); // Actualizar cobro en la base de datos
         }}
-        className="text-right w-full"
+        className="w-full text-center border-gray-300 rounded-md shadow-sm"
     />
+</div>
 </td>
 
-<td className="border p-2 text-right">
+<td className="border bg-gray-100 p-2 text-center">
+<div className="flex items-center justify-end">                                            
+<span className="mr-1">$</span>
     {/* Mostrar el valor calculado de cobro */}
-    {(cobro.renta - cobro.saldo).toFixed(2)}
+    <input 
+    type="number" 
+    value={(cobro.renta - cobro.saldo).toFixed(2)}
+    className="w-full text-center border-gray-300 rounded-md shadow-sm"
+    ></input>
+    </div>
 </td>
 
-                                            <td className="border p-2 text-right">
+                                            <td className="border bg-gray-100 p-2 text-center">
+                                            <div className="flex items-center justify-end">                                            
+                                            <span className="mr-1">$</span>
                                                 <input
                                                     type="number"
                                                     value={cobro.deuda}
                                                     onChange={(e) => handleEdit(cobro.id, 'deuda', parseFloat(e.target.value))}
-                                                    className="text-right w-full"
+                                                    className="w-full text-center border-gray-300 rounded-md shadow-sm"
                                                 />
+                                            </div>
                                             </td>
-                                            <td className="border-2 text-center truncate">
+                                            <td className="border bg-gray-100 p-2 text-center">
                                                 <label className="inline-flex items-center cursor-pointer">
                                                     <input
                                                         type="checkbox"
@@ -323,12 +339,12 @@ const TablaCobros = () => {
                                                     </div>
                                                 </label>
                                             </td>
-                                            <td className="border p-2 text-center">
+                                            <td className="border bg-gray-100 p-2 text-center">
                                                 <input
                                                     type="text"
                                                     value={cobro.nota}
                                                     onChange={(e) => handleEdit(cobro.id, 'nota', e.target.value)}
-                                                    className="w-full"
+                                                    className="w-full text-center border-gray-300 rounded-md shadow-sm"
                                                 />
                                             </td>
                                         </tr>
@@ -337,17 +353,17 @@ const TablaCobros = () => {
                             </table>
 
                             {/* Fila con los totales */}
-                            <div className="flex space-x-4 mt-4 justify-center">
-                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                            <div className="flex space-x-4 mt-4 justify-center text-xl">
+                                <div className=" text-white bg-blue-900 font-bold px-4 py-2 rounded-md">
                                     Rentas: ${totals.renta.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
-                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                <div className=" text-white bg-blue-900 font-bold px-4 py-2 rounded-md">
                                     Saldos: ${totals.saldo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
-                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                <div className=" text-white bg-blue-900 font-bold px-4 py-2 rounded-md">
                                     Cobros: ${totals.cobro.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
-                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                <div className=" text-white bg-blue-900 font-bold px-4 py-2 rounded-md">
                                     Deudas: ${totals.deuda.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
                             </div>
