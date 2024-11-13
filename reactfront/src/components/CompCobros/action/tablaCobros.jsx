@@ -21,10 +21,7 @@ const TablaCobros = () => {
             try {
                 const response = await axios.get(URI_COBROS);
                 setCobros(response.data); // Almacena todos los cobros en el estado
-                if (fechaInicio && fechaFin) {
-                    // Si las fechas ya están seleccionadas, filtrar cobros al cargar los datos
-                    filterCobros(fechaInicio, fechaFin, response.data, searchTerm);
-                }
+                filterCobros(fechaInicio, fechaFin, response.data, searchTerm); // Filtra cobros inmediatamente
             } catch (error) {
                 Swal.fire({
                     title: "Error",
@@ -89,32 +86,32 @@ const TablaCobros = () => {
         // Filtrar los cobros según las fechas seleccionadas
         filterCobros(Finicio, Ffin, cobros, searchTerm);
     };
-// Función para filtrar los cobros según las fechas y el término de búsqueda
-const filterCobros = (Finicio, Ffin, cobros, searchTerm) => {
-    const filtered = cobros.filter((cobro) => {
-        const cobroFechaInicio = cobro.fechaInicio ? new Date(cobro.fechaInicio) : null;
-        const cobroFechaFin = cobro.fechaFin ? new Date(cobro.fechaFin) : null;
 
-        // Excluir los cobros con fechaFin nula
-        if (cobroFechaFin === null || cobroFechaInicio === null) return false;
+    // Función para filtrar los cobros según las fechas y el término de búsqueda
+    const filterCobros = (Finicio, Ffin, cobros, searchTerm) => {
+        const filtered = cobros.filter((cobro) => {
+            const cobroFechaInicio = cobro.fechaInicio ? new Date(cobro.fechaInicio) : null;
+            const cobroFechaFin = cobro.fechaFin ? new Date(cobro.fechaFin) : null;
 
-        // Comparar las fechas
-        const fechaValida =
-            cobroFechaInicio >= Finicio && cobroFechaFin <= Ffin;
+            // Excluir los cobros con fechaFin nula
+            if (cobroFechaFin === null || cobroFechaInicio === null) return false;
 
-        // Filtrar también por el término de búsqueda (nombre del conductor)
-        const conductorValido =
-            searchTerm === "" ||
-            conductores
-                .find((conductor) => conductor.id === cobro.idConductor) // Encontramos al conductor por su id
-                ?.nombre.toLowerCase().includes(searchTerm.toLowerCase()); // Filtramos por el nombre
+            // Comparar las fechas
+            const fechaValida =
+                cobroFechaInicio >= Finicio && cobroFechaFin <= Ffin;
 
-        return fechaValida && conductorValido;
-    });
+            // Filtrar también por el término de búsqueda (nombre del conductor)
+            const conductorValido =
+                searchTerm === "" ||
+                conductores
+                    .find((conductor) => conductor.id === cobro.idConductor) // Encontramos al conductor por su id
+                    ?.nombre.toLowerCase().includes(searchTerm.toLowerCase()); // Filtramos por el nombre
 
-    setFilteredCobros(filtered); // Actualizar el estado con los cobros filtrados
-};
+            return fechaValida && conductorValido;
+        });
 
+        setFilteredCobros(filtered); // Actualizar el estado con los cobros filtrados
+    };
 
     // Función para obtener el nombre del conductor por su ID
     const getConductorNombre = (id) => {
@@ -122,54 +119,242 @@ const filterCobros = (Finicio, Ffin, cobros, searchTerm) => {
         return conductor ? conductor.nombre : "Desconocido";
     };
 
-    // Función para obtener el nombre del propietario por su ID
-    const getPropietarioNombre = (id) => {
-        const propietario = propietarios.find((propietario) => propietario.id === id);
-        return propietario ? propietario.nombre : "Desconocido";
+    const getPropietarioNombre = (idPropietario) => {
+        const propietario = propietarios.find((propietario) => propietario.id === idPropietario);
+        return propietario ? propietario.nombre : "Propietario no encontrado"; // Si no se encuentra el propietario
     };
 
-    // Función que maneja el cambio en el campo de búsqueda
-    const handleSearchChange = (term) => {
-        setSearchTerm(term);
+    // Función para agrupar los cobros por idPropietario
+    const groupByPropietario = () => {
+        const grouped = filteredCobros.reduce((acc, cobro) => {
+            const propietarioId = cobro.idPropietario;
+            if (!acc[propietarioId]) {
+                acc[propietarioId] = [];
+            }
+            acc[propietarioId].push(cobro);
+            return acc;
+        }, {});
+
+        return grouped;
     };
+
+    // Función para manejar la actualización del estado de pago (switch)
+    const handleSwitchChange = async (id, pagoValue) => {
+        try {
+            // Realizamos la actualización en la base de datos
+            const response = await axios.put(`${URI_COBROS}${id}`, { pago: pagoValue });
+            if (response.status === 200) {
+                // Actualizamos el estado local con el nuevo valor de 'pago'
+                setFilteredCobros((prevCobros) =>
+                    prevCobros.map((cobro) =>
+                        cobro.id === id ? { ...cobro, pago: pagoValue } : cobro
+                    )
+                );
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: "No se pudo actualizar el estado de pago.",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Aceptar",
+            });
+        }
+    };
+
+    // Actualiza el valor de cobro cuando cambia renta o saldo
+    const updateCobroo = async (id, renta, saldo) => {
+        try {
+            // Calculamos el nuevo valor de cobro
+            const nuevoCobro = renta - saldo;
+
+            // Realizamos la actualización en la base de datos
+            const response = await axios.put(`${URI_COBROS}${id}`, { cobro: nuevoCobro });
+
+            if (response.status === 200) {
+                // Actualizamos el estado local con el nuevo valor de cobro
+                setFilteredCobros((prevCobros) =>
+                    prevCobros.map((cobro) =>
+                        cobro.id === id ? { ...cobro, cobro: nuevoCobro } : cobro
+                    )
+                );
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: "No se pudo actualizar el cobro.",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Aceptar",
+            });
+        }
+
+        return renta - saldo;
+    };
+
+    // Función para manejar la edición de los valores (Renta, Saldo, Cobro, Deuda y Nota)
+    const handleEdit = async (id, field, value) => {
+        try {
+            // Actualizamos el valor del campo en la base de datos
+            const response = await axios.put(`${URI_COBROS}${id}`, { [field]: value });
+
+            if (response.status === 200) {
+                // Actualizamos el estado local con el nuevo valor del campo
+                setFilteredCobros((prevCobros) =>
+                    prevCobros.map((cobro) =>
+                        cobro.id === id ? { ...cobro, [field]: value } : cobro
+                    )
+                );
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: `No se pudo actualizar ${field}.`,
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Aceptar",
+            });
+        }
+    };
+
+    // Calcular el total de cada columna
+    const calculateTotals = (cobros) => {
+        const totals = cobros.reduce(
+            (acc, cobro) => {
+                acc.renta += cobro.renta || 0;
+                acc.saldo += cobro.saldo || 0;
+                acc.cobro += cobro.cobro || 0;
+                acc.deuda += cobro.deuda || 0;
+                return acc;
+            },
+            { renta: 0, saldo: 0, cobro: 0, deuda: 0 }
+        );
+        return totals;
+    };
+
+    const groupedCobros = groupByPropietario();
 
     return (
         <div className="p-4">
-            <h1 className="text-4xl font-bold mb-4">Cobros Registrados</h1>
             {/* Componente DateSelector para seleccionar el rango de fechas */}
-            <DateSelector onFechaChange={handleFechaChange} onSearchChange={handleSearchChange} />
+            <DateSelector onFechaChange={handleFechaChange} onSearchChange={setSearchTerm} /> {/* Pasando setSearchTerm como prop */}
 
-            {/* Tabla para mostrar los cobros filtrados */}
-            <div className="shadow-lg border border-gray-300 rounded-lg p-4 mt-4">
-                <table className="text-xl font-bold table-auto w-full">
-                    <thead className="shadow-md">
-                        <tr className="bg-black text-white">
-                            <th className="border border-gray-300 p-2 text-center">No</th>
-                            <th className="border border-gray-300 p-2 text-center">Nombre Conductor</th>
-                            <th className="border border-gray-300 p-2 text-center">Renta</th>
-                            <th className="border border-gray-300 p-2 text-center">Saldo</th>
-                            <th className="border border-gray-300 p-2 text-center">Cobro</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredCobros.length > 0 ? (
-                            filteredCobros.map((cobro, index) => (
-                                <tr key={cobro.id} className="shadow-md">
-                                    <td className="border p-2 text-center">{index + 1}</td>
-                                    <td className="border p-2 text-center">{getConductorNombre(cobro.idConductor)}</td>
-                                    <td className="border p-2 text-right">${cobro.renta}</td>
-                                    <td className="border p-2 text-right">${cobro.saldo}</td>
-                                    <td className="border p-2 text-right">${cobro.cobro}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="5" className="text-center">No se encontraron cobros para este rango de fechas.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            {Object.keys(groupedCobros).map((propietarioId) => {
+                const totals = calculateTotals(groupedCobros[propietarioId]);
+
+                return (
+                    <div key={propietarioId} className="mb-6">
+                        <div className="shadow-lg border border-gray-300 rounded-lg p-4">
+                            <div className="flex">
+                                <i className="fa-solid fa-user-tie text-4xl mr-4"></i>
+                                <p className="font-bold mt-2 text-2xl">{getPropietarioNombre(parseInt(propietarioId))}</p>
+                            </div>
+
+                            <table className="text-xl font-bold table-auto w-full">
+                                <thead className="shadow-md">
+                                    <tr className="bg-black text-white">
+                                        <th className="border border-gray-300 p-2 text-center">No</th>
+                                        <th className="border border-gray-300 p-2 text-center">Nombre Conductor</th>
+                                        <th className="border border-gray-300 p-2 text-center">Renta</th>
+                                        <th className="border border-gray-300 p-2 text-center">Saldo</th>
+                                        <th className="border border-gray-300 p-2 text-center">Cobro</th>
+                                        <th className="border border-gray-300 p-2 text-center">Deuda</th>
+                                        <th className="border border-gray-300 p-2 text-center">Pago</th>
+                                        <th className="border border-gray-300 p-2 text-center">Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {groupedCobros[propietarioId].map((cobro, index) => (
+                                        <tr key={cobro.id} className="shadow-md">
+                                            <td className="border p-2 text-center">{index + 1}</td>
+                                            <td className="border p-2 text-center">{getConductorNombre(cobro.idConductor)}</td>
+                                            <td className="border p-2 text-right">
+    <input
+        type="number"
+        value={cobro.renta}
+        onChange={(e) => {
+            const newRenta = parseFloat(e.target.value);
+            handleEdit(cobro.id, 'renta', newRenta); // Actualizar renta en el estado
+            updateCobroo(cobro.id, newRenta, cobro.saldo); // Actualizar cobro en la base de datos
+        }}
+        className="text-right w-full"
+    />
+</td>
+<td className="border p-2 text-right">
+    <input
+        type="number"
+        value={cobro.saldo}
+        onChange={(e) => {
+            const newSaldo = parseFloat(e.target.value);
+            handleEdit(cobro.id, 'saldo', newSaldo); // Actualizar saldo en el estado
+            updateCobroo(cobro.id, cobro.renta, newSaldo); // Actualizar cobro en la base de datos
+        }}
+        className="text-right w-full"
+    />
+</td>
+
+<td className="border p-2 text-right">
+    {/* Mostrar el valor calculado de cobro */}
+    {(cobro.renta - cobro.saldo).toFixed(2)}
+</td>
+
+                                            <td className="border p-2 text-right">
+                                                <input
+                                                    type="number"
+                                                    value={cobro.deuda}
+                                                    onChange={(e) => handleEdit(cobro.id, 'deuda', parseFloat(e.target.value))}
+                                                    className="text-right w-full"
+                                                />
+                                            </td>
+                                            <td className="border-2 text-center truncate">
+                                                <label className="inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="sr-only"
+                                                        checked={cobro.pago === 1}
+                                                        onChange={() => handleSwitchChange(cobro.id, cobro.pago === 1 ? 0 : 1)}
+                                                    />
+                                                    <div
+                                                        className={`w-11 h-6 rounded-full relative transition-all duration-300 ${cobro.pago === 1 ? 'bg-green-600' : 'bg-gray-600'}`}
+                                                    >
+                                                        <div
+                                                            className={`absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-transform duration-300 ease-in-out transform ${cobro.pago === 1 ? 'translate-x-5' : ''}`}
+                                                        ></div>
+                                                    </div>
+                                                </label>
+                                            </td>
+                                            <td className="border p-2 text-center">
+                                                <input
+                                                    type="text"
+                                                    value={cobro.nota}
+                                                    onChange={(e) => handleEdit(cobro.id, 'nota', e.target.value)}
+                                                    className="w-full"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+
+                            {/* Fila con los totales */}
+                            <div className="flex space-x-4 mt-4 justify-center">
+                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                    Rentas: ${totals.renta.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </div>
+                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                    Saldos: ${totals.saldo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </div>
+                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                    Cobros: ${totals.cobro.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </div>
+                                <div className=" text-red-500 bg-black text-lg font-bold px-4 py-2 rounded-md">
+                                    Deudas: ${totals.deuda.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 };

@@ -104,7 +104,6 @@ const MostrarCobros = (isCollapsed) => {
                             Crear Hoja de Cobros
                         </button>
 
-                        <h1 className="text-3xl font-bold text-center">Hoja de Cobros</h1>
                         <TablaCobros
                         cobros={cobros}
                         propietarios={propietarios}
