@@ -1,6 +1,7 @@
 import Encabezado from "../others/Encabezado";
 import React, { useState, useEffect } from "react";
 import HojaCobros from "./hojaCobros";
+import TablaCobros from "./tablaCobros";
 
 const MostrarCobros = (isCollapsed) => {
     const URI_COBROS = "http://localhost:8000/cobros";
@@ -94,8 +95,7 @@ const MostrarCobros = (isCollapsed) => {
                 <>
 <Encabezado />
       <div className= {`pt-24 mr-12 mb-12 transition-all duration-300 ${
-    isCollapsed ? "ml-28" : "ml-28"
-  }`}>
+    isCollapsed ? "ml-28" : "ml-28"}`}>
                         {/* Botón para crear Hoja de Cobros */}
                         <button
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -103,6 +103,14 @@ const MostrarCobros = (isCollapsed) => {
                         >
                             Crear Hoja de Cobros
                         </button>
+
+                        <h1 className="text-3xl font-bold text-center">Hoja de Cobros</h1>
+                        <TablaCobros
+                        cobros={cobros}
+                        propietarios={propietarios}
+                            />
+
+
                     </div>
                 </>
             )}
@@ -118,5 +126,4 @@ const MostrarCobros = (isCollapsed) => {
         </>
     );
 };
-
 export default MostrarCobros;

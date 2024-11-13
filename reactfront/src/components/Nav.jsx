@@ -33,7 +33,7 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
         }`}
       >
         <div className="px-3 py-3">
-          <div className="text-white text-2xl font-bold mb-8">
+          <div className="text-white text-xl font-bold mb-8 mt-1">
             {!isCollapsed && "Panel de Control"}
           </div>
           {isCollapsed && (

@@ -66,8 +66,11 @@ const DateSelector = ({ onFechaChange, onSearchChange }) => { // Recibe onSearch
 
     return (
         <div className="font-bold mb-3 grid grid-cols-12 gap-4 border p-3 rounded-lg shadow-xl bg-white">
-            <div className="col-span-1">
+            <div className="col-end-1">
+            <i className="fa fa-calendar-days text-3xl"></i>
                 {/* Year Selector */}
+                </div>
+                <div className="w-20">
                 <select 
                     value={selectedYear} 
                     onChange={handleYearChange} 
@@ -97,7 +100,7 @@ const DateSelector = ({ onFechaChange, onSearchChange }) => { // Recibe onSearch
             <div className="col-span-5">
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between">
-                    <button onClick={() => changeWeek(-1)} className="p-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition">
+                    <button onClick={() => changeWeek(-1)} className="p-2 bg-fuchsia-500 text-xl text-white rounded-md shadow hover:bg-blue-600 transition">
                         &lt;
                     </button>
                     
@@ -105,7 +108,7 @@ const DateSelector = ({ onFechaChange, onSearchChange }) => { // Recibe onSearch
                         {weekStart} al {weekEnd}
                     </span>
                     
-                    <button onClick={() => changeWeek(1)} className="p-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition">
+                    <button onClick={() => changeWeek(1)} className="p-2 text-xl bg-fuchsia-500 text-white rounded-md shadow hover:bg-blue-600 transition">
                         &gt;
                     </button>
                 </div>

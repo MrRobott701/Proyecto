@@ -1,5 +1,7 @@
 // En controllers/CobrosController.js
 import CobrosModel from '../models/CobrosModel.js';
+import { Op } from 'sequelize'; // Asegúrate de importar Op
+
 
 
 // Mostrar todos los registros
@@ -16,6 +18,41 @@ export const getAllCobros = async (req, res) => {
         console.log(error);
     }
 };
+
+
+// Obtener cobros por fechas
+export const obtenerCobrosPorFechas = async (req, res) => {
+    const { inicio, fin } = req.params;
+
+    // Convertir las fechas a formato Date (si no están ya en ese formato)
+    const fechaInicio = new Date(inicio);
+    const fechaFin = new Date(fin);
+
+    // Verificar que las fechas son válidas
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+        return res.status(400).send("Las fechas proporcionadas no son válidas.");
+    }
+
+    try {
+        const cobros = await CobrosModel.findAll({
+            where: {
+                // Usamos las columnas fechaInicio y fechaFin para filtrar los cobros
+                fechaInicio: { 
+                    [Op.gte]: fechaInicio,  // Mayor o igual que fechaInicio
+                },
+                fechaFin: {
+                    [Op.lte]: fechaFin,      // Menor o igual que fechaFin
+                }
+            }
+        });
+        res.json(cobros); // Devuelve los cobros encontrados
+    } catch (error) {
+        console.error("Error en obtenerCobrosPorFechas:", error);
+        res.status(500).send("Error al obtener los cobros");
+    }
+};
+
+
 
 // Mostrar un registro por id
 export const getCobro = async (req, res) => {

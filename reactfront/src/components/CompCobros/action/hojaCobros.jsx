@@ -12,9 +12,9 @@ const HojaCobros = ({ isCollapsed, vehiculos, contratos, propietarios, conductor
     const [idConductor, setIdConductor] = useState("");
     const [idVehiculo, setIdVehiculo] = useState("");
     const [idPropietario, setIdPropietario] = useState("");
-    const [renta, setRenta] = useState("");
-    const [saldo, setSaldo] = useState("");
-    const [cobro, setCobro] = useState(""); // Esta es la variable que almacenará el cobro
+    const [renta, setRenta] = useState(0);
+    const [saldo, setSaldo] = useState(0);
+    const [cobro, setCobro] = useState(0); // Esta es la variable que almacenará el cobro
     const [deuda, setDeuda] = useState("");
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
@@ -41,7 +41,7 @@ const HojaCobros = ({ isCollapsed, vehiculos, contratos, propietarios, conductor
                     const saldo = ""; // Pendiente de implementar
                     const total = (renta - saldo) || 0;
                     const vehiculo = contrato.idVehiculo || "No asignado";
-
+                    setCobro(total);
                     return {
                         ...conductor,
                         idContrato: contrato.id,
@@ -203,9 +203,9 @@ const handleSave = async () => {
                     idConductor: parseInt(conductor.id),  // Convertir a entero
                     idVehiculo: parseInt(conductor.idVehiculo),  // Convertir a entero
                     idPropietario: parseInt(propietario.id),  // Convertir a entero
-                    renta: conductor.renta ? parseFloat(conductor.renta) : "",  // Verificar si es vacío
-                    saldo: conductor.saldo ? parseFloat(conductor.saldo) : "",  // Verificar si es vacío
-                    cobro: conductor.cobro ? parseFloat(conductor.cobro) : "",  // Verificar si es vacío
+                    renta: conductor.renta ? parseFloat(conductor.renta) : 0,  // Verificar si es vacío
+                    saldo: conductor.saldo ? parseFloat(conductor.saldo) : 0,  // Verificar si es vacío
+                    cobro: conductor.cobro ? parseFloat(conductor.cobro) : conductor.renta,  // Verificar si es vacío
                     fechaInicio,
                     fechaFin,
                     nota: conductor.nota,
@@ -215,12 +215,12 @@ const handleSave = async () => {
                 // Mostrar datos para depuración
                 console.log("Datos de cobro del conductor: ", cobroData);
 
-                // Verificar que todos los campos estén bien antes de enviar
+                /* Verificar que todos los campos estén bien antes de enviar
                 if (!cobroData.renta || !cobroData.saldo || !cobroData.cobro) {
                     console.log("Faltan datos en el cobroData para el conductor: ", conductor.id);
                     continue; // Saltar a la siguiente iteración si hay datos faltantes
                 }
-
+*/
                 try {
                     // Enviar el cobro uno por uno
                     const response = await axios.post(URI, cobroData);
@@ -311,11 +311,14 @@ const handleSave = async () => {
                     <i className="fa-solid fa-circle-xmark"></i>
                 </button>
                 <h1
-                className="text-4xl text-center font-bold mb-3 no-select"
+                className="text-4xl text-center font-bold mb-2 no-select"
                 style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}>
                     <i className="fa-solid fa-file-contract mr-4"></i>
                     Crear Nueva Hoja de Cobros
                     </h1>
+                    <hr className="mb-4 border-gray-800 border-t-8"></hr>
+                {/* Selector de fechas */}
+                <div className="shadow-lg border border-gray-300 rounded-lg p-4">
                 <DateSelector onFechaChange={handleFechaChange} onSearchChange={handleSearchChange} />
 
                 {filteredPropietarios.map((propietario) => (
@@ -437,6 +440,7 @@ const handleSave = async () => {
                 </div>
                 </div>
             </div>
+        </div>
 
             {/* Mostrar el componente CompViewVehiculo cuando se selecciona un vehículo */}
             {showVehiculo && (
