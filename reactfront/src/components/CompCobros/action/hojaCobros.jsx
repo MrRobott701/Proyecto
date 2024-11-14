@@ -391,7 +391,7 @@ const handleSave = async () => {
                                                     type="text"
                                                     value={conductor.nota}
                                                     onChange={(e) => handleInputChange(e, conductor.id, "nota")}
-                                                    className="w-full text-black text-lg border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full text-black text-center text-lg border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 />
                                             </td>
                                             <td className="border bg-gray-100 border-gray-300 p-2">

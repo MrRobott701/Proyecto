@@ -11,9 +11,10 @@ import CompCreateVehiculos from "./components/CompVehiculos/actions/crearVehicul
 import CompEditVehiculos from "./components/CompVehiculos/actions/editarVehiculo.jsx";
 import CompContratos from "./components/CompContratos/action/mostrarContratos.jsx";
 import CompCobros from "./components/CompCobros/action/mostrarCobros.jsx";
+import TablaCobros from "./components/CompCobros/action/tablaCobros.jsx";
 import NotFound from "./components/NotFound.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from "./components/Home.jsx";
+import Home from "./components/CompHome/actions/Home.jsx";
 import Nav from "./components/Nav.jsx";
 
 function App() {
@@ -47,6 +48,9 @@ function App() {
 
               <Route path="/contratos" element={<CompContratos isCollapsed={isCollapsed} />} />
               <Route path="/cobros" element={<CompCobros isCollapsed={isCollapsed} />} />
+              
+              <Route path="/tabla-cobros" element={<TablaCobros isCollapsed={isCollapsed}/>} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

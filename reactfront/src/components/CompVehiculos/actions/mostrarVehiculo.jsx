@@ -266,7 +266,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
             {filteredVehiculos.length === 0 ? (
               <p className="text-center text-2xl mt-10">No Hay Registros</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-14">
                 {filteredVehiculos.map((vehiculo) => {
                   const fileId = extractFileId(vehiculo.fotoCarro);
                   const asignacion = asignaciones[vehiculo.id] || { idConductor: 0, conductorAsignado: null };
@@ -279,7 +279,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                   ].find(option => option.value === asignacion.idConductor) || { value: 0, label: "Sin conductor" };
 
                   return (
-                    <div key={vehiculo.id} className="text-lg bg-white p-6 rounded-lg border mt-4 transform transition-transform hover:scale-105 hover:shadow-lg relative z-20"
+                    <div key={vehiculo.id} className="text-lg bg-white p-6 rounded-lg border mt-4 transform hover:scale-105 transition-all duration-300 relative z-20"
                       style={{ boxShadow: "0px 0px 15px rgba(39, 235, 245, 0.8)" }}>
                       
                       {/* Botón para eliminar vehículo */}
@@ -291,7 +291,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
                         <div>{vehiculo.marca}</div>
                       </div>
 
-                      <div className="border-2 border-gray-200 mt-2 mb-2 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg hover:scale-105 hover:shadow-lg">
+                      <div className="border-2 border-gray-200 mt-2 mb-2 w-full h-48 flex justify-center items-center relative overflow-hidden rounded-lg">
                         {fileId ? (
                           <iframe
                             src={`https://drive.google.com/file/d/${fileId}/preview?disablezoom=true`}

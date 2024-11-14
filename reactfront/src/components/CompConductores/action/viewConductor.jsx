@@ -7,6 +7,7 @@ const URI_VEHICULOS = 'http://localhost:8000/vehiculos';
 const URI_CONTRATOS = 'http://localhost:8000/contratos';
 
 const CompViewConductor = ({ id, onClose }) => {
+  console.log("Desde el modal:" + id);
   const [conductor, setConductor] = useState(null);
   const [vehiculo, setVehiculo] = useState(null);
   const [showVehiculo, setShowVehiculo] = useState(false);

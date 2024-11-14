@@ -100,7 +100,7 @@ const DateSelector = ({ onFechaChange, onSearchChange }) => { // Recibe onSearch
             <div className="col-span-5">
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between">
-                    <button onClick={() => changeWeek(-1)} className="p-2 bg-fuchsia-500 text-xl text-white rounded-md shadow hover:bg-blue-600 transition">
+                    <button onClick={() => changeWeek(-1)} className="p-2 bg-fuchsia-500 text-xl text-white rounded-md shadow hover:bg-fuchsia-700 transition">
                         &lt;
                     </button>
                     
@@ -108,7 +108,7 @@ const DateSelector = ({ onFechaChange, onSearchChange }) => { // Recibe onSearch
                         {weekStart} al {weekEnd}
                     </span>
                     
-                    <button onClick={() => changeWeek(1)} className="p-2 text-xl bg-fuchsia-500 text-white rounded-md shadow hover:bg-blue-600 transition">
+                    <button onClick={() => changeWeek(1)} className="p-2 text-xl bg-fuchsia-500 text-white rounded-md shadow hover:bg-fuchsia-700 transition">
                         &gt;
                     </button>
                 </div>

@@ -66,7 +66,7 @@ const ContratoCard = ({ contrato, onView, onEdit, onDelete }) => {
   return (
     <>
     <div
-  className="select-none border border-blue-500 p-4 rounded-lg text-lg relative hover:scale-105 "
+  className="select-none border border-blue-500 p-4 rounded-lg text-lg relative hover:scale-105 transition-all duration-300 "
   style={{ boxShadow: "0px 0px 8px rgba(245, 101, 39, 0.8)" }}
   onClick={() => onView(contrato.id)}
 >
