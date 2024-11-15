@@ -1,6 +1,6 @@
 // EditarContrato.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import Swal from 'sweetalert2';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -33,7 +33,7 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const contratoRes = await axios.get(`${URI_CONTRATOS}/${contratoId}`);
+        const contratoRes = await axiosInstance.get(`${URI_CONTRATOS}/${contratoId}`);
         const contrato = contratoRes.data;
 
         setIdConductor(contrato.idConductor);
@@ -49,9 +49,9 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
         setDuracionMeses(contrato.duracionMeses.toString());
 
         const [conductoresRes, vehiculosRes, propietariosRes] = await Promise.all([
-          axios.get(URI_CONDUCTORES),
-          axios.get(URI_VEHICULOS),
-          axios.get(URI_PROPIETARIOS),
+          axiosInstance.get(URI_CONDUCTORES),
+          axiosInstance.get(URI_VEHICULOS),
+          axiosInstance.get(URI_PROPIETARIOS),
         ]);
         setConductores(conductoresRes.data);
         setVehiculos(vehiculosRes.data);
@@ -89,8 +89,8 @@ const EditarContrato = ({ contratoId, onClose, onEditSuccess }) => {
         duracionMeses: parseInt(duracionMeses),
       };
 
-      await axios.put(`${URI_CONTRATOS}/${contratoId}`, contratoActualizado);
-      const response2 = await axios.get(`${URI_CONTRATOS}/${contratoId}`);
+      await axiosInstance.put(`${URI_CONTRATOS}/${contratoId}`, contratoActualizado);
+      const response2 = await axiosInstance.get(`${URI_CONTRATOS}/${contratoId}`);
       const contrato = response2.data;
       console.log('Contrato actualizado:', contrato);
 

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import { useState, useEffect } from 'react';
 import CompCreatePropietarios from './crearPropietarios.jsx';
 import CompEditPropietarios from './editarPropietarios.jsx';
@@ -27,7 +27,7 @@ const CompSowPropietarios = ({ isCollapsed }) => {
   const getPropietarios = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(URI);
+      const response = await axiosInstance.get(URI);
       setPropietarios(response.data);
     } catch (error) {
       console.error("Error fetching propietarios:", error);

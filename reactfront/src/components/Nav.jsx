@@ -5,6 +5,7 @@ import camIcon2 from "../images/ico-cam2.png";
 
 const Nav = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
+  const token = localStorage.getItem('token');
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -177,7 +178,7 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
               </Link>
             </li>
             <li>
-              <Link
+            <Link
                 to="/cobros"
                 className={`flex items-center p-2 border rounded ${
                   location.pathname === "/cobros"
@@ -201,6 +202,9 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
                 ></i>
                 {!isCollapsed && <span className="ml-4">Cobros</span>}
               </Link>
+
+
+
             </li>
           </ul>
         </div>

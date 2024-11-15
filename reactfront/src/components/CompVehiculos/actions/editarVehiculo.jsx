@@ -1,6 +1,6 @@
 // CompEditVehiculo.jsx
 
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -78,7 +78,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
   useEffect(() => {
     const getPropietarios = async () => {
       try {
-        const response = await axios.get(`${URI_PROPPIETARIOS}`);
+        const response = await axiosInstance.get(`${URI_PROPPIETARIOS}`);
         setPropietarios(response.data);
       } catch (error) {
         console.error('Error al obtener los propietarios:', error);
@@ -92,7 +92,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
 
     const getConductores = async () => {
       try {
-        const response = await axios.get(`${URI_CONDUCTOR}/activo`);
+        const response = await axiosInstance.get(`${URI_CONDUCTOR}/activo`);
         setConductores(response.data);
       } catch (error) {
         console.error('Error al obtener los conductores:', error);
@@ -106,7 +106,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
 
     const getVehiculo = async () => {
       try {
-        const response = await axios.get(`${URI}/${vehiculoId}`);
+        const response = await axiosInstance.get(`${URI}/${vehiculoId}`);
         const vehiculo = response.data;
 
         // Asigna los valores al estado, asegurando que sean cadenas y en el formato correcto
@@ -301,7 +301,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
   // Función para actualizar el conductor con el ID del vehículo
   const updateConductor = async (id, data) => {
     try {
-      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, data);
+      const response = await axiosInstance.put(`${URI_CONDUCTOR}/asignar/${id}`, data);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar el conductor:', error);
@@ -532,7 +532,7 @@ const CompEditVehiculo = ({ onClose, getVehiculos, vehiculoId }) => {
 
 
         console.log('Datos del Vehículo:', datosVehiculo, 'ID:', vehiculoId);
-        const response = await axios.put(`${URI}/${vehiculoId}`, datosVehiculo);
+        const response = await axiosInstance.put(`${URI}/${vehiculoId}`, datosVehiculo);
 
         console.log('Respuesta de la actualización del vehículo:', response.data);
 

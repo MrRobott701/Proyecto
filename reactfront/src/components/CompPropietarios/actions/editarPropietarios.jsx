@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -23,7 +23,7 @@ const CompEditPropietarios = ({ id, onClose, getPropietarios }) => {
 
   const fetchPropietario = async (id) => {
     try {
-      const response = await axios.get(`${URI}/${id}`);
+      const response = await axiosInstance.get(`${URI}/${id}`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -32,7 +32,7 @@ const CompEditPropietarios = ({ id, onClose, getPropietarios }) => {
 
   const updatePropietarios = async (id, data) => {
     try {
-      const response = await axios.put(`${URI}/${id}`, data);
+      const response = await axiosInstance.put(`${URI}/${id}`, data);
       return response.data;
     } catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import React, { useEffect, useState } from 'react';
 import CompViewVehiculo from '../../CompVehiculos/actions/viewVehiculo.jsx';
 
@@ -14,7 +14,7 @@ export const MostrarCarros = () => {
     useEffect(() => {
         const getCarros = async () => {
             try {
-                const response = await axios.get(URI_VEHICULOS);
+                const response = await axiosInstance.get(URI_VEHICULOS);
                 setVehiculos(response.data);
             } catch (error) {
                 console.error(error);
@@ -23,7 +23,7 @@ export const MostrarCarros = () => {
 
         const getPropietarios = async () => {
             try {
-                const response = await axios.get(URI_PROPIETARIOS);
+                const response = await axiosInstance.get(URI_PROPIETARIOS);
                 setPropietarios(response.data);
             } catch (error) {
                 console.error(error);

@@ -1,6 +1,6 @@
 // CompViewVehiculo.jsx
 
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; // Asegúrate de tener SweetAlert2 instalado
 
@@ -17,7 +17,7 @@ const CompViewVehiculo = ({ id, onClose }) => {
   // Función para obtener los datos del vehículo
   const fetchVehiculo = async (id) => {
     try {
-      const response = await axios.get(`${URI_VEHICULOS}/${id}`);
+      const response = await axiosInstance.get(`${URI_VEHICULOS}/${id}`);
       setVehiculo(response.data);
       document.body.style.overflow = 'hidden'; // Quita el scroll cuando se muestra el modal
 
@@ -46,7 +46,7 @@ const CompViewVehiculo = ({ id, onClose }) => {
   // Función para obtener los datos del conductor
   const fetchConductor = async (idConductor) => {
     try {
-      const response = await axios.get(`${URI_CONDUCTORES}/${idConductor}`);
+      const response = await axiosInstance.get(`${URI_CONDUCTORES}/${idConductor}`);
       setConductor(response.data);
     } catch (error) {
       console.error(error);
@@ -61,7 +61,7 @@ const CompViewVehiculo = ({ id, onClose }) => {
   // Función para obtener los datos del propietario
   const fetchPropietario = async (idPropietario) => {
     try {
-      const response = await axios.get(`${URI_PROPIETARIOS}/${idPropietario}`);
+      const response = await axiosInstance.get(`${URI_PROPIETARIOS}/${idPropietario}`);
       setPropietario(response.data);
     } catch (error) {
       console.error(error);

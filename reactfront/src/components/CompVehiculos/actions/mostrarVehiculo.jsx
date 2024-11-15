@@ -1,7 +1,7 @@
 // mostrarVehiculo.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import 'sweetalert2/dist/sweetalert2.min.css';
@@ -69,7 +69,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   const getVehiculos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(URI);
+      const response = await axiosInstance.get(URI);
       setVehiculos(response.data);
 
       // Inicializar asignaciones para cada vehículo
@@ -86,7 +86,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
       response.data.forEach(async (vehiculo) => {
         if (vehiculo.idConductor && vehiculo.idConductor !== 0) {
           try {
-            const conductorResponse = await axios.get(`${URI_CONDUCTOR}/${vehiculo.idConductor}`);
+            const conductorResponse = await axiosInstance.get(`${URI_CONDUCTOR}/${vehiculo.idConductor}`);
             setAsignaciones((prev) => ({
               ...prev,
               [vehiculo.id]: {
@@ -115,7 +115,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   const getConductores = async () => {
     setConductoresLoading(true);
     try {
-      const response = await axios.get(`${URI_CONDUCTOR}/activo`);
+      const response = await axiosInstance.get(`${URI_CONDUCTOR}/activo`);
       setConductores(response.data);
     } catch (error) {
       console.error('Error al obtener los conductores:', error);
@@ -161,7 +161,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   // Función para actualizar el conductor en la API
   const updateConductor = async (id, idVehiculo) => {
     try {
-      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, {
+      const response = await axiosInstance.put(`${URI_CONDUCTOR}/asignar/${id}`, {
         idVehiculo: idVehiculo,
       }, {
         headers: {
@@ -178,7 +178,7 @@ const CompSowVehiculos = ({ isCollapsed }) => {
   // Función para asignar conductor
   const asignarConductor = async (idVehiculo, idConductor) => {
     try {
-      await axios.put(`${URI}/asignar/${idVehiculo}`, {
+      await axiosInstance.put(`${URI}/asignar/${idVehiculo}`, {
         idConductor: idConductor,
       });
       if (idConductor && idConductor !== 0) {

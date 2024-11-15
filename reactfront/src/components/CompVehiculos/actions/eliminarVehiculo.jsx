@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';  // Asegúrate de importar axios si no está ya en tu proyecto.
+import axiosInstance from '../../../axiosConfig.js';; // Asegúrate de importar axios si no está ya en tu proyecto.
 
 const EliminarVehiculo = ({ id, idConductor, getVehiculos }) => {
     const URI = 'http://localhost:8000/vehiculos';
@@ -51,9 +51,9 @@ const handleDelete = async () => {
 
             // Si el usuario confirma la segunda alerta, proceder con la eliminación
             if (result2.isConfirmed) {
-                const response = await axios.put(`${URI}/delete/${id}`);
+                const response = await axiosInstance.put(`${URI}/delete/${id}`);
                 console.log(response);
-                const responseConductores = await axios.put(`${URI_CONDUCTORES}/quitVehiculo/${idConductor}`);
+                const responseConductores = await axiosInstance.put(`${URI_CONDUCTORES}/quitVehiculo/${idConductor}`);
                 console.log(responseConductores);
                 // Mostrar mensaje de éxito
                 Swal.fire({

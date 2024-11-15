@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import { showSuccessAlert, showErrorAlert } from './../../alerts.jsx';
@@ -16,11 +16,11 @@ const AsignarChofer = ({ idVehiculo, onAsignacionExitosa }) => {
   useEffect(() => {
     const getVehiculoInfo = async () => {
       try {
-        const response = await axios.get(`${URI}/${idVehiculo}`);
+        const response = await axiosInstance.get(`${URI}/${idVehiculo}`);
         const { idConductor } = response.data;
         setIdConductor(idConductor);
         if (idConductor && idConductor !== 0) {
-          const conductor = await axios.get(`${URI_CONDUCTOR}/${idConductor}`);
+          const conductor = await axiosInstance.get(`${URI_CONDUCTOR}/${idConductor}`);
           setConductorAsignado(conductor.data.nombre);
         }
       } catch (error) {
@@ -39,7 +39,7 @@ const AsignarChofer = ({ idVehiculo, onAsignacionExitosa }) => {
   useEffect(() => {
     const getConductores = async () => {
       try {
-        const response = await axios.get(`${URI_CONDUCTOR}/activo`);
+        const response = await axiosInstance.get(`${URI_CONDUCTOR}/activo`);
         setConductores(response.data);
       } catch (error) {
         console.error('Error al obtener los conductores:', error);
@@ -69,7 +69,7 @@ const AsignarChofer = ({ idVehiculo, onAsignacionExitosa }) => {
 
   const updateConductor = async (id, idVehiculo) => {
     try {
-      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, {
+      const response = await axiosInstance.put(`${URI_CONDUCTOR}/asignar/${id}`, {
         idVehiculo: idVehiculo,
       }, {
         headers: {
@@ -89,7 +89,7 @@ const AsignarChofer = ({ idVehiculo, onAsignacionExitosa }) => {
     console.log('idConductor:', idConductor);
 
     try {
-      const response = await axios.put(`${URI}/asignar/${idVehiculo}`, {
+      const response = await axiosInstance.put(`${URI}/asignar/${idVehiculo}`, {
         idConductor: idConductor,
       });
       showSuccessAlert('CONDUCTOR ASIGNADO');

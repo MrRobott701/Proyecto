@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig'; // Importar axiosInstance
 import Encabezado from "../others/Encabezado";
 import DateSelector from "./DateSelector";
 import CompViewVehiculo from "../../CompVehiculos/actions/viewVehiculo"; // Asegúrate de importar el componente
@@ -225,7 +225,7 @@ const handleSave = async () => {
 */
                 try {
                     // Enviar el cobro uno por uno
-                    const response = await axios.post(URI, cobroData);
+                    const response = await axiosInstance.post(URI, cobroData);
                     console.log("Respuesta de la API: ", response);
 
                     if (response.status === 201) {

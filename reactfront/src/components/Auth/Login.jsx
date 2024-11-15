@@ -1,7 +1,6 @@
 // src/components/Auth/Login.jsx
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
-
+import axiosInstance from '../../axiosConfig'; // Importa la instancia personalizada
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,9 +14,9 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/usuarios/login', form);
-      setAuthToken(response.data.token);
-      navigate('/');
+      const response = await axiosInstance.post('/usuarios/login', form); // Usa la instancia personalizada
+      setAuthToken(response.data.token); // Guarda el token en el contexto y localStorage
+      navigate('/'); // Redirige al inicio después del login
     } catch (error) {
       alert(error.response?.data?.message || 'Error en el inicio de sesión');
     }

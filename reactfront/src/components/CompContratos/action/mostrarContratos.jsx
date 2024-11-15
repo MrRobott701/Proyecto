@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import axiosInstance from "../../../axiosConfig.js";
 import Encabezado from "../others/Encabezado";
 import ContratoCard from "./ContratoCard";
 import CrearContrato from "./CrearContrato";
@@ -25,10 +25,10 @@ const MostrarContratos = (isCollapsed) => {
     setIsLoading(true);
     try {
       const [contractsRes, conductorsRes, vehiclesRes, ownersRes] = await Promise.all([
-        axios.get(URI_CONTRATOS),
-        axios.get(URI_CONDUCTORES),
-        axios.get(URI_VEHICULOS),
-        axios.get(URI_PROPIETARIOS),
+        axiosInstance.get(URI_CONTRATOS),
+        axiosInstance.get(URI_CONDUCTORES),
+        axiosInstance.get(URI_VEHICULOS),
+        axiosInstance.get(URI_PROPIETARIOS),
       ]);
 
       const conductors = conductorsRes.data;
@@ -97,7 +97,7 @@ const MostrarContratos = (isCollapsed) => {
     
 
       if (result.isConfirmed) {
-        await axios.delete(`${URI_CONTRATOS}/${id}`);
+        await axiosInstance.delete(`${URI_CONTRATOS}/${id}`);
         Swal.fire(
           'Eliminado!',
           'El contrato ha sido eliminado.',

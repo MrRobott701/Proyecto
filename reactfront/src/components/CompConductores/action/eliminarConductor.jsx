@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import 'tailwindcss/tailwind.css'; // Importa los estilos de Tailwind
 
 const URI = 'http://localhost:8000/Conductores';
@@ -28,8 +28,8 @@ const EliminarConductor = ({ id,idVehiculo, getConductores }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 // Eliminar el conductor
-                await axios.delete(`${URI}/${id}`);
-                await axios.put(`${URI_VEHICULOS}/quitConductor/${idVehiculo}`);
+                await axiosInstance.delete(`${URI}/${id}`);
+                await axiosInstance.put(`${URI_VEHICULOS}/quitConductor/${idVehiculo}`);
                 getConductores(); // Refrescar la lista de Conductores
                 swalWithTailwindButtons.fire(
                     '¡Eliminado!',

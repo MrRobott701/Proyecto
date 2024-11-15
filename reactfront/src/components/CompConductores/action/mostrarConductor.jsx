@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import { useState, useEffect } from 'react';
 import CompCreateConductores from './crearConductor.jsx';
 import CompEditConductores from './editarConductor.jsx';
@@ -29,7 +29,7 @@ const CompSowConductores = ({ isCollapsed }) => {
   const getConductores = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(URI);
+      const response = await axiosInstance.get(URI);
       setConductores(response.data);
     } catch (error) {
       console.error("Error fetching Conductores:", error);
@@ -64,7 +64,7 @@ const CompSowConductores = ({ isCollapsed }) => {
 
   const actualizarActivo = async (id, nuevoValor) => {
     try {
-      await axios.put(`${URI}/${id}`, { activo: nuevoValor });
+      await axiosInstance.put(`${URI}/${id}`, { activo: nuevoValor });
       console.log(`Conductor ${id} actualizado a activo: ${nuevoValor}`);
     } catch (error) {
       console.error('Error actualizando el valor de activo:', error);

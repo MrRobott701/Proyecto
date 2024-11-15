@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import 'tailwindcss/tailwind.css'; // Importa los estilos de Tailwind
 
 const URI = 'http://localhost:8000/propietarios';
@@ -27,7 +27,7 @@ const EliminarPropietario = ({ id, getPropietarios }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 // Eliminar el propietario
-                await axios.delete(`${URI}/${id}`);
+                await axiosInstance.delete(`${URI}/${id}`);
                 getPropietarios(); // Refrescar la lista de propietarios
                 swalWithTailwindButtons.fire(
                     '¡Eliminado!',

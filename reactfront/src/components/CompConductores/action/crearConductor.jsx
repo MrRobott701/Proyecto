@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Upload from '../../Upload';
@@ -140,7 +140,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
   useEffect(() => {
     const getVehiculos = async () => {
       try {
-        const response = await axios.get(`${URI_VEHICULOS}/activos`);
+        const response = await axiosInstance.get(`${URI_VEHICULOS}/activos`);
         setVehiculos(response.data);
       } catch (error) {
         console.error('Error al obtener los vehiculos:', error);
@@ -528,7 +528,7 @@ const CompCreateConductores = ({ onClose, getConductores }) => {
     
 
  // Crear el conductor y asignar respuesta a una variable
- const respuestaConductor = await axios.post(URI, {
+ const respuestaConductor = await axiosInstance.post(URI, {
   nombre,
   direccion,
   telefono,
@@ -581,12 +581,12 @@ const nuevoIdConductor = nuevoConductor.id;
 // Asignar el vehículo si se seleccionó alguno
 if (idVehiculo && idVehiculo !== 0) {
   // Primero, asignar el vehículo al conductor
-  await axios.put(`${URI}/asignar/${nuevoIdConductor}`, {
+  await axiosInstance.put(`${URI}/asignar/${nuevoIdConductor}`, {
     idVehiculo: idVehiculo,
   });
 
   // Luego, actualizar el vehículo para asignarle al conductor
-  await axios.put(`${URI_VEHICULOS}/asignar/${idVehiculo}`, {
+  await axiosInstance.put(`${URI_VEHICULOS}/asignar/${idVehiculo}`, {
     idConductor: nuevoIdConductor,
   });
 
@@ -664,7 +664,7 @@ const onCloseSinGuardar = () => {
   // Función para actualizar el vehiculo con el ID del conductor
   const updateVehiculo = async (id, data) => {
     try {
-        const response = await axios.put(`${URI_VEHICULOS}/asignar/${id}`, data);
+        const response = await axiosInstance.put(`${URI_VEHICULOS}/asignar/${id}`, data);
         return response.data;
     } catch (error) {
         console.error('Error al actualizar el conductor:', error);

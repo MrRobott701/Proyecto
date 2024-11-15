@@ -1,6 +1,6 @@
 // src/components/Auth/Register.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../axiosConfig'; // Importa la instancia personalizada
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
@@ -12,9 +12,9 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/usuarios/register', form);
+      await axiosInstance.post('/usuarios/register', form); // Usa la instancia personalizada
       alert('Registro exitoso');
-      navigate('/login');
+      navigate('/login'); // Redirige al login después del registro
     } catch (error) {
       alert(error.response?.data?.message || 'Error en el registro');
     }

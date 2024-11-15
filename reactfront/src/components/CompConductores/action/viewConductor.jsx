@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import { useEffect, useState } from 'react';
 import CompViewVehiculo from './viewVehiculo';
 
@@ -25,7 +25,7 @@ const CompViewConductor = ({ id, onClose }) => {
 
   const fetchConductor = async (id) => {
     try {
-      const response = await axios.get(`${URI}/${id}`);
+      const response = await axiosInstance.get(`${URI}/${id}`);
       setConductor(response.data);
       document.body.style.overflow = 'hidden';
     } catch (error) {
@@ -35,7 +35,7 @@ const CompViewConductor = ({ id, onClose }) => {
 
   const fetchVehiculo = async (id) => {
     try {
-      const response = await axios.get(`${URI_VEHICULOS}/${id}`);
+      const response = await axiosInstance.get(`${URI_VEHICULOS}/${id}`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -44,7 +44,7 @@ const CompViewConductor = ({ id, onClose }) => {
 
   const fetchContrato = async (id) => {
     try {
-      const response = await axios.get(`${URI_CONTRATOS}/${id}`);
+      const response = await axiosInstance.get(`${URI_CONTRATOS}/${id}`);
       return response.data;
     } catch (error) {
       console.error(error);

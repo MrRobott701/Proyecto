@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import Swal from 'sweetalert2';
 import { sendUpload } from "../../sendUpload";
 import { GenerarPortada } from "./CompContratoPDF/Portada";
@@ -27,9 +27,9 @@ export const fetchContratoData = async (contrato) => {
 
   try {
     const [conductorRes, vehiculoRes, propietarioRes] = await Promise.all([
-      axios.get(`${URI_CONDUCTORES}/${contrato.idConductor}`),
-      axios.get(`${URI_VEHICULOS}/${contrato.idVehiculo}`),
-      axios.get(`${URI_PROPIETARIOS}/${contrato.idPropietario}`),
+      axiosInstance.get(`${URI_CONDUCTORES}/${contrato.idConductor}`),
+      axiosInstance.get(`${URI_VEHICULOS}/${contrato.idVehiculo}`),
+      axiosInstance.get(`${URI_PROPIETARIOS}/${contrato.idPropietario}`),
     ]);
 
     return {
@@ -119,10 +119,10 @@ export const handleGenerarPdfContrato = async (contrato) => {
       const urlDeposito = await sendUpload(eventDeposito);
       
       // Actualizar el contrato con la URL del archivo en Google Drive
-      await axios.put(`${URI_CONTRATOS}/${contrato.id}`, { contratoDoc: url, depositoDoc: urlDeposito });
+      await axiosInstance.put(`${URI_CONTRATOS}/${contrato.id}`, { contratoDoc: url, depositoDoc: urlDeposito });
 
       // Actualziar idContrato en conductor
-      await axios.put(`${URI_CONDUCTORES}/upContrato/${contrato.idConductor}`, { idContrato: contrato.id});
+      await axiosInstance.put(`${URI_CONDUCTORES}/upContrato/${contrato.idConductor}`, { idContrato: contrato.id});
 
       Swal.fire({
         icon: 'success',

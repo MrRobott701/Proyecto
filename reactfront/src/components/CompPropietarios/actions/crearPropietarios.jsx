@@ -1,5 +1,5 @@
 // src/components/CompPropietarios/crearPropietarios.jsx
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -243,7 +243,7 @@ const CompCreatePropietarios = ({ onClose, getPropietarios }) => {
 
     // Crear propietario
     try {
-      await axios.post(URI, {
+      await axiosInstance.post(URI, {
         nombre,
         direccion,
         telefono,

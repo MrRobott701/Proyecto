@@ -1,6 +1,6 @@
 // AsignarVehiculoAConductor.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import Swal from 'sweetalert2';
 import VehiculoSelect from './VehiculoSelect'; // Asegúrate de la ruta correcta
 import { showSuccessAlert, showErrorAlert } from '../../alerts.jsx';
@@ -17,11 +17,11 @@ const AsignarVehiculoAConductor = ({ idConductor, onAsignacionExitosa }) => {
   useEffect(() => {
     const getConductorInfo = async () => {
       try {
-        const response = await axios.get(`${URI}/${idConductor}`);
+        const response = await axiosInstance.get(`${URI}/${idConductor}`);
         const { idVehiculo } = response.data;
         setIdVehiculo(idVehiculo);
         if (idVehiculo && idVehiculo !== 0) {
-          const vehiculo = await axios.get(`${URI_VEHICULOS}/${idVehiculo}`);
+          const vehiculo = await axiosInstance.get(`${URI_VEHICULOS}/${idVehiculo}`);
           setVehiculoAsignado(vehiculo.data.nombre);
         }
       } catch (error) {
@@ -40,7 +40,7 @@ const AsignarVehiculoAConductor = ({ idConductor, onAsignacionExitosa }) => {
   useEffect(() => {
     const getVehiculos = async () => {
       try {
-        const response = await axios.get(`${URI_VEHICULOS}/activos`);
+        const response = await axiosInstance.get(`${URI_VEHICULOS}/activos`);
         console.log('Respuesta de vehiculos:', response.data);
         setVehiculos(response.data);
       } catch (error) {
@@ -58,7 +58,7 @@ const AsignarVehiculoAConductor = ({ idConductor, onAsignacionExitosa }) => {
 
   const updateVehiculo = async (id, idConductor) => {
     try {
-      const response = await axios.put(`${URI_VEHICULOS}/asignar/${id}`, {
+      const response = await axiosInstance.put(`${URI_VEHICULOS}/asignar/${id}`, {
         idConductor: idConductor,
       }, {
         headers: {
@@ -74,7 +74,7 @@ const AsignarVehiculoAConductor = ({ idConductor, onAsignacionExitosa }) => {
 
   const asignarVehiculo = async (idVehiculo) => {
     try {
-      const response = await axios.put(`${URI}/asignar/${idConductor}`, {
+      const response = await axiosInstance.put(`${URI}/asignar/${idConductor}`, {
         idVehiculo: idVehiculo,
       });
       showSuccessAlert('Vehículo asignado', 'El vehículo se asignó correctamente');

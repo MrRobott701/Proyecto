@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../../axiosConfig.js";
 import Swal from "sweetalert2";
 import CompViewConductor from "../../CompConductores/action/viewConductor"; // Modal para ver conductor
 import Encabezado from "../others/Encabezado";
@@ -22,13 +22,13 @@ const Tabla = ({ isCollapsed, selectedWeek, setShowTable }) => {
         console.log("selectedWeek: ", selectedWeek);
         const fetchData = async () => {
             try {
-                const cobrosData = await axios.get(URI_COBROS);
+                const cobrosData = await axiosInstance.get(URI_COBROS);
                 setCobros(cobrosData.data);
 
-                const conductoresData = await axios.get(URI_CONDUCTORES);
+                const conductoresData = await axiosInstance.get(URI_CONDUCTORES);
                 setConductores(conductoresData.data);
 
-                const propietariosData = await axios.get(URI_PROPIETARIOS);
+                const propietariosData = await axiosInstance.get(URI_PROPIETARIOS);
                 setPropietarios(propietariosData.data);
             } catch (error) {
                 Swal.fire({
@@ -74,7 +74,7 @@ const Tabla = ({ isCollapsed, selectedWeek, setShowTable }) => {
         };
 
         try {
-            const response = await axios.put(`${URI_COBROS}${id}`, updatedCobro);
+            const response = await axiosInstance.put(`${URI_COBROS}${id}`, updatedCobro);
 
             if (response.status === 200) {
                 setCobros(updatedCobros);

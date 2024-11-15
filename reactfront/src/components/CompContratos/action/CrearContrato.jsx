@@ -1,6 +1,6 @@
 // CrearContrato.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
@@ -99,9 +99,9 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
   const fetchData = useCallback(async () => {
     try {
       const [conductoresRes, vehiculosRes, propietariosRes] = await Promise.all([
-        axios.get(URI_CONDUCTORES),
-        axios.get(URI_VEHICULOS),
-        axios.get(URI_PROPIETARIOS),
+        axiosInstance.get(URI_CONDUCTORES),
+        axiosInstance.get(URI_VEHICULOS),
+        axiosInstance.get(URI_PROPIETARIOS),
       ]);
       setConductores(conductoresRes.data);
       setVehiculos(vehiculosRes.data);
@@ -296,7 +296,7 @@ const CrearContrato = ({ onClose, onSubmitSuccess }) => {
         estado:1,
       };
 
-      const response = await axios.post(URI_CONTRATOS, nuevoContrato);
+      const response = await axiosInstance.post(URI_CONTRATOS, nuevoContrato);
   const contrato = response.data.contrato;
     console.log('Contrato creado:', contrato);
   Swal.close();

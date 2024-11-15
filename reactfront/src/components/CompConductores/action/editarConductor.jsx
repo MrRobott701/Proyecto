@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -218,7 +218,7 @@ const handleAvalTelefonoChange = (e) => {
 
   const fetchConductor = async (id) => {
     try {
-      const response = await axios.get(`${URI}/${id}`);
+      const response = await axiosInstance.get(`${URI}/${id}`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -227,7 +227,7 @@ const handleAvalTelefonoChange = (e) => {
 
   const updateConductores = async (id, data) => {
     try {
-      const response = await axios.put(`${URI}/${id}`, data);
+      const response = await axiosInstance.put(`${URI}/${id}`, data);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -580,7 +580,7 @@ const handleDeleteFiles = async (docUrl, setDocUrl, docType) => {
     return <div></div>; // Puedes mostrar un spinner de carga
   }
 
-  const response = await axios.put(`${URI}/${id}`, datosConductor);
+  const response = await axiosInstance.put(`${URI}/${id}`, datosConductor);
   console.log('Respuesta:', response.data);
 
   Swal.close();

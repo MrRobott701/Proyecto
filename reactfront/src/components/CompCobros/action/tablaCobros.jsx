@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../../axiosConfig.js";
 import DateSelector from "./DateSelector";
 import Swal from "sweetalert2";
 import CompViewConductor from "../../CompConductores/action/viewConductor";
@@ -21,14 +21,14 @@ const TablaCobros = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const cobrosData = await axios.get(URI_COBROS);
+                const cobrosData = await axiosInstance.get(URI_COBROS);
                 setCobros(cobrosData.data);
                 console.log(cobrosData.data);
 
-                const conductoresData = await axios.get(URI_CONDUCTORES);
+                const conductoresData = await axiosInstance.get(URI_CONDUCTORES);
                 setConductores(conductoresData.data);
 
-                const propietariosData = await axios.get(URI_PROPIETARIOS);
+                const propietariosData = await axiosInstance.get(URI_PROPIETARIOS);
                 setPropietarios(propietariosData.data);
             } catch (error) {
                 Swal.fire({
@@ -105,7 +105,7 @@ const TablaCobros = () => {
 
     const handleSwitchChange = async (id, pagoValue) => {
         try {
-            const response = await axios.put(`${URI_COBROS}${id}`, { pago: pagoValue });
+            const response = await axiosInstance.put(`${URI_COBROS}${id}`, { pago: pagoValue });
             if (response.status === 200) {
                 setCobros((prevCobros) =>
                     prevCobros.map((cobro) =>
@@ -127,7 +127,7 @@ const TablaCobros = () => {
     const updateCobroo = async (id, renta, saldo) => {
         try {
             const nuevoCobro = renta - saldo;
-            const response = await axios.put(`${URI_COBROS}${id}`, { cobro: nuevoCobro });
+            const response = await axiosInstance.put(`${URI_COBROS}${id}`, { cobro: nuevoCobro });
 
             if (response.status === 200) {
                 setCobros((prevCobros) =>
@@ -149,7 +149,7 @@ const TablaCobros = () => {
 
     const handleEdit = async (id, field, value) => {
         try {
-            const response = await axios.put(`${URI_COBROS}${id}`, { [field]: value });
+            const response = await axiosInstance.put(`${URI_COBROS}${id}`, { [field]: value });
 
             if (response.status === 200) {
                 setCobros((prevCobros) =>

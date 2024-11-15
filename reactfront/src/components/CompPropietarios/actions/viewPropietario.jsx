@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';
 import { useEffect, useState } from 'react';
 
 const URI = 'http://localhost:8000/propietarios';
@@ -9,7 +9,7 @@ const CompViewPropietario = ({ id, onClose }) => {
   const fetchPropietario = async (id) => {
     
     try {
-      const response = await axios.get(`${URI}/${id}`);
+      const response = await axiosInstance.get(`${URI}/${id}`);
       setPropietario(response.data);
       document.body.style.overflow = 'hidden';
       

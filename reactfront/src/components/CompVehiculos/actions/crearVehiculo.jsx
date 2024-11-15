@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../../axiosConfig.js';;
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -66,7 +66,7 @@ const [activo, setActivo] = useState('1');
   useEffect(() => {
     const getPropietarios = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/propietarios'); // Asegúrate de reemplazar con tu URL correcta
+        const response = await axiosInstance.get('http://localhost:8000/propietarios'); // Asegúrate de reemplazar con tu URL correcta
         setPropietarios(response.data);
       } catch (error) {
         console.error('Error al obtener los propietarios:', error);
@@ -83,7 +83,7 @@ const [activo, setActivo] = useState('1');
 
     const getConductores = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/conductores/activo'); // Asegúrate de reemplazar con tu URL correcta
+        const response = await axiosInstance.get('http://localhost:8000/conductores/activo'); // Asegúrate de reemplazar con tu URL correcta
         setConductores(response.data);
       } catch (error) {
         console.error('Error al obtener los conductores:', error);
@@ -181,7 +181,7 @@ const [activo, setActivo] = useState('1');
   // Función para actualizar el conductor con el ID del vehículo
 const updateConductor = async (id, data) => {
   try {
-      const response = await axios.put(`${URI_CONDUCTOR}/asignar/${id}`, {
+      const response = await axiosInstance.put(`${URI_CONDUCTOR}/asignar/${id}`, {
         idVehiculo: data.idVehiculo,
       }, {
         headers : {
@@ -353,7 +353,7 @@ const storeVehiculo = async (e) => {
     const polizaSeguroVencimientoFormatted = formatFecha(polizaSeguroVencimiento);
     const tarjetaCirculacionVencimientoFormatted = formatFecha(tarjetaCirculacionVencimiento);
 
-    const response = await axios.post(URI, {
+    const response = await axiosInstance.post(URI, {
       marca,
       modelo,
       color,
