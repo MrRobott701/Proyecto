@@ -59,10 +59,8 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
           {/* Puedes agregar más elementos al navbar horizontal si lo deseas */}
         </nav>
       </header>
-      <div className="z-50 fixed right-2 top-3 text-2xl flex items-center">
-  {/* Ícono del Usuario */}
-  {/* Nombre del Usuario */}
-  <span className={`text-white font-semibold transition-opacity duration-300 truncate`}>
+      <div className="z-50 fixed right-2 top-3 text-xl flex items-center w-60">
+  <span className={`text-white font-semibold text-end`}>
     {user?.nombre || "Usuario"}
   </span>
   <i className="fa-solid fa-user-circle text-white text-4xl ml-2"></i>
