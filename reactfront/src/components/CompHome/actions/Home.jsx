@@ -46,18 +46,24 @@ const Home = ({ isCollapsed }) => {
     <>
       <Encabezado />
       <div className={`pt-20 z-10 transition-all duration-300 ${isCollapsed ? "" : "ml-24"}`}>
-        <div className="flex justify-between">
+        {/* Contenedor de dos columnas */}
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Primera Columna: Vehículos y Métricas */}
+          <div className="md:w-5/6 flex flex-col">
+            <DocVencimientos vehiculos={vehiculos} />
+            <MetricasCobr
+              cobros={cobros}
+              propietarios={propietarios}
+              conductores={conductores}
+              setShowMetricasCobros={true}
+            />
+          </div>
 
-  <div className="">
-    <DocVencimientos vehiculos={vehiculos} />
-  </div>
-          {/*VEHICULOS*/}
-          <div className="mr-4 ml-5">
+          {/* Segunda Columna: Vehículos */}
+          <div className="md:w-1/2 mr-2">
             <VehiculosView />
           </div>
-          </div>
-          
-        
+        </div>
       </div>
     </>
   );
