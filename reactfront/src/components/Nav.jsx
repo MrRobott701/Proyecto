@@ -48,7 +48,7 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
   return (
     <>
       {/* Navbar horizontal */}
-      <header className="h-16 z-30 fixed w-full bg-gray-800">
+      <header className="h-[10%] w-1 z-50 fixed bg-gray-800">
         <nav className="relative h-full flex items-center px-4">
           <button
             onClick={handleCollapse}
@@ -334,9 +334,8 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
             </p>
           ) : (
             <>
-            
-            <i class="text-white text-2xl fa-regular fa-copyright absolute mt-14 ml-6"></i>
-            <img src={camIcon2} alt="Cam Icon" className="ml-3 h-14 w-30 mb-14"/>
+           
+            <img src={camIcon2} alt="Cam Icon" className="ml-3 h-14 w-30 mb-8"/>
             </>
           )}
         </div>
