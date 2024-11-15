@@ -64,9 +64,28 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
     {user?.nombre || "Usuario"}
   </span>
   <i className="fa-solid fa-user-circle text-white text-4xl ml-2"></i>
-  
 </div>
 
+<div className="z-50 fixed right-2 text-xl flex top-0">
+<button
+                onClick={cerrarSession}
+                className={`flex items-center p-1 border rounded-md border-black text-white bg-gray-800
+                          hover: transform hover:scale-105 transition-all duration-300
+                           focus:outline-none mt-3`}
+                style={{
+                  boxShadow: "0px 0px 5px 2px rgba(101, 101, 101, 0.8)",
+                }}
+              >
+                <i
+                  className={"fa-solid fa-right-from-bracket text-2xl ml-1"}
+                ></i>
+                <span
+                  className="text-lg font-semibold ml-2"
+                >
+                  Salir
+                </span>
+              </button>
+</div>
 
 
 
@@ -286,7 +305,7 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
               </Link>
             </li>
 
-            {/* Cerrar Sesión */}
+            {/* Cerrar Sesión 
             <li>
               <button
                 onClick={cerrarSession}
@@ -311,32 +330,59 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
                 </span>
               </button>
             </li>
+            */}
           </ul>
         </div>
+{/* Footer en el sidebar */}
+<div className="absolute bottom-0 w-full py-1 bg-gray-800">
+  {/* Contenedor de las imágenes */}
+  <div className="relative flex items-center justify-center h-14 w-30">
+    {/* Icono para el estado expandido */}
+    <a
+      href="https://staging.costaensenada.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`absolute transition-opacity duration-300 ${
+        isCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+      }`}
+    >
+      <img
+        src={camIcon}
+        alt="Cam Icon"
+        className="h-12 w-30 hover:scale-110 transition-transform duration-300"
+      />
+    </a>
 
-        {/* Footer en el sidebar */}
-        <div className="absolute bottom-0 w-full py-1 bg-gray-800">
-          <a
-            href="https://staging.costaensenada.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex text-2xl items-center justify-center"
-          >
-            {!isCollapsed && (
-              <img src={camIcon} alt="Cam Icon" className="h-12 w-30" />
-            )}
-          </a>
-          {!isCollapsed ? (
-            <p className="text-center text-white text-xs mt-2">
-              &copy; 2024 Todos los derechos reservados
-            </p>
-          ) : (
-            <>
-           
-            <img src={camIcon2} alt="Cam Icon" className="ml-3 h-14 w-30 mb-8"/>
-            </>
-          )}
-        </div>
+    {/* Icono para el estado colapsado */}
+    <a
+      href="https://staging.costaensenada.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`absolute transition-opacity duration-300 ${
+        isCollapsed ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      <img
+        src={camIcon2}
+        alt="Cam Icon"
+        className="h-12 w-30 hover:scale-110 transition-transform duration-300"
+      />
+    </a>
+  </div>
+
+  {/* Texto para el estado expandido */}
+  <p
+    className={`text-center text-white text-xs mt-2 transition-all duration-300 ${
+      isCollapsed ? 'opacity-0 translate-y-5 pointer-events-none' : 'opacity-100 translate-y-0'
+    }`}
+  >
+    &copy; 2024 Todos los derechos reservados
+  </p>
+</div>
+
+
+
+
       </div>
     </>
   );
