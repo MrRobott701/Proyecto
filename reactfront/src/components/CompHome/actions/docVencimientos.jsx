@@ -67,7 +67,7 @@ const DocVencimientos = ({ vehiculos }) => {
   };
 
   return (
-    <div>
+    <div className="ml-2">
       <div className="flex justify-center items-center">
         <i className="fa-solid fa-paste text-2xl mr-2"></i>
         <h1 className="text-2xl font-bold mb-2 text-center">Documentos Prontos a Vencer</h1>

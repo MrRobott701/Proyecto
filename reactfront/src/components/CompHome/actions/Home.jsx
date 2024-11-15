@@ -45,9 +45,9 @@ const Home = ({ isCollapsed }) => {
   return (
     <>
       <Encabezado />
-      <div className={`pt-20 z-10 transition-all duration-300 ${isCollapsed ? "" : "ml-24"}`}>
+      <div className={`pt-20 z-10 transition-all duration-300 ${isCollapsed ? "" : "ml-20"}`}>
         {/* Contenedor de dos columnas */}
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-2">
           {/* Primera Columna: Vehículos y Métricas */}
           <div className="md:w-5/6 flex flex-col">
             <DocVencimientos vehiculos={vehiculos} />

@@ -88,8 +88,9 @@ export const MostrarCarros = () => {
         <h3 className="text-xl font-bold text-gray-800">{propietario.nombre}</h3>
       </div>
 
-      <table className="w-full table-auto border-collapse shadow-sm rounded-lg overflow-hidden">
-        <thead className="bg-gray-800 text-white text-center text-xl">
+
+  <table className="font-bold text-lg w-full rounded-lg">
+  <thead className="sticky top-16 bg-black text-white z-10">     
           <tr>
             <th className="px-4 py-2 border">Marca</th>
             <th className="px-4 py-2 border">Modelo</th>
