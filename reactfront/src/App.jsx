@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CompSowPropietarios from "./components/CompPropietarios/actions/mostrarPropietarios.jsx";
@@ -16,47 +17,78 @@ import NotFound from "./components/NotFound.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./components/CompHome/actions/Home.jsx";
 import Nav from "./components/Nav.jsx";
+import Login from "./components/Auth/Login.jsx";
+import Register from "./components/Auth/Register.jsx";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from './components/Auth/PrivateRoute.jsx'; // Crear este componente
 
 function App() {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   return (
-    <BrowserRouter>
-    
-      <div className="flex flex-col h-screen">
-        <Nav isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-        <div
-          className={`flex-grow transition-all duration-300 ${isCollapsed ? "" : "ml-32"}`} // Ajuste importante
-        >
-          <div className=""> {/* Este contenedor debe ajustarse */}
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route
-                path="/propietarios" element={<CompSowPropietarios isCollapsed={isCollapsed} />} />
-              <Route path="/create" element={<CompCreatePropietarios />} />
-              <Route path="/edit/:id" element={<CompEditPropietarios />} />
-              <Route
-                path="/conductores"
-                element={<CompShowConductores isCollapsed={isCollapsed} />}
-              />
-              <Route path="/createConductor" element={<CompCreateConductores />} />
-              <Route path="/editConductor/:id" element={<CompEditConductores />} />
-
-              <Route path="/vehiculos" element={<CompShowVehiculos isCollapsed={isCollapsed} />} />
-              <Route path="/createVehiculo" element={<CompCreateVehiculos />} />
-              <Route path="/editVehiculo/:id" element={<CompEditVehiculos />} />
-
-              <Route path="/contratos" element={<CompContratos isCollapsed={isCollapsed} />} />
-              <Route path="/cobros" element={<CompCobros isCollapsed={isCollapsed} />} />
-              
-              <Route path="/tabla-cobros" element={<TablaCobros isCollapsed={isCollapsed}/>} />
-              
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="flex flex-col h-screen">
+          <Nav isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+          <div
+            className={`flex-grow transition-all duration-300 ${isCollapsed ? "" : "ml-32"}`}
+          >
+            <div>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                
+                {/* Rutas protegidas */}
+                <Route
+                  path="/propietarios"
+                  element={
+                    <PrivateRoute>
+                      <CompSowPropietarios isCollapsed={isCollapsed} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/conductores"
+                  element={
+                    <PrivateRoute>
+                      <CompShowConductores isCollapsed={isCollapsed} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/vehiculos"
+                  element={
+                    <PrivateRoute>
+                      <CompShowVehiculos isCollapsed={isCollapsed} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/contratos"
+                  element={
+                    <PrivateRoute>
+                      <CompContratos isCollapsed={isCollapsed} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/cobros"
+                  element={
+                    <PrivateRoute>
+                      <CompCobros isCollapsed={isCollapsed} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="/tabla-cobros" element={<TablaCobros isCollapsed={isCollapsed}/>} />
+                <Route path="/" element={<Home />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
           </div>
         </div>
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
- export default App;
+
+export default App;

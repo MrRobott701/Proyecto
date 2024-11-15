@@ -1,3 +1,4 @@
+// app.js
 import express from 'express';
 import cors from 'cors';
 import db from './models/db/db.js';
@@ -6,11 +7,20 @@ import conductoresRoutes from './routes/conductores.js';
 import vehiculosRoutes from './routes/vehiculos.js';
 import contratosRoutes from './routes/contratos.js';
 import cobrosRoutes from './routes/cobros.js';
+import usuariosRoutes from './routes/usuarios.js';
+import dotenv from 'dotenv';
+
+// Cargar variables de entorno
+dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Reemplaza con la URL de tu frontend
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type, Authorization'
+}));
 app.use(express.json());
 
 // Rutas
@@ -19,7 +29,7 @@ app.use('/conductores', conductoresRoutes);
 app.use('/vehiculos', vehiculosRoutes);
 app.use('/contratos', contratosRoutes);
 app.use('/cobros', cobrosRoutes);
-
+app.use('/usuarios', usuariosRoutes);
 
 // Conexión a la base de datos
 const startServer = async () => {
@@ -34,6 +44,5 @@ const startServer = async () => {
         console.log('Error de conexión', error);
     }
 };
-
 
 startServer();
