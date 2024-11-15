@@ -47,11 +47,20 @@ export const loginUser = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({ token });
+        // Preparar datos del usuario para la respuesta (excluyendo la contraseña)
+        const userData = {
+            id: user.id,
+            nombre: user.nombre, // Asegúrate de que el modelo tenga este campo
+            correo: user.correo,
+            // Añade otros campos que consideres necesarios
+        };
+
+        res.status(200).json({ token, user: userData });
     } catch (error) {
         res.status(500).json({ message: 'Error iniciando sesión', error: error.message });
     }
 };
+
 
 // Listar todos los registros (Protegida)
 export const getUsers = async (req, res) => {

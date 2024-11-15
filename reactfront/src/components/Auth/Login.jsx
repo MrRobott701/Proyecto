@@ -1,4 +1,3 @@
-// src/components/Auth/Login.jsx
 import React, { useState, useContext } from 'react';
 import axiosInstance from '../../axiosConfig'; // Importa la instancia personalizada
 import { AuthContext } from '../../context/AuthContext';
@@ -15,7 +14,13 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axiosInstance.post('/usuarios/login', form); // Usa la instancia personalizada
-      setAuthToken(response.data.token); // Guarda el token en el contexto y localStorage
+      const { token, user } = response.data;
+
+      setAuthToken(token); // Guarda el token en el contexto
+      localStorage.setItem('authToken', token); // Opcional: guardar token en localStorage
+      localStorage.setItem('user', JSON.stringify(user)); // Guarda el usuario en localStorage
+
+      console.log(user); // Para depuración
       navigate('/'); // Redirige al inicio después del login
     } catch (error) {
       alert(error.response?.data?.message || 'Error en el inicio de sesión');

@@ -39,8 +39,8 @@ axiosInstance.interceptors.response.use(
         // Token inválido o expirado
         console.error('Token inválido o expirado. Redirigiendo al login...');
         // Opcional: Implementar lógica de cierre de sesión automática
-        //localStorage.removeItem('token');
-        //window.location.href = '/login';
+        // localStorage.removeItem('token');
+        // window.location.href = '/login';
       }
       // Puedes agregar más condiciones para otros códigos de estado
     }

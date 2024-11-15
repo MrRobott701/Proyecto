@@ -10,6 +10,8 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { authToken, logout } = useContext(AuthContext);
+  const user = JSON.parse(localStorage.getItem('user'));
+
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -57,6 +59,18 @@ const Nav = ({ isCollapsed, setIsCollapsed }) => {
           {/* Puedes agregar más elementos al navbar horizontal si lo deseas */}
         </nav>
       </header>
+      <div className="z-50 fixed right-2 top-3 text-2xl flex items-center">
+  {/* Ícono del Usuario */}
+  {/* Nombre del Usuario */}
+  <span className={`text-white font-semibold transition-opacity duration-300 truncate`}>
+    {user?.nombre || "Usuario"}
+  </span>
+  <i className="fa-solid fa-user-circle text-white text-4xl ml-2"></i>
+  
+</div>
+
+
+
 
       {/* Sidebar vertical con transición */}
       <div
