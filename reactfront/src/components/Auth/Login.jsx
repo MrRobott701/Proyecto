@@ -74,46 +74,46 @@ function Login() {
       icon: 'info',
       title: 'Registrarse',
       html: `
-      <div class="text-center font-semibold pointer-events-none">
-        <p class="mb-2">El registro es exclusivo para administradores.</p>
+      <div className="text-center font-semibold pointer-events-none">
+        <p className="mb-2">El registro es exclusivo para administradores.</p>
         <p>Para registrarse, contacte al administrador a través de las siguientes opciones:</p>
         </div>
         <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
           <!-- Correo Electrónico -->
           <a
             href="mailto:jorge.perez56@uabc.edu.mx"
-            class="text-black hover:text-white text-3xl hover:scale-125"
+            className="text-black hover:text-white text-3xl hover:scale-125"
             style="text-shadow: 0 0 10px white; text-decoration: none;"
           >
-            <i class="fas fa-envelope" style="font-size: 30px;"></i>
+            <i className="fas fa-envelope" style="font-size: 30px;"></i>
           </a>
           <!-- WhatsApp -->
           <a
             href="https://api.whatsapp.com/send?phone=6461609694"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-black hover:text-white text-3xl hover:scale-125"
+            className="text-black hover:text-white text-3xl hover:scale-125"
             style="text-shadow: 0 0 10px white; text-decoration: none;"
           >
-            <i class="fa-brands fa-square-whatsapp" style="font-size: 30px;"></i>
+            <i className="fa-brands fa-square-whatsapp" style="font-size: 30px;"></i>
           </a>
           <!-- Discord -->
           <a
             href="https://discord.gg/B9PCwpSM"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-black hover:text-white text-3xl hover:scale-125"
+            className="text-black hover:text-white text-3xl hover:scale-125"
             style="text-shadow: 0 0 10px white; text-decoration: none;"
           >
-            <i class="fab fa-discord" style="font-size: 30px;"></i>
+            <i className="fab fa-discord" style="font-size: 30px;"></i>
           </a>
         </div>
-        <div class="text-center font-semibold mt-4 pointer-events-none">
-        <i class="fa-solid fa-paper-plane"></i>
+        <div className="text-center font-semibold mt-4 pointer-events-none">
+        <i className="fa-solid fa-paper-plane"></i>
                  <span>jorge.perez56@uabc.edu.mx</span>
                  </div>
-                 <div class="text-center font-semibold pointer-events-none">
-                 <i class="fa-solid fa-phone"></i>
+                 <div className="text-center font-semibold pointer-events-none">
+                 <i className="fa-solid fa-phone"></i>
           <span>646 160 9694</span>
         </div>
       `,
@@ -208,7 +208,7 @@ function Login() {
           ¿No tienes cuenta?{" "}
           <button
             onClick={handleShowRegisterInfo}
-            className="pointer-events-auto text-sm font-bold text-blue-600 underline hover:text-blue-700"
+            className="pointer-events-auto text-sm font-bold text-blue-600 underline hover:text-blue-800"
           >
             Regístrate
           </button>
@@ -229,7 +229,7 @@ function Login() {
             <a className="rounded-full border border-white/20 flex justify-center items-center gap-x-3 py-1 px-2 md:py-2 md:px-4 text-xs md:text-base bg-white/5 hover:scale-105 hover:bg-white/10 transition"
 href="mailto:jorge.perez56@uabc.edu.mx"
 >
-            <i class="fa-solid fa-envelope-circle-check"></i>
+            <i className="fa-solid fa-envelope-circle-check"></i>
               <p className="text-sm pointer-events-none"
               
               >jorge.perez56@uabc.edu.mx</p>
@@ -238,7 +238,7 @@ href="mailto:jorge.perez56@uabc.edu.mx"
 href="https://api.whatsapp.com/send?phone=6461609694"
     target="_blank"
     rel="noopener noreferrer"
->  <i class="fa-solid fa-phone"></i>
+>  <i className="fa-solid fa-phone"></i>
               <p className="text-sm font-semibold pointer-events-none">
                 +52 646-160-9694</p>
             </a>
@@ -252,12 +252,12 @@ href="https://api.whatsapp.com/send?phone=6461609694"
   <h3 className="text-xl font-semibold pointer-events-none">Jorge Ivan Pérez Hernández</h3>
  
   <p className="text-sm pointer-events-none">Web Developer desde México
-    <i class="ml-2 fa-solid fa-briefcase my-1"></i>
+    <i className="ml-2 fa-solid fa-briefcase my-1"></i>
     <a 
       href="https://staging.costaensenada.com/"
       target="_blank"
       rel="noopener noreferrer"
-      className="pointer-events-auto text-sm font-semibold ml-1 text-blue-600 underline hover:text-blue-700"
+      className="pointer-events-auto text-sm font-semibold ml-1 text-blue-700 underline hover:text-blue-800"
     >
       Portafolio
     </a>
@@ -288,7 +288,7 @@ href="https://api.whatsapp.com/send?phone=6461609694"
     className="text-black hover:text-white text-3xl hover:scale-110 transition duration-300"
   style={{ textShadow: '0 0 10px white' }}
   >
-<i class="text-4xl fa-brands fa-square-whatsapp"></i>
+<i className="text-4xl fa-brands fa-square-whatsapp"></i>
   </a>
   {/* Discord */}
   <a

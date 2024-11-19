@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../../axiosConfig'; // Importa la instancia personalizada
 import { useNavigate } from 'react-router-dom';
 
-function Register() {
+function Register(isCollapsed) {
   const [form, setForm] = useState({ nombre: '', correo: '', password: '' });
   const navigate = useNavigate();
 
@@ -21,6 +21,10 @@ function Register() {
   };
 
   return (
+    // Formulario de registro
+    <div className= {`pt-24 mr-12 mb-12 transition-all duration-300 ${
+      isCollapsed ? "ml-28" : ""
+    }`}>
     <div className="container mt-5">
       <h2>Registro</h2>
       <form onSubmit={handleSubmit}>
@@ -59,6 +63,7 @@ function Register() {
         </div>
         <button type="submit" className="btn btn-primary">Registrarse</button>
       </form>
+    </div>
     </div>
   );
 }

@@ -206,7 +206,7 @@ const updateConductor = async (id, data) => {
 
     const { value: date } = await Swal.fire({
       title: title,
-      html: '<input type="text" id="datepicker" class="swal2-input">',
+      html: '<input type="text" id="datepicker" className="swal2-input">',
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Seleccionar',
